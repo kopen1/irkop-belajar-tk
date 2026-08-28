@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#8ED1FF">
+  <meta name="description" content="Belajar TK - Bermain sambil belajar: huruf, angka, hijaiyah, gambar, warna, mewarnai, dan kuis.">
+  <title>Belajar TK — Bermain Sambil Belajar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BC%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== SPLASH / MULAI ===== -->
+  <div id="splash" class="splash">
+    <div class="splash-deco d1">🎈</div>
+    <div class="splash-deco d2">⭐</div>
+    <div class="splash-deco d3">🌈</div>
+    <div class="splash-deco d4">☁️</div>
+    <div class="splash-card">
+      <div class="mascot-big">🐼</div>
+      <h1>Belajar TK</h1>
+      <p>Bermain sambil belajar bareng <b>Momo</b>!</p>
+      <button id="btnStart" class="btn btn-primary btn-xl">▶ &nbsp;MULAI</button>
+      <p class="splash-tip">Gunakan tombol 🔊 dan 🎵 di atas untuk suara &amp; musik</p>
+    </div>
+  </div>
+
+  <!-- ===== APP ===== -->
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <button id="btnBack" class="icon-btn" aria-label="Kembali">⬅️</button>
+      <div id="topTitle" class="top-title">Beranda</div>
+      <div class="top-actions">
+        <button id="btnSfx" class="icon-btn" aria-label="Suara ON/OFF" title="Suara ON/OFF">🔊</button>
+        <button id="btnMusic" class="icon-btn" aria-label="Musik ON/OFF" title="Musik ON/OFF">🎵</button>
+      </div>
+    </header>
+    <main id="main" class="main"></main>
+  </div>
+
+  <div id="confettiLayer" aria-hidden="true"></div>
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
