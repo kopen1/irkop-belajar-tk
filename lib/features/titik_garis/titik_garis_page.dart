@@ -32,7 +32,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
     ]),
     _TraceLevel(name: 'Rumah', icon: '🏠', points: [
       Offset(.50, .08), Offset(.84, .34), Offset(.84, .86),
-      Offset(.16, .86), Offset(.16, .34), Offset(.50, .08),
+      Offset(.16, .86), Offset(.16, .34),
     ]),
     _TraceLevel(name: 'Bintang', icon: '⭐', points: [
       Offset(.50, .07), Offset(.61, .37), Offset(.93, .37),
@@ -44,13 +44,57 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
       Offset(.14, .50), Offset(.34, .23), Offset(.68, .23),
       Offset(.88, .10), Offset(.82, .36), Offset(.94, .50),
       Offset(.82, .64), Offset(.88, .90), Offset(.68, .77),
-      Offset(.34, .77), Offset(.14, .50),
+      Offset(.34, .77),
     ]),
     _TraceLevel(name: 'Roket', icon: '🚀', points: [
       Offset(.50, .06), Offset(.68, .26), Offset(.74, .58),
       Offset(.90, .78), Offset(.66, .73), Offset(.58, .92),
       Offset(.50, .76), Offset(.42, .92), Offset(.34, .73),
       Offset(.10, .78), Offset(.26, .58), Offset(.32, .26),
+    ]),
+    _TraceLevel(name: 'Layangan', icon: '🪁', points: [
+      Offset(.50, .07), Offset(.82, .45), Offset(.50, .91), Offset(.18, .45),
+    ]),
+    _TraceLevel(name: 'Panah', icon: '➡️', points: [
+      Offset(.10, .50), Offset(.58, .50), Offset(.58, .26),
+      Offset(.90, .50), Offset(.58, .74),
+    ]),
+    _TraceLevel(name: 'Mahkota', icon: '👑', points: [
+      Offset(.12, .76), Offset(.12, .26), Offset(.34, .55),
+      Offset(.50, .16), Offset(.66, .55), Offset(.88, .26),
+      Offset(.88, .76),
+    ]),
+    _TraceLevel(name: 'Petir', icon: '⚡', points: [
+      Offset(.58, .07), Offset(.30, .48), Offset(.52, .48),
+      Offset(.38, .93), Offset(.78, .38), Offset(.55, .38),
+    ]),
+    _TraceLevel(name: 'Pohon', icon: '🌳', points: [
+      Offset(.50, .10), Offset(.76, .34), Offset(.62, .34),
+      Offset(.82, .58), Offset(.58, .58), Offset(.58, .88),
+      Offset(.42, .88), Offset(.42, .58), Offset(.18, .58),
+      Offset(.38, .34), Offset(.24, .34),
+    ]),
+    _TraceLevel(name: 'Bunga', icon: '🌸', points: [
+      Offset(.50, .12), Offset(.67, .30), Offset(.88, .32),
+      Offset(.73, .50), Offset(.82, .72), Offset(.60, .68),
+      Offset(.50, .90), Offset(.40, .68), Offset(.18, .72),
+      Offset(.27, .50), Offset(.12, .32), Offset(.33, .30),
+    ]),
+    _TraceLevel(name: 'Hati', icon: '❤️', points: [
+      Offset(.50, .84), Offset(.16, .48), Offset(.16, .24),
+      Offset(.34, .10), Offset(.50, .26), Offset(.66, .10),
+      Offset(.84, .24), Offset(.84, .48),
+    ]),
+    _TraceLevel(name: 'Mobil', icon: '🚗', points: [
+      Offset(.12, .64), Offset(.22, .40), Offset(.62, .40),
+      Offset(.78, .64), Offset(.90, .64), Offset(.90, .80),
+      Offset(.12, .80),
+    ]),
+    _TraceLevel(name: 'Pesawat', icon: '✈️', points: [
+      Offset(.10, .50), Offset(.38, .44), Offset(.56, .12),
+      Offset(.66, .12), Offset(.58, .44), Offset(.90, .50),
+      Offset(.58, .56), Offset(.66, .88), Offset(.56, .88),
+      Offset(.38, .56),
     ]),
   ];
 
@@ -73,8 +117,12 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
     audio.speak('Mulai gambar ${levels[index].name}. Tarik garis sesuai urutan nomor.');
   }
 
+  int round = 0;
+
   void _nextLevel() {
-    _selectLevel((levelIndex + 1) % levels.length);
+    final next = levelIndex + 1;
+    if (next >= levels.length) round++;
+    _selectLevel(next % levels.length);
   }
 
   Future<void> _complete() async {
@@ -110,7 +158,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                             borderRadius: BorderRadius.circular(22 * s),
                           ),
                           child: Text(
-                            'Tarik garis dari titik $progress ke titik ${progress + 1}',
+                            'Tarik garis dari titik $progress ke titik ${progress >= level.points.length ? 1 : progress + 1}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 20 * s, fontWeight: FontWeight.w900, color: const Color(0xFF28354D)),
                           ),
@@ -301,18 +349,59 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
   }
 
   Widget _header(double w, double s) => SizedBox(
-    height: w * .15,
+    height: (w < 500 ? 104 : 118) * s,
     child: Stack(
       alignment: Alignment.center,
       children: [
-        Positioned(left: w * .035, child: _round(w * .105, Icons.arrow_back_rounded, () => Navigator.of(context).maybePop())),
-        Positioned(right: w * .035, child: _round(w * .105, Icons.music_note_rounded, () => audio.speak('Titik dan Garis. Pilih gambar lalu tarik garis sesuai urutan nomor.'))),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Titik & Garis', style: TextStyle(fontSize: 34 * s, color: const Color(0xFFFFD32F), fontWeight: FontWeight.w900, shadows: const [Shadow(color: Color(0xFF17417B), blurRadius: 3, offset: Offset(2, 3))])),
-            Text('Tarik Garis Sesuai Urutan Nomor', style: TextStyle(fontSize: 17 * s, color: Colors.white, fontWeight: FontWeight.w900)),
-          ],
+        Positioned(
+          left: 16 * s,
+          top: 18 * s,
+          child: _round(58 * s, Icons.arrow_back_rounded, () => Navigator.of(context).maybePop()),
+        ),
+        Positioned(
+          right: 16 * s,
+          top: 18 * s,
+          child: _round(
+            58 * s,
+            Icons.music_note_rounded,
+            () => audio.speak('Titik dan Garis. Pilih gambar lalu tarik garis sesuai urutan nomor.'),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 82 * s, right: 82 * s, top: 4 * s),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Titik & Garis',
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 34 * s,
+                    color: const Color(0xFFFFD32F),
+                    fontWeight: FontWeight.w900,
+                    shadows: const [
+                      Shadow(color: Color(0xFF17417B), blurRadius: 3, offset: Offset(2, 3)),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 2 * s),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Tarik Garis Sesuai Urutan Nomor',
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 17 * s,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     ),
