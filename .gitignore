@@ -6,3 +6,7 @@ build/
 .flutter-plugins-dependencies
 .idea/
 *.iml
+*.sh
+*.bak
+.git
+fix/
