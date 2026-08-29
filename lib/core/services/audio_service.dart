@@ -33,11 +33,9 @@ class AudioService {
   }
 
   Future<void> click() async {
-    await init();
-    try {
-      await _tts.stop();
-      await _tts.speak('Klik');
-    } catch (_) {}
+    // Feedback visual InkWell sudah cukup. Jangan memakai TTS untuk suara
+    // klik karena kata "Klik" dapat terdengar bertumpuk dengan nama objek.
+    // Metode ini tetap dipertahankan agar pemanggil lama tidak perlu diubah.
   }
 
   Future<void> speak(String text) async {
