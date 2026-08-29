@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants/app_colors.dart';
-import '../features/home/home_page.dart';
+import 'app_router.dart';
+import 'app_theme.dart';
 
 class IrkopApp extends StatelessWidget {
   const IrkopApp({super.key});
@@ -10,15 +10,14 @@ class IrkopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'IRKOP Belajar TK',
+
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.background,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-        ),
-      ),
-      home: const HomePage(),
+
+      theme: AppTheme.light,
+
+      initialRoute: AppRouter.home,
+
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
