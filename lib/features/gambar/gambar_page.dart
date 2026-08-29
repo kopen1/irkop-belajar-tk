@@ -237,7 +237,8 @@ class _GambarPageState extends State<GambarPage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(26),
         onTap: () {
-          audio.click();
+          // Nama gambar harus terdengar bersih tanpa suara klik yang
+          // bertumpuk dengan pengucapan, misalnya hanya "Buku".
           audio.speak(label);
         },
         child: Padding(
