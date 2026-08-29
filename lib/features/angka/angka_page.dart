@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../learning/learning_data.dart';
 import '../learning/learning_page.dart';
 
 class AngkaPage extends StatelessWidget {
@@ -8,7 +9,9 @@ class AngkaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LearningPage(
-      type: LearningType.angka,
+      title: 'Belajar Angka 🔢',
+      subtitle: 'Belajar angka sambil bermain',
+      items: angkaItems,
     );
   }
 }

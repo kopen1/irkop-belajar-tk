@@ -7,30 +7,22 @@ class AudioService {
 
   final FlutterTts _tts = FlutterTts();
 
-  bool backgroundOn = true;
-  bool _ready = false;
+  bool _initialized = false;
 
   Future<void> init() async {
-    if (_ready) return;
+    if (_initialized) return;
 
-    try {
-      await _tts.setLanguage('id-ID');
-      await _tts.setSpeechRate(0.52);
-      await _tts.setPitch(1.08);
-      await _tts.setVolume(1.0);
+    await _tts.setLanguage('id-ID');
 
-      // Jangan menunggu suara selesai.
-      // Ini membuat UI dan pertanyaan berikutnya tidak terasa lambat.
-      await _tts.awaitSpeakCompletion(false);
+    // Sebelumnya 0.42, terlalu lambat.
+    await _tts.setSpeechRate(0.60);
 
-      _ready = true;
-    } catch (_) {}
-  }
+    await _tts.setVolume(1.0);
+    await _tts.setPitch(1.05);
 
-  Future<void> stop() async {
-    try {
-      await _tts.stop();
-    } catch (_) {}
+    await _tts.awaitSpeakCompletion(false);
+
+    _initialized = true;
   }
 
   Future<void> speak(String text) async {
@@ -38,10 +30,8 @@ class AudioService {
 
     await init();
 
-    // Hentikan suara sebelumnya agar tidak mengantre.
-    await stop();
-
     try {
+      await _tts.stop();
       await _tts.speak(text);
     } catch (_) {}
   }
@@ -58,11 +48,9 @@ class AudioService {
     await speak('Belum tepat. Coba lagi ya.');
   }
 
-  Future<void> click() async {
-    await speak('Ya!');
-  }
-
-  void toggleBackground() {
-    backgroundOn = !backgroundOn;
+  Future<void> stop() async {
+    try {
+      await _tts.stop();
+    } catch (_) {}
   }
 }
