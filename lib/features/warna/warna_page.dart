@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../learning/learning_data.dart';
 import '../learning/learning_page.dart';
 
 class WarnaPage extends StatelessWidget {
@@ -9,9 +8,7 @@ class WarnaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LearningPage(
-      title: 'Belajar Warna 🎨',
-      subtitle: 'Mengenal Berbagai Warna',
-      items: warnaItems,
+      type: LearningType.warna,
     );
   }
 }

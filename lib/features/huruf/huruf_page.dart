@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../learning/learning_data.dart';
 import '../learning/learning_page.dart';
 
 class HurufPage extends StatelessWidget {
@@ -9,9 +8,7 @@ class HurufPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LearningPage(
-      title: 'Dunia Huruf 🔤',
-      subtitle: 'Belajar dan bermain bersama',
-      items: hurufItems,
+      type: LearningType.huruf,
     );
   }
 }
