@@ -86,7 +86,7 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
           ]),
         )),
       ]);
-    }))));
+    })))));
   }
 
   Widget _header(double w, double s) => SizedBox(height: w * .14, child: Stack(alignment: Alignment.center, children: [
