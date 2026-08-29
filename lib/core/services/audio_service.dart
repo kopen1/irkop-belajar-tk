@@ -8,27 +8,45 @@ class AudioService {
   final FlutterTts _tts = FlutterTts();
 
   bool _initialized = false;
+  bool _backgroundOn = true;
+
+  bool get backgroundOn => _backgroundOn;
+
+  void toggleBackground() {
+    _backgroundOn = !_backgroundOn;
+  }
 
   Future<void> init() async {
     if (_initialized) return;
 
     await _tts.setLanguage('id-ID');
+
+    // Lebih cepat agar respons tombol tidak terasa lambat.
     await _tts.setSpeechRate(0.72);
     await _tts.setVolume(1.0);
-    await _tts.setPitch(1.08);
+    await _tts.setPitch(1.05);
     await _tts.awaitSpeakCompletion(false);
 
     _initialized = true;
   }
 
+  Future<void> click() async {
+    // Jangan memakai suara TTS panjang untuk click.
+    // Tetap stop audio lama agar respons halaman langsung.
+    try {
+      await _tts.stop();
+    } catch (_) {}
+  }
+
   Future<void> speak(String text) async {
-    if (text.trim().isEmpty) return;
+    final value = text.trim();
+    if (value.isEmpty) return;
 
     await init();
 
     try {
       await _tts.stop();
-      await _tts.speak(text);
+      await _tts.speak(value);
     } catch (_) {}
   }
 
@@ -37,20 +55,12 @@ class AudioService {
   }
 
   Future<void> correct() async {
-    await speak('Hebat! Jawaban kamu benar!');
+    await speak('Benar! Hebat sekali!');
   }
 
   Future<void> wrong() async {
     await speak('Belum tepat. Coba lagi ya.');
   }
-
-  Future<void> click() async {
-    await init();
-  }
-
-  bool get backgroundOn => false;
-
-  void toggleBackground() {}
 
   Future<void> stop() async {
     try {
