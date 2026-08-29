@@ -46,7 +46,7 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
                 Expanded(child: Wrap(spacing: 10 * s, runSpacing: 8 * s, children: colors.map((c) => GestureDetector(
                   onTap: () => setState(() => selected = c),
                   child: Container(width: 36 * s, height: 36 * s, decoration: BoxDecoration(color: c, shape: BoxShape.circle, border: Border.all(color: c == selected ? Colors.white : const Color(0x33000000), width: c == selected ? 4 : 2)),
-                )).toList())),
+                )).toList()),
                 SizedBox(width: 10 * s),
                 Material(color: const Color(0xFFFFC62E), borderRadius: BorderRadius.circular(16 * s), child: InkWell(onTap: () => setState(() {}), child: SizedBox(width: 58 * s, height: 54 * s, child: Icon(Icons.brush_rounded, color: Colors.white, size: 31 * s)))),
               ]),
