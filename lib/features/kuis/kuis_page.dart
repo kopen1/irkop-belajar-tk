@@ -77,7 +77,7 @@ class _KuisPageState extends State<KuisPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
             decoration: BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.white, width: 3), boxShadow: const [BoxShadow(color: Color(0x330D405C), blurRadius: 12, offset: Offset(0, 6))]),
             child: Column(children: [
-              Container(padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 7), decoration: BoxDecoration(color: const Color(0xFF56B9E8), borderRadius: BorderRadius.circular(18)), child: Text('Pertanyaan ' + number.toString(), style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900))),
+              Container(padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 7), decoration: BoxDecoration(color: const Color(0xFF56B9E8), borderRadius: BorderRadius.circular(18)), child: Text('Pertanyaan $number', style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900))),
               const SizedBox(height: 16),
               Text(question.prompt, textAlign: TextAlign.center, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF17223B))),
               const SizedBox(height: 20),
@@ -91,7 +91,7 @@ class _KuisPageState extends State<KuisPage> {
                     Text(o.$1, style: const TextStyle(fontSize: 62)),
                     Text(o.$2, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
                   ])),
-                ));
+                )));
               }).toList()),
             ]),
           ),
