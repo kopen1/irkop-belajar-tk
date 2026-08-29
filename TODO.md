@@ -36,8 +36,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
 
 ## Build APK
 
-- [ ] Jalankan Flutter analyze pada environment yang memiliki Flutter SDK
-- [ ] Perbaiki seluruh error analyzer
+- [x] Jalankan Flutter analyze pada GitHub Actions environment
+- [x] Perbaiki error analyzer yang terdeteksi pada workflow terakhir
 - [ ] Jalankan Flutter test bila test tersedia
 - [ ] Build APK release
 - [ ] Uji APK di perangkat Android
