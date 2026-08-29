@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
                     constraints: const BoxConstraints(maxWidth: 1080),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           '🎓 IRKOP Belajar TK',
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -63,7 +63,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           'Ayo bermain sambil belajar! 🌈',
                           textAlign: TextAlign.center,
                           style: TextStyle(
