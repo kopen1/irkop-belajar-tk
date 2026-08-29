@@ -283,6 +283,15 @@ class _KuisPageState extends State<KuisPage> {
                         child: Icon(Icons.close_rounded, color: Colors.white, size: 30),
                       ),
                     ),
+                  if (selectedWrong)
+                    const Positioned(
+                      top: -20,
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: Color(0xFFE4544D),
+                        child: Icon(Icons.close_rounded, color: Colors.white, size: 30),
+                      ),
+                    ),
                   if (selectedCorrect)
                     const Positioned(
                       top: -20,
