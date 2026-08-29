@@ -28,7 +28,9 @@ class _KuisPageState extends State<KuisPage> {
 
   int number = 1;
   bool? result;
+  String? selectedAnswer;
   late List<int> _queue;
+  final List<int> _recentQuestions = <int>[];
   int _queuePosition = 0;
   late int _questionIndex;
   late List<(String emoji, String label)> _visibleOptions;
@@ -90,14 +92,24 @@ class _KuisPageState extends State<KuisPage> {
       _newQueue();
     }
     _questionIndex = _queue[_queuePosition];
+    while (_recentQuestions.contains(_questionIndex) && _queuePosition < _queue.length - 1) {
+      _queuePosition++;
+      _questionIndex = _queue[_queuePosition];
+    }
+    _recentQuestions.add(_questionIndex);
+    if (_recentQuestions.length > 8) _recentQuestions.removeAt(0);
     _visibleOptions = List<(String emoji, String label)>.from(question.options)..shuffle(random);
     result = null;
+    selectedAnswer = null;
   }
 
   Future<void> choose(String value) async {
     if (result != null) return;
     final ok = value == question.answer;
-    setState(() => result = ok);
+    setState(() {
+      selectedAnswer = value;
+      result = ok;
+    });
     if (ok) {
       confetti.play();
       await audio.correct();
@@ -112,7 +124,10 @@ class _KuisPageState extends State<KuisPage> {
   }
 
   void _tryAgain() {
-    setState(() => result = null);
+    setState(() {
+      result = null;
+      selectedAnswer = null;
+    });
     audio.question(question.prompt);
   }
 
@@ -229,8 +244,8 @@ class _KuisPageState extends State<KuisPage> {
 
   Widget _answerCard((String emoji, String label) option, bool compact) {
     final correct = option.$2 == question.answer;
-    final selectedCorrect = result == true && correct;
-    final selectedWrong = result == false && !correct;
+    final selectedCorrect = result == true && selectedAnswer == option.$2 && correct;
+    final selectedWrong = result == false && selectedAnswer == option.$2 && !correct;
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -259,6 +274,15 @@ class _KuisPageState extends State<KuisPage> {
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
+                  if (selectedWrong)
+                    const Positioned(
+                      top: -20,
+                      child: CircleAvatar(
+                        radius: 22,
+                        backgroundColor: Color(0xFFE4544D),
+                        child: Icon(Icons.close_rounded, color: Colors.white, size: 30),
+                      ),
+                    ),
                   if (selectedCorrect)
                     const Positioned(
                       top: -20,
