@@ -21,18 +21,18 @@ class AudioService {
 
     await _tts.setLanguage('id-ID');
 
-    // Lebih cepat agar respons tombol tidak terasa lambat.
-    await _tts.setSpeechRate(0.72);
+    // Lebih cepat dan responsif.
+    await _tts.setSpeechRate(0.82);
     await _tts.setVolume(1.0);
     await _tts.setPitch(1.05);
+
+    // Jangan menunggu TTS selesai sebelum interaksi berikutnya.
     await _tts.awaitSpeakCompletion(false);
 
     _initialized = true;
   }
 
   Future<void> click() async {
-    // Jangan memakai suara TTS panjang untuk click.
-    // Tetap stop audio lama agar respons halaman langsung.
     try {
       await _tts.stop();
     } catch (_) {}
@@ -55,11 +55,11 @@ class AudioService {
   }
 
   Future<void> correct() async {
-    await speak('Benar! Hebat sekali!');
+    await speak('Benar! Hebat!');
   }
 
   Future<void> wrong() async {
-    await speak('Belum tepat. Coba lagi ya.');
+    await speak('Belum tepat. Coba lagi.');
   }
 
   Future<void> stop() async {
