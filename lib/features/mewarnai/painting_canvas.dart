@@ -2,90 +2,51 @@ import 'package:flutter/material.dart';
 
 class PaintingCanvas extends StatefulWidget {
   final Color color;
-
-  const PaintingCanvas({
-    super.key,
-    required this.color,
-  });
-
+  const PaintingCanvas({super.key, required this.color});
   @override
   State<PaintingCanvas> createState() => _PaintingCanvasState();
 }
 
 class _PaintingCanvasState extends State<PaintingCanvas> {
-  final List<List<Offset>> lines = [];
-  List<Offset>? currentLine;
+  final lines = <_Stroke>[];
+  List<Offset>? current;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onPanStart: (details) {
+      onPanStart: (d) {
         final box = context.findRenderObject() as RenderBox;
-        final point = box.globalToLocal(details.globalPosition);
-
-        setState(() {
-          currentLine = [point];
-          lines.add(currentLine!);
-        });
+        current = [box.globalToLocal(d.globalPosition)];
+        setState(() => lines.add(_Stroke(widget.color, current!)));
       },
-      onPanUpdate: (details) {
+      onPanUpdate: (d) {
         final box = context.findRenderObject() as RenderBox;
-        final point = box.globalToLocal(details.globalPosition);
-
-        setState(() {
-          currentLine?.add(point);
-        });
+        setState(() => current?.add(box.globalToLocal(d.globalPosition)));
       },
-      onPanEnd: (_) {
-        currentLine = null;
-      },
-      child: CustomPaint(
-        painter: _Painter(
-          lines: lines,
-          color: widget.color,
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.black26),
-          ),
-        ),
-      ),
+      onPanEnd: (_) => current = null,
+      child: CustomPaint(painter: _Painter(lines), child: const SizedBox.expand()),
     );
   }
 }
 
-class _Painter extends CustomPainter {
-  final List<List<Offset>> lines;
+class _Stroke {
   final Color color;
+  final List<Offset> points;
+  _Stroke(this.color, this.points);
+}
 
-  _Painter({
-    required this.lines,
-    required this.color,
-  });
-
+class _Painter extends CustomPainter {
+  final List<_Stroke> lines;
+  _Painter(this.lines);
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 8
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-
     for (final line in lines) {
-      for (int i = 0; i < line.length - 1; i++) {
-        canvas.drawLine(
-          line[i],
-          line[i + 1],
-          paint,
-        );
+      final p = Paint()..color = line.color.withValues(alpha: .78)..strokeWidth = 18..strokeCap = StrokeCap.round;
+      for (var i = 0; i < line.points.length - 1; i++) {
+        canvas.drawLine(line.points[i], line.points[i + 1], p);
       }
     }
   }
-
   @override
-  bool shouldRepaint(covariant _Painter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant _Painter old) => true;
 }

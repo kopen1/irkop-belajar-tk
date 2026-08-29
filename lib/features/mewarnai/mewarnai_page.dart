@@ -1,170 +1,87 @@
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/kid_background.dart';
-import '../../core/widgets/kid_header.dart';
+import 'painting_canvas.dart';
 
 class MewarnaiPage extends StatefulWidget {
   const MewarnaiPage({super.key});
-
   @override
-  State<MewarnaiPage> createState() =>
-      _MewarnaiPageState();
+  State<MewarnaiPage> createState() => _MewarnaiPageState();
 }
 
-class _MewarnaiPageState
-    extends State<MewarnaiPage> {
-  Color color = Colors.red;
-  bool painted = false;
-
-  final colors = [
-    Colors.red,
-    Colors.blue,
-    Colors.yellow,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.pink,
-    Colors.brown,
-    Colors.black,
+class _MewarnaiPageState extends State<MewarnaiPage> {
+  Color selected = Colors.red;
+  final colors = const [
+    Color(0xFFFF2433), Color(0xFFFF8214), Color(0xFFFFD31B), Color(0xFF2BC53B),
+    Color(0xFF1E8ED9), Color(0xFF6542CF), Color(0xFFE436A7), Color(0xFF20252D),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: KidBackground(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(14),
-              child: KidHeader(
-                title: 'Mewarnai 🖍️',
-                subtitle:
-                    'Pilih warna lalu tekan gambar',
-              ),
-            ),
-
-            const Text(
-              'Contoh: 🐱 Kucing Berwarna',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-              ),
-            ),
-
-            const Text(
-              '🐱',
-              style: TextStyle(
-                fontSize: 90,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
+    return Scaffold(body: KidBackground(child: SafeArea(child: LayoutBuilder(builder: (context, box) {
+      final w = box.maxWidth;
+      final s = (w / 820).clamp(.72, 1.0);
+      return Column(children: [
+        _header(w, s),
+        Expanded(child: Padding(
+          padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 14),
+          child: Column(children: [
             Expanded(
-              child: Center(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(
-                      () => painted = true,
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(
-                      milliseconds: 250,
-                    ),
-                    width: 250,
-                    height: 250,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: painted
-                          ? color.withValues(alpha: 0.82)
-                          : Colors.white.withValues(alpha: 0.94),
-                      borderRadius:
-                          BorderRadius.circular(
-                        100,
-                      ),
-                      border: Border.all(
-                        width: 7,
-                        color: Colors.black,
-                      ),
-                    ),
-                    child: const Text(
-                      '🐱',
-                      style: TextStyle(
-                        fontSize: 150,
-                      ),
-                    ),
-                  ),
-                ),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(12 * s),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .95), borderRadius: BorderRadius.circular(30 * s), border: Border.all(color: Colors.white, width: 3), boxShadow: const [BoxShadow(color: Color(0x330D405C), blurRadius: 12, offset: Offset(0, 6))]),
+                child: Stack(children: [
+                  Positioned.fill(child: CustomPaint(painter: _DinoOutlinePainter())),
+                  Positioned.fill(child: IgnorePointer(child: Center(child: Text('☀️', style: TextStyle(fontSize: 55 * s))))),
+                  Positioned.fill(child: PaintingCanvas(color: selected)),
+                ]),
               ),
             ),
-
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: colors
-                  .map(
-                    (c) => GestureDetector(
-                      onTap: () {
-                        setState(
-                          () {
-                            color = c;
-                            painted = true;
-                          },
-                        );
-                      },
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: c,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: c == color ? const Color(0xFF31536D) : Colors.white,
-                            width: c == color ? 5 : 3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
+            SizedBox(height: 12 * s),
+            Container(
+              padding: EdgeInsets.all(12 * s),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .92), borderRadius: BorderRadius.circular(26 * s), boxShadow: const [BoxShadow(color: Color(0x220D405C), blurRadius: 8, offset: Offset(0, 4))]),
+              child: Row(children: [
+                Expanded(child: Wrap(spacing: 10 * s, runSpacing: 8 * s, children: colors.map((c) => GestureDetector(
+                  onTap: () => setState(() => selected = c),
+                  child: Container(width: 36 * s, height: 36 * s, decoration: BoxDecoration(color: c, shape: BoxShape.circle, border: Border.all(color: c == selected ? Colors.white : const Color(0x33000000), width: c == selected ? 4 : 2)),
+                )).toList())),
+                SizedBox(width: 10 * s),
+                Material(color: const Color(0xFFFFC62E), borderRadius: BorderRadius.circular(16 * s), child: InkWell(onTap: () => setState(() {}), child: SizedBox(width: 58 * s, height: 54 * s, child: Icon(Icons.brush_rounded, color: Colors.white, size: 31 * s)))),
+              ]),
             ),
-
-            Padding(
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () {
-                        setState(
-                          () => painted = true,
-                        );
-                      },
-                      child: const Text(
-                        '🖌 Cat',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () {
-                        setState(
-                          () => painted = false,
-                        );
-                      },
-                      child: const Text(
-                        '🧽 Hapus',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ]),
+        )),
+      ]);
+    }))));
   }
+
+  Widget _header(double w, double s) => SizedBox(height: w * .14, child: Stack(alignment: Alignment.center, children: [
+    Positioned(left: w * .035, child: Material(color: const Color(0xFFFFC42D), shape: const CircleBorder(), elevation: 5, child: InkWell(customBorder: const CircleBorder(), onTap: () => Navigator.of(context).maybePop(), child: SizedBox(width: w * .105, height: w * .105, child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: w * .06)))),
+    Positioned(right: w * .035, child: Material(color: const Color(0xFF29C63E), shape: const CircleBorder(), elevation: 5, child: SizedBox(width: w * .105, height: w * .105, child: Icon(Icons.music_note_rounded, color: Colors.white, size: w * .06)))),
+    Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text('Ayo Mewarnai', style: TextStyle(fontSize: 35 * s, color: const Color(0xFFFFD32F), fontWeight: FontWeight.w900, shadows: const [Shadow(color: Color(0xFF17417B), blurRadius: 3, offset: Offset(2, 3))])),
+      Text('Warnai Gambar Sesukamu!', style: TextStyle(fontSize: 17 * s, color: Colors.white, fontWeight: FontWeight.w900)),
+    ]),
+  ]));
+}
+
+class _DinoOutlinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..color = Colors.black..style = PaintingStyle.stroke..strokeWidth = 5..strokeCap = StrokeCap.round;
+    final body = RRect.fromRectAndRadius(Rect.fromLTWH(size.width * .23, size.height * .20, size.width * .52, size.height * .62), Radius.circular(size.width * .20));
+    canvas.drawRRect(body, p);
+    canvas.drawCircle(Offset(size.width * .54, size.height * .39), size.width * .17, p);
+    canvas.drawCircle(Offset(size.width * .50, size.height * .36), size.width * .014, Paint()..color = Colors.black);
+    canvas.drawCircle(Offset(size.width * .61, size.height * .36), size.width * .014, Paint()..color = Colors.black);
+    canvas.drawArc(Rect.fromCenter(center: Offset(size.width * .56, size.height * .47), width: size.width * .18, height: size.height * .10), 0.1, 2.6, false, p);
+    for (var i = 0; i < 5; i++) {
+      final x = size.width * (.27 + i * .10);
+      canvas.drawLine(Offset(x, size.height * .23), Offset(x + size.width * .03, size.height * .13), p);
+    }
+  }
+  @override
+  bool shouldRepaint(covariant _DinoOutlinePainter old) => false;
 }
