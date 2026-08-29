@@ -31,7 +31,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 18 * s, vertical: 10 * s),
             decoration: BoxDecoration(color: Colors.white.withValues(alpha: .86), borderRadius: BorderRadius.circular(22 * s)),
-            child: Text(progress >= points.length ? 'Bintang selesai!' : 'Tarik garis dari titik ' + progress.toString() + ' ke titik ' + (progress + 1).toString(), style: TextStyle(fontSize: 20 * s, fontWeight: FontWeight.w900, color: const Color(0xFF28354D))),
+            child: Text(progress >= points.length ? 'Bintang selesai!' : 'Tarik garis dari titik $progress ke titik ${progress + 1}', style: TextStyle(fontSize: 20 * s, fontWeight: FontWeight.w900, color: const Color(0xFF28354D))),
           ),
         ),
         SizedBox(height: 14 * s),
@@ -68,8 +68,9 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                   ),
                   child: Stack(children: [
                     if (progress >= points.length) const Center(child: Text('⭐', style: TextStyle(fontSize: 180))),
-                    for (var i = 0; i < points.length; i++)
+                    for (var i = 0; i < points.length; i++) {
                       Positioned(left: p(i).dx - 24, top: p(i).dy - 24, child: _dot(i + 1, i < progress, s)),
+                    }
                   ]),
                 ),
               ),
@@ -101,14 +102,14 @@ class _StarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final dotted = Paint()..color = const Color(0xFF667487)..strokeWidth = 7..strokeCap = StrokeCap.round;
-    for (var i = 0; i < all.length - 1; i++) _dashed(canvas, all[i], all[i + 1], dotted);
+    for (var i = 0; i < all.length - 1; i++) { _dashed(canvas, all[i], all[i + 1], dotted); }
     final done = Paint()..color = const Color(0xFF247FC3)..strokeWidth = 7..strokeCap = StrokeCap.round;
-    for (var i = 0; i < completed - 1; i++) canvas.drawLine(all[i], all[i + 1], done);
+    for (var i = 0; i < completed - 1; i++) { canvas.drawLine(all[i], all[i + 1], done); }
     if (previewStart != null && previewEnd != null) canvas.drawLine(previewStart!, previewEnd!, done);
   }
   void _dashed(Canvas c, Offset a, Offset b, Paint p) {
     final d = b - a; final len = d.distance; final step = d / len;
-    for (double x = 0; x < len; x += 20) c.drawLine(a + step * x, a + step * (x + 9).clamp(0, len), p);
+    for (double x = 0; x < len; x += 20) { c.drawLine(a + step * x, a + step * (x + 9).clamp(0, len), p); }
   }
   @override
   bool shouldRepaint(covariant _StarPainter old) => true;
