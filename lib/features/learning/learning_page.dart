@@ -334,6 +334,12 @@ class _LearningPageState extends State<LearningPage>
   }
 
   Widget _learn(LearningItem item) {
+    // Dunia Gambar menggunakan layout visual grid:
+    // 1 baris berisi 2 item.
+    if (widget.type == LearningType.gambar) {
+      return _visualGrid();
+    }
+
     final background = widget.type == LearningType.warna
         ? selectedColor.withValues(alpha: 0.45)
         : Colors.white.withValues(alpha: 0.93);
@@ -434,6 +440,92 @@ class _LearningPageState extends State<LearningPage>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _visualGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+        childAspectRatio: 0.88,
+      ),
+      itemBuilder: (context, i) {
+        final visualItem = items[i];
+
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(26),
+            onTap: () {
+              setState(() {
+                index = i;
+              });
+
+              audio.speak(visualItem.sound);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: i == index
+                    ? const Color(0xFFFFD65C)
+                    : Colors.white.withValues(alpha: 0.94),
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x26000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            visualItem.visual,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 72,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      visualItem.title,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF31536D),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Icon(
+                      Icons.volume_up_rounded,
+                      size: 22,
+                      color: Color(0xFF55758C),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
