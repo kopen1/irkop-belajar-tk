@@ -2,6 +2,13 @@
 
 Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-benar selesai diberi tanda `[x]`. Pekerjaan yang belum diverifikasi visual di perangkat tetap `[ ]`.
 
+## Batch berikutnya — audit visual responsif
+
+- [ ] Cek ulang Home pada lebar 360–420 px
+- [ ] Cek ulang Dunia Gambar tetap 2 kolom pada mobile
+- [ ] Cek ulang Dunia Warna: palet memakai warna asli dan teks tetap terbaca
+- [ ] Cek ulang header pada layar sempit
+
 ## Blueprint visual utama
 
 - [x] Background global: langit, awan, pelangi, rumput, dan bunga

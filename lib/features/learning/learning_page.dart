@@ -215,7 +215,7 @@ class _LearningPageState extends State<LearningPage>
     }
   }
 
-  Color get selectedColor {
+  Color _colorForTitle(String name) {
     const colors = {
       'Merah': Color(0xFFFF6B6B),
       'Biru': Color(0xFF6CA8FF),
@@ -229,8 +229,10 @@ class _LearningPageState extends State<LearningPage>
       'Hitam': Color(0xFF424242),
     };
 
-    return colors[items[index].title] ?? Colors.transparent;
+    return colors[name] ?? Colors.transparent;
   }
+
+  Color get selectedColor => _colorForTitle(items[index].title);
 
   @override
   void initState() {
@@ -291,7 +293,8 @@ class _LearningPageState extends State<LearningPage>
 
     return Scaffold(
       body: KidBackground(
-        child: Column(
+        child: SafeArea(
+          child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
@@ -328,6 +331,7 @@ class _LearningPageState extends State<LearningPage>
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -418,20 +422,37 @@ class _LearningPageState extends State<LearningPage>
                   audio.speak(items[i].sound);
                 },
                 child: Container(
-                  width: widget.type == LearningType.warna ? 112 : 50,
-                  height: widget.type == LearningType.warna ? 56 : 50,
+                  width: widget.type == LearningType.warna ? 118 : 50,
+                  height: widget.type == LearningType.warna ? 58 : 50,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: i == index
-                        ? const Color(0xFFFFD65C)
-                        : Colors.white,
+                    color: widget.type == LearningType.warna
+                        ? _colorForTitle(items[i].title)
+                        : i == index
+                            ? const Color(0xFFFFD65C)
+                            : Colors.white,
+                    border: Border.all(
+                      color: i == index ? const Color(0xFF31536D) : Colors.white,
+                      width: i == index ? 4 : 2,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x220D405C),
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     items[i].title,
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      fontSize: widget.type == LearningType.warna ? 14 : 18,
+                      fontSize: widget.type == LearningType.warna ? 13 : 18,
+                      color: widget.type == LearningType.warna &&
+                              items[i].title == 'Hitam'
+                          ? Colors.white
+                          : const Color(0xFF31536D),
                     ),
                   ),
                 ),
@@ -445,13 +466,13 @@ class _LearningPageState extends State<LearningPage>
 
   Widget _visualGrid() {
     return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
       itemCount: items.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 14,
-        childAspectRatio: 0.96,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.05,
       ),
       itemBuilder: (context, i) {
         final visualItem = items[i];
@@ -483,7 +504,7 @@ class _LearningPageState extends State<LearningPage>
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -495,7 +516,7 @@ class _LearningPageState extends State<LearningPage>
                             visualItem.visual,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontSize: 72,
+                              fontSize: 68,
                             ),
                           ),
                         ),

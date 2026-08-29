@@ -42,7 +42,12 @@ class HomePage extends StatelessWidget {
                       : 1;
 
               return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 20, 18, 28),
+                padding: EdgeInsets.fromLTRB(
+                  constraints.maxWidth < 420 ? 12 : 18,
+                  20,
+                  constraints.maxWidth < 420 ? 12 : 18,
+                  28,
+                ),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1080),
@@ -52,7 +57,7 @@ class HomePage extends StatelessWidget {
                           '🎓 IRKOP Belajar TK',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: constraints.maxWidth < 420 ? 28 : 32,
                             fontWeight: FontWeight.w900,
                             color: Color(0xFF31536D),
                           ),
@@ -62,7 +67,7 @@ class HomePage extends StatelessWidget {
                           'Ayo bermain sambil belajar! 🌈',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: constraints.maxWidth < 420 ? 16 : 18,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF55758C),
                           ),
@@ -76,7 +81,7 @@ class HomePage extends StatelessWidget {
                             crossAxisCount: columns,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: columns == 1 ? 3.55 : 1.55,
+                            childAspectRatio: columns == 1 ? 3.35 : columns == 2 ? 1.28 : 1.48,
                           ),
                           itemBuilder: (context, i) {
                             final entry = entries[i];

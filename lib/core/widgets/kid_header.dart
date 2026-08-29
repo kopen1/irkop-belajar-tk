@@ -23,17 +23,24 @@ class _KidHeaderState extends State<KidHeader> {
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
 
-    return Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 390;
+        final buttonSize = compact ? 52.0 : 62.0;
+        final titleSize = compact ? 20.0 : 24.0;
+        final subtitleSize = compact ? 13.0 : 16.0;
+
+        return Row(
       children: [
         if (canPop) _circle(Icons.arrow_back_rounded, () {
           audio.click();
           Navigator.of(context).maybePop();
         }),
-        if (canPop) const SizedBox(width: 10),
+        if (canPop) SizedBox(width: compact ? 6 : 10),
         Expanded(
           child: Container(
-            height: 92,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            height: compact ? 82 : 92,
+            padding: const EdgeInsets.symmetric(horizontal: compact ? 12 : 18, vertical: compact ? 8 : 12),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.94),
               borderRadius: BorderRadius.circular(28),
@@ -54,7 +61,7 @@ class _KidHeaderState extends State<KidHeader> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: titleSize,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF31536D),
                   ),
@@ -65,7 +72,7 @@ class _KidHeaderState extends State<KidHeader> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: subtitleSize,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF668398),
                   ),
@@ -80,6 +87,8 @@ class _KidHeaderState extends State<KidHeader> {
           () => setState(audio.toggleBackground),
         ),
       ],
+    );
+      },
     );
   }
 
