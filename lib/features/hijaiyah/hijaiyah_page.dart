@@ -61,18 +61,15 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                       Expanded(child: Container(
                         alignment: Alignment.center,
                         decoration: _card(s),
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10 * s),
-                          child: Text(item, textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 176 * s, height: 1, fontWeight: FontWeight.w800, color: const Color(0xFF8A22C8))),
-                        ),
+                        child: _centeredArabic(item, 176 * s, const Color(0xFF8A22C8), FontWeight.w800),
                       )),
                       SizedBox(width: 16 * s),
                       Expanded(child: Container(
                         decoration: _card(s),
                         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Transform.translate(
-                            offset: Offset(0, -3 * s),
-                            child: Text(item, textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 72 * s, height: .95, color: const Color(0xFF8A22C8), fontWeight: FontWeight.w900)),
+                          SizedBox(
+                            height: 78 * s,
+                            child: _centeredArabic(item, 72 * s, const Color(0xFF8A22C8), FontWeight.w900),
                           ),
                           SizedBox(height: 8 * s),
                           Text(names[index], style: TextStyle(fontSize: 34 * s, color: const Color(0xFF201B2A), fontWeight: FontWeight.w900)),
@@ -108,7 +105,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(22 * s),
                             onTap: () => select(i),
-                            child: Center(child: Padding(padding: EdgeInsets.only(top: 2 * s), child: Text(letters[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 40 * s, height: 1, color: Colors.black, fontWeight: FontWeight.w900)))),
+                            child: _centeredArabic(letters[i], 40 * s, Colors.black, FontWeight.w900),
                           ),
                         );
                       },
@@ -118,6 +115,32 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
               );
             },
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _centeredArabic(String value, double fontSize, Color color, FontWeight weight) {
+    return Center(
+      child: Text(
+        value,
+        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.center,
+        textHeightBehavior: const TextHeightBehavior(
+          applyHeightToFirstAscent: false,
+          applyHeightToLastDescent: false,
+        ),
+        strutStyle: StrutStyle(
+          fontSize: fontSize,
+          height: 1,
+          leading: 0,
+          forceStrutHeight: true,
+        ),
+        style: TextStyle(
+          fontSize: fontSize,
+          height: 1,
+          color: color,
+          fontWeight: weight,
         ),
       ),
     );
