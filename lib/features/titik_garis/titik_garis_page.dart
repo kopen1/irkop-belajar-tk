@@ -216,7 +216,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20 * s),
         itemCount: levels.length,
-        separatorBuilder: (_, _) => SizedBox(width: 8 * s),
+        separatorBuilder: (context, index) => SizedBox(width: 8 * s),
         itemBuilder: (context, i) {
           final active = i == levelIndex;
           return Material(
