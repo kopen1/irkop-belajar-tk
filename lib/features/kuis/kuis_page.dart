@@ -91,7 +91,7 @@ class _KuisPageState extends State<KuisPage> {
                     Text(o.$1, style: const TextStyle(fontSize: 62)),
                     Text(o.$2, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
                   ])),
-                )));
+                ))));
               }).toList()),
             ]),
           ),
