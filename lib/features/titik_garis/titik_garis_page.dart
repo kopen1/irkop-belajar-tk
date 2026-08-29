@@ -60,7 +60,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                     child: Text(
                       progress == points.length
                           ? '🎉 Hebat! Bintangnya selesai!'
-                          : 'Hubungkan titik $progress ke \${progress + 1}',
+                          : 'Hubungkan titik $progress ke ${progress + 1}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -93,7 +93,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                         );
 
                     final completed = <Offset>[];
-                    for (var i = 0; i < progress - 1; i++) {
+                    for (var i = 0; i < progress; i++) {
                       completed.add(point(i));
                     }
 
@@ -206,7 +206,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                                       ],
                                     ),
                                     child: Text(
-                                      '\${i + 1}',
+                                      '${i + 1}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w900,
                                         fontSize: 18,
