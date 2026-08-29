@@ -1,8 +1,15 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'features/splash/splash_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const SplashPage());
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Belajar TK',
+      home: const SplashPage(),
+    ),
+  );
 }
