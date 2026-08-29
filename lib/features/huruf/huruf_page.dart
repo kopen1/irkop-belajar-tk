@@ -173,7 +173,7 @@ class _HurufPageState extends State<HurufPage> {
       child: Row(
         children: [
           Expanded(child: _wordCard(compact)),
-          const SizedBox(width: compact ? 10 : 16),
+          SizedBox(width: compact ? 10 : 16),
           Expanded(child: _letterCard(compact)),
         ],
       ),
@@ -196,7 +196,7 @@ class _HurufPageState extends State<HurufPage> {
               style: TextStyle(fontSize: compact ? 92 : 120),
             ),
           ),
-          const SizedBox(height: compact ? 10 : 14),
+          SizedBox(height: compact ? 10 : 14),
           Text(
             _words[_index],
             maxLines: 1,
@@ -240,7 +240,7 @@ class _HurufPageState extends State<HurufPage> {
               ),
             ),
           ),
-          const SizedBox(height: compact ? 24 : 30),
+          SizedBox(height: compact ? 24 : 30),
           Material(
             color: const Color(0xFF2DCA43),
             borderRadius: BorderRadius.circular(26),
