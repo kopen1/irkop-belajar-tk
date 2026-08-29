@@ -2,6 +2,99 @@
 
 Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-benar selesai diberi tanda `[x]`. Pekerjaan yang belum diverifikasi visual di perangkat tetap `[ ]`.
 
+## Pemeriksaan oleh User di Web
+
+**Petunjuk:** Setelah deploy selesai, buka web versi terbaru. Untuk setiap poin:
+- Ganti `[ ]` menjadi `[x]` jika berhasil/sesuai.
+- Jika gagal atau belum sesuai, biarkan `[ ]` dan tulis komentar di bawah poin tersebut.
+- Contoh: `Komentar: Dunia Gambar masih 1 kolom di HP.`
+
+### 1. Home
+- [ ] Background langit, awan, pelangi, rumput, dan bunga tampil
+  - Komentar:
+- [ ] Judul dan subtitle tidak terpotong di layar HP
+  - Komentar:
+- [ ] Kartu menu rapi dan proporsional
+  - Komentar:
+- [ ] Tidak ada elemen keluar layar/overflow
+  - Komentar:
+
+### 2. Dunia Gambar
+- [ ] Di HP, 1 baris berisi tepat 2 visual
+  - Komentar:
+- [ ] Gambar dan label tidak terpotong
+  - Komentar:
+- [ ] Spacing dan ukuran kartu sudah sesuai blueprint
+  - Komentar:
+
+### 3. Dunia Warna
+- [ ] Kotak pilihan menampilkan warna asli
+  - Komentar:
+- [ ] Nama warna mudah dibaca
+  - Komentar:
+- [ ] Label panjang tidak pecah aneh
+  - Komentar:
+- [ ] Warna aktif memiliki indikator/border yang jelas
+  - Komentar:
+
+### 4. Header semua halaman
+- [ ] Tombol kembali berfungsi
+  - Komentar:
+- [ ] Judul dan subtitle tidak bertabrakan dengan tombol
+  - Komentar:
+- [ ] Tombol musik tampil dan dapat ditekan
+  - Komentar:
+- [ ] Layar HP sempit tetap rapi
+  - Komentar:
+
+### 5. Dunia Huruf, Angka, dan Hijaiyah
+- [ ] Grid dan kartu tampil rapi
+  - Komentar:
+- [ ] Visual/teks mudah dibaca
+  - Komentar:
+- [ ] Tidak ada overflow pada layar HP
+  - Komentar:
+- [ ] Warna, spacing, dan background mendekati blueprint
+  - Komentar:
+
+### 6. Mewarnai
+- [ ] Gambar utama tampil utuh
+  - Komentar:
+- [ ] Palet warna dapat dipilih
+  - Komentar:
+- [ ] Warna aktif terlihat jelas
+  - Komentar:
+- [ ] Tidak ada bagian keluar layar
+  - Komentar:
+
+### 7. Titik & Garis
+- [ ] Nomor titik tampil benar
+  - Komentar:
+- [ ] Garis muncul mengikuti urutan titik
+  - Komentar:
+- [ ] Progress/interaksi berjalan benar
+  - Komentar:
+
+### 8. Kuis Seru
+- [ ] Pertanyaan tampil rapi
+  - Komentar:
+- [ ] Pilihan jawaban dapat dipilih
+  - Komentar:
+- [ ] State benar/salah tampil benar
+  - Komentar:
+- [ ] Pindah soal berjalan benar
+  - Komentar:
+
+### 9. Pemeriksaan akhir
+- [ ] Semua halaman dapat dibuka dari Home
+  - Komentar:
+- [ ] Tidak ada teks atau visual yang terpotong
+  - Komentar:
+- [ ] Tidak ada overflow/error visual
+  - Komentar:
+- [ ] Hasil web sudah sesuai blueprint secara keseluruhan
+  - Komentar:
+
 ## Batch berikutnya — audit visual responsif
 
 - [ ] Cek ulang Home pada lebar 360–420 px
