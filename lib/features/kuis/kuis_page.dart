@@ -39,6 +39,7 @@ class _KuisPageState extends State<KuisPage> {
 
   String? selected;
   bool locked = false;
+  bool? _lastAnswerCorrect;
 
   final bank = const [
     _Question(
@@ -125,6 +126,7 @@ class _KuisPageState extends State<KuisPage> {
       number++;
       selected = null;
       locked = false;
+      _lastAnswerCorrect = null;
       question =
           bank[random.nextInt(bank.length)];
     });
@@ -144,30 +146,35 @@ class _KuisPageState extends State<KuisPage> {
   ) async {
     if (locked) return;
 
-    setState(
-      () => selected = answer,
-    );
+    final isCorrect = answer == question.answer;
 
-    if (answer != question.answer) {
+    setState(() {
+      selected = answer;
+      locked = true;
+      _lastAnswerCorrect = isCorrect;
+    });
+
+    if (!isCorrect) {
       await audio.wrong();
 
       await Future.delayed(
         const Duration(
-          milliseconds: 700,
+          milliseconds: 1300,
         ),
       );
 
       if (mounted) {
-        setState(
-          () => selected = null,
-        );
+        setState(() {
+          selected = null;
+          locked = false;
+          _lastAnswerCorrect = null;
+        });
       }
 
       return;
     }
 
     setState(() {
-      locked = true;
       score++;
     });
 
@@ -381,6 +388,67 @@ class _KuisPageState extends State<KuisPage> {
                 ),
               ],
             ),
+
+
+            if (_lastAnswerCorrect != null)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Center(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 34),
+                      padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
+                      decoration: BoxDecoration(
+                        color: (_lastAnswerCorrect!
+                                ? const Color(0xFF38C947)
+                                : const Color(0xFFFF6B5F))
+                            .withValues(alpha: 0.97),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Colors.white, width: 4),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x550D405C),
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _lastAnswerCorrect! ? '🎉' : '🐯',
+                            style: const TextStyle(fontSize: 72),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _lastAnswerCorrect!
+                                ? 'Hebat!'
+                                : 'Coba lagi ya!',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 34,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _lastAnswerCorrect!
+                                ? 'Jawaban kamu benar!'
+                                : 'Tidak apa-apa, coba sekali lagi.',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
             Align(
               alignment:
