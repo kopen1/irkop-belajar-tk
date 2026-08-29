@@ -338,12 +338,6 @@ class _LearningPageState extends State<LearningPage>
   }
 
   Widget _learn(LearningItem item) {
-    // Dunia Gambar menggunakan layout visual grid:
-    // 1 baris berisi 2 item.
-    if (widget.type == LearningType.gambar) {
-      return _visualGrid();
-    }
-
     final background = widget.type == LearningType.warna
         ? selectedColor.withValues(alpha: 0.45)
         : Colors.white.withValues(alpha: 0.93);
@@ -392,16 +386,21 @@ class _LearningPageState extends State<LearningPage>
           Row(
             children: [
               Expanded(
-                child: FilledButton(
+                child: _navigationButton(
+                  icon: Icons.arrow_back_rounded,
+                  label: 'Sebelumnya',
                   onPressed: previous,
-                  child: const Text('⬅ Sebelumnya'),
+                  colors: const [Color(0xFF6CA8FF), Color(0xFF4E8DE6)],
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: FilledButton(
+                child: _navigationButton(
+                  icon: Icons.arrow_forward_rounded,
+                  label: 'Selanjutnya',
                   onPressed: next,
-                  child: const Text('Selanjutnya ➡'),
+                  colors: const [Color(0xFFFFB84D), Color(0xFFFF8F4D)],
+                  trailing: true,
                 ),
               ),
             ],
@@ -460,6 +459,49 @@ class _LearningPageState extends State<LearningPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _navigationButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required List<Color> colors,
+    bool trailing = false,
+  }) {
+    final iconWidget = Icon(icon, size: 24, color: Colors.white);
+    final labelWidget = Flexible(
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+      ),
+    );
+    final children = trailing
+        ? [labelWidget, const SizedBox(width: 8), iconWidget]
+        : [iconWidget, const SizedBox(width: 8), labelWidget];
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: colors),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Color(0x330D405C), blurRadius: 8, offset: Offset(0, 5)),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(22),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: children),
+          ),
+        ),
       ),
     );
   }

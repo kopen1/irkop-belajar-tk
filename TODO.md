@@ -10,6 +10,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
 - Contoh: `Komentar: Dunia Gambar masih 1 kolom di HP.`
 
 ### 1. Home
+- [ ] PERUBAHAN TERBARU: halaman depan sekarang 2 kartu per baris pada layar HP
+  - Komentar:
 - [X] Background langit, awan, pelangi, rumput, dan bunga tampil
   - Komentar:
 - [X] Judul dan subtitle tidak terpotong di layar HP
@@ -20,6 +22,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
   - Komentar:
 
 ### 2. Dunia Gambar
+- [ ] PERUBAHAN TERBARU: Dunia Gambar kembali ke mode belajar per item dengan tombol Sebelumnya/Selanjutnya
+  - Komentar:
 - [X] Di HP, 1 baris berisi tepat 2 visual
   - Komentar:
 - [X] Gambar dan label tidak terpotong
@@ -38,6 +42,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
   - Komentar:
 
 ### 4. Header semua halaman
+- [ ] PERUBAHAN TERBARU: tombol Sebelumnya/Selanjutnya diperindah dengan warna, ikon, gradient, dan shadow
+  - Komentar:
 - [X] Tombol kembali berfungsi
   - Komentar:
 - [X] Judul dan subtitle tidak bertabrakan dengan tombol

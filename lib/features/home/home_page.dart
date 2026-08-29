@@ -35,11 +35,7 @@ class HomePage extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final columns = constraints.maxWidth >= 900
-                  ? 3
-                  : constraints.maxWidth >= 560
-                      ? 2
-                      : 1;
+              final columns = constraints.maxWidth >= 900 ? 3 : 2;
 
               return SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
@@ -81,7 +77,7 @@ class HomePage extends StatelessWidget {
                             crossAxisCount: columns,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: columns == 1 ? 3.35 : columns == 2 ? 1.28 : 1.48,
+                            childAspectRatio: columns == 2 ? 0.95 : 1.48,
                           ),
                           itemBuilder: (context, i) {
                             final entry = entries[i];
