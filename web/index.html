@@ -3,11 +3,45 @@
 <head>
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-  <title>IRKOP Belajar TK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#46A7E7">
+  <title>Belajar TK</title>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; background: #46A7E7; }
+    #irkop-splash {
+      position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center;
+      overflow: hidden; background: linear-gradient(#43A8E8, #8ED4F1 65%, #7BD25B);
+      color: white; font-family: Arial, sans-serif; transition: opacity .35s ease;
+    }
+    #irkop-splash.hide { opacity: 0; pointer-events: none; }
+    .splash-box { text-align: center; padding: 24px; }
+    .rainbow { font-size: 64px; line-height: 1; }
+    .title {
+      margin-top: 8px; font-size: clamp(40px, 10vw, 72px); font-weight: 900;
+      text-shadow: 0 4px 0 rgba(0,29,88,.45);
+    }
+    .title b { color: #FFE12E; }
+    .subtitle { margin-top: 8px; font-size: clamp(16px, 4vw, 25px); font-weight: 800; }
+    .panda { margin-top: 24px; font-size: min(38vw, 220px); line-height: .85; }
+    .byline { margin-top: 22px; font-size: 13px; font-weight: 700; opacity: .8; }
+  </style>
 </head>
 <body>
+  <div id="irkop-splash" aria-label="Belajar TK sedang dimuat">
+    <div class="splash-box">
+      <div class="rainbow">🌈</div>
+      <div class="title">BELAJAR <b>TK</b></div>
+      <div class="subtitle">Ayo Bermain &amp; Belajar Bersama!</div>
+      <div class="panda">🐼</div>
+      <div class="byline">by IRKOP</div>
+    </div>
+  </div>
+  <script>
+    window.setTimeout(function () {
+      var splash = document.getElementById('irkop-splash');
+      if (splash) splash.classList.add('hide');
+    }, 2300);
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
