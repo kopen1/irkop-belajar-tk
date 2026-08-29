@@ -16,7 +16,7 @@ class KuisPage extends StatefulWidget {
 class _Question {
   final String prompt;
   final String answer;
-  final List<(String, String)> options;
+  final List<(String emoji, String label)> options;
 
   const _Question(this.prompt, this.answer, this.options);
 }
@@ -28,8 +28,10 @@ class _KuisPageState extends State<KuisPage> {
 
   int number = 1;
   bool? result;
-  int _questionIndex = 0;
-  final List<int> _questionQueue = [];
+  late List<int> _queue;
+  int _queuePosition = 0;
+  late int _questionIndex;
+  late List<(String emoji, String label)> _visibleOptions;
 
   final bank = const <_Question>[
     _Question('Mana gambar ikan?', 'Ikan', [('🐱', 'Kucing'), ('🐟', 'Ikan'), ('🚗', 'Mobil')]),
@@ -44,6 +46,18 @@ class _KuisPageState extends State<KuisPage> {
     _Question('Mana gambar bola?', 'Bola', [('⚽', 'Bola'), ('🍎', 'Apel'), ('🚗', 'Mobil')]),
     _Question('Mana warna hijau?', 'Hijau', [('🔴', 'Merah'), ('🟢', 'Hijau'), ('🟣', 'Ungu')]),
     _Question('Mana gambar burung?', 'Burung', [('🐦', 'Burung'), ('🐘', 'Gajah'), ('🐱', 'Kucing')]),
+    _Question('Mana gambar pisang?', 'Pisang', [('🍌', 'Pisang'), ('🍓', 'Stroberi'), ('🍇', 'Anggur')]),
+    _Question('Mana gambar anjing?', 'Anjing', [('🐶', 'Anjing'), ('🐱', 'Kucing'), ('🐰', 'Kelinci')]),
+    _Question('Mana warna biru?', 'Biru', [('🟡', 'Kuning'), ('🔵', 'Biru'), ('🔴', 'Merah')]),
+    _Question('Mana gambar rumah?', 'Rumah', [('🏠', 'Rumah'), ('🚗', 'Mobil'), ('🚲', 'Sepeda')]),
+    _Question('Mana gambar kelinci?', 'Kelinci', [('🐰', 'Kelinci'), ('🐼', 'Panda'), ('🐻', 'Beruang')]),
+    _Question('Mana warna ungu?', 'Ungu', [('🟣', 'Ungu'), ('🟠', 'Oranye'), ('🟢', 'Hijau')]),
+    _Question('Mana gambar bunga?', 'Bunga', [('🌼', 'Bunga'), ('🌳', 'Pohon'), ('☀️', 'Matahari')]),
+    _Question('Mana gambar matahari?', 'Matahari', [('🌙', 'Bulan'), ('⭐', 'Bintang'), ('☀️', 'Matahari')]),
+    _Question('Mana gambar panda?', 'Panda', [('🐼', 'Panda'), ('🐯', 'Harimau'), ('🦁', 'Singa')]),
+    _Question('Mana warna oranye?', 'Oranye', [('🟠', 'Oranye'), ('🟣', 'Ungu'), ('🔵', 'Biru')]),
+    _Question('Mana gambar roket?', 'Roket', [('🚀', 'Roket'), ('✈️', 'Pesawat'), ('🚁', 'Helikopter')]),
+    _Question('Mana gambar buku?', 'Buku', [('📘', 'Buku'), ('⚽', 'Bola'), ('🎈', 'Balon')]),
   ];
 
   _Question get question => bank[_questionIndex];
@@ -52,36 +66,38 @@ class _KuisPageState extends State<KuisPage> {
   void initState() {
     super.initState();
     confetti = ConfettiController(duration: const Duration(seconds: 2));
-    _refillQueue();
-    _takeNextQuestion(initial: true);
+    _queue = List<int>.generate(bank.length, (i) => i)..shuffle(random);
+    _loadQuestion(initial: true);
     WidgetsBinding.instance.addPostFrameCallback((_) => audio.question(question.prompt));
   }
 
-  void _refillQueue() {
-    _questionQueue
-      ..clear()
-      ..addAll(List<int>.generate(bank.length, (index) => index))
-      ..shuffle(random);
-
-    if (bank.length > 1 && _questionQueue.first == _questionIndex) {
-      final first = _questionQueue.removeAt(0);
-      _questionQueue.add(first);
+  void _newQueue() {
+    final previous = _questionIndex;
+    _queue = List<int>.generate(bank.length, (i) => i)..shuffle(random);
+    if (bank.length > 1 && _queue.first == previous) {
+      final first = _queue.removeAt(0);
+      _queue.add(first);
     }
+    _queuePosition = 0;
   }
 
-  void _takeNextQuestion({bool initial = false}) {
-    if (_questionQueue.isEmpty) _refillQueue();
-    _questionIndex = _questionQueue.removeAt(0);
-    if (!initial) number++;
+  void _loadQuestion({bool initial = false}) {
+    if (!initial) {
+      _queuePosition++;
+      number++;
+    }
+    if (_queuePosition >= _queue.length) {
+      _newQueue();
+    }
+    _questionIndex = _queue[_queuePosition];
+    _visibleOptions = List<(String emoji, String label)>.from(question.options)..shuffle(random);
     result = null;
   }
 
   Future<void> choose(String value) async {
     if (result != null) return;
-
     final ok = value == question.answer;
     setState(() => result = ok);
-
     if (ok) {
       confetti.play();
       await audio.correct();
@@ -91,7 +107,7 @@ class _KuisPageState extends State<KuisPage> {
   }
 
   void _nextQuestion() {
-    setState(() => _takeNextQuestion());
+    setState(() => _loadQuestion());
     audio.question(question.prompt);
   }
 
@@ -118,7 +134,7 @@ class _KuisPageState extends State<KuisPage> {
                   _header(),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 22),
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                       child: _quizPanel(),
                     ),
                   ),
@@ -141,48 +157,18 @@ class _KuisPageState extends State<KuisPage> {
   }
 
   Widget _quizPanel() {
-    final width = MediaQuery.sizeOf(context).width;
-    final compact = width < 430;
-    final options = [...question.options]..shuffle(Random(_questionIndex));
-
+    final compact = MediaQuery.sizeOf(context).width < 430;
     return Container(
       padding: EdgeInsets.fromLTRB(16, compact ? 10 : 14, 16, 18),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: .94),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Colors.white, width: 3),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x260D405C),
-            blurRadius: 14,
-            offset: Offset(0, 6),
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Color(0x260D405C), blurRadius: 14, offset: Offset(0, 6))],
       ),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 7),
-            decoration: BoxDecoration(
-              color: const Color(0xFF56B9E8),
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x3356B9E8),
-                  blurRadius: 7,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Text(
-              'Pertanyaan $number',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
+          _progressHeader(),
           const SizedBox(height: 18),
           Text(
             question.prompt,
@@ -195,7 +181,7 @@ class _KuisPageState extends State<KuisPage> {
           ),
           const SizedBox(height: 22),
           Row(
-            children: options.map((option) => _answerCard(option, compact)).toList(),
+            children: _visibleOptions.map((option) => _answerCard(option, compact)).toList(),
           ),
           if (result != null) ...[
             const SizedBox(height: 20),
@@ -206,10 +192,45 @@ class _KuisPageState extends State<KuisPage> {
     );
   }
 
-  Widget _answerCard((String, String) option, bool compact) {
-    final selected = result != null && option.$2 == question.answer;
-    final wrongSelected = result == false && option.$2 != question.answer;
+  Widget _progressHeader() {
+    final dots = List<bool>.generate(8, (i) => i == (number - 1) % 8);
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2D98C8),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Text(
+            'Pertanyaan $number',
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: dots
+                .map((active) => Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: active ? const Color(0xFF2D98C8) : const Color(0xFFD5D9DD),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
 
+  Widget _answerCard((String emoji, String label) option, bool compact) {
+    final correct = option.$2 == question.answer;
+    final selectedCorrect = result == true && correct;
+    final selectedWrong = result == false && !correct;
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -218,7 +239,7 @@ class _KuisPageState extends State<KuisPage> {
           borderRadius: BorderRadius.circular(22),
           elevation: 2,
           child: InkWell(
-            onTap: () => choose(option.$2),
+            onTap: result == null ? () => choose(option.$2) : null,
             borderRadius: BorderRadius.circular(22),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
@@ -226,19 +247,19 @@ class _KuisPageState extends State<KuisPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
-                  color: selected
+                  color: selectedCorrect
                       ? const Color(0xFF18A83B)
-                      : wrongSelected
+                      : selectedWrong
                           ? const Color(0xFFE4544D)
                           : const Color(0xFFD7DCE3),
-                  width: selected || wrongSelected ? 4 : 2,
+                  width: selectedCorrect || selectedWrong ? 4 : 2,
                 ),
               ),
               child: Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
-                  if (selected)
+                  if (selectedCorrect)
                     const Positioned(
                       top: -20,
                       child: CircleAvatar(
@@ -273,73 +294,48 @@ class _KuisPageState extends State<KuisPage> {
   }
 
   Widget _resultPanel(bool ok) {
-    final title = ok ? 'Benar! Hebat sekali!' : 'Coba lagi ya!';
-    final subtitle = ok
-        ? 'Jawaban kamu benar. Yuk lanjut ke soal berikutnya!'
-        : 'Tidak apa-apa, pilih jawaban yang lain.';
-
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 15, 16, 14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ok
-            ? const Color(0xFFE8FBEA)
-            : const Color(0xFFFFEEEE),
+        color: ok ? const Color(0xFFE9FBEA) : const Color(0xFFFFEEEE),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: ok ? const Color(0xFF31B650) : const Color(0xFFE66A62),
-          width: 3,
-        ),
+        border: Border.all(color: ok ? const Color(0xFF2CAB4A) : const Color(0xFFE66A62), width: 3),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Text(ok ? '⭐' : '💪', style: const TextStyle(fontSize: 44)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  title,
+          Text(ok ? '🦖' : '🦖💧', style: const TextStyle(fontSize: 64)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ok ? 'Hebat sekali!' : 'Coba lagi ya!',
                   style: TextStyle(
                     color: ok ? const Color(0xFF147F2D) : const Color(0xFFC7443D),
-                    fontSize: 24,
+                    fontSize: 25,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF26324A),
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: ok ? _nextQuestion : _tryAgain,
-              icon: Icon(ok ? Icons.arrow_forward_rounded : Icons.replay_rounded),
-              label: Text(ok ? 'Soal Berikutnya' : 'Coba Lagi'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ok
-                    ? const Color(0xFFFFB91D)
-                    : const Color(0xFF56B9E8),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.w900,
+                const SizedBox(height: 4),
+                Text(
+                  ok ? 'Jawaban kamu benar. Yuk lanjut!' : 'Tidak apa-apa. Pilih jawaban yang lain.',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF26324A)),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: ok ? _nextQuestion : _tryAgain,
+                  icon: Icon(ok ? Icons.arrow_forward_rounded : Icons.replay_rounded),
+                  label: Text(ok ? 'Soal Berikutnya' : 'Coba Lagi'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ok ? const Color(0xFFFFB91D) : const Color(0xFF56B9E8),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -356,20 +352,12 @@ class _KuisPageState extends State<KuisPage> {
           Positioned(
             left: 18,
             top: 18,
-            child: _roundButton(
-              const Color(0xFFFFC42D),
-              Icons.arrow_back_rounded,
-              () => Navigator.of(context).maybePop(),
-            ),
+            child: _roundButton(const Color(0xFFFFC42D), Icons.arrow_back_rounded, () => Navigator.of(context).maybePop()),
           ),
           Positioned(
             right: 18,
             top: 18,
-            child: _roundButton(
-              const Color(0xFF29C63E),
-              Icons.music_note_rounded,
-              () => audio.question(question.prompt),
-            ),
+            child: _roundButton(const Color(0xFF29C63E), Icons.music_note_rounded, () => audio.question(question.prompt)),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 86),
@@ -384,13 +372,7 @@ class _KuisPageState extends State<KuisPage> {
                       fontSize: 35,
                       color: Color(0xFFFFD32F),
                       fontWeight: FontWeight.w900,
-                      shadows: [
-                        Shadow(
-                          color: Color(0xFF17417B),
-                          blurRadius: 3,
-                          offset: Offset(2, 3),
-                        ),
-                      ],
+                      shadows: [Shadow(color: Color(0xFF17417B), blurRadius: 3, offset: Offset(2, 3))],
                     ),
                   ),
                 ),
@@ -399,11 +381,7 @@ class _KuisPageState extends State<KuisPage> {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     'Ayo Jawab Pertanyaannya!',
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.w900),
                   ),
                 ),
               ],
@@ -422,15 +400,7 @@ class _KuisPageState extends State<KuisPage> {
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
-        child: SizedBox(
-          width: 62,
-          height: 62,
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 35,
-          ),
-        ),
+        child: SizedBox(width: 62, height: 62, child: Icon(icon, color: Colors.white, size: 35)),
       ),
     );
   }
