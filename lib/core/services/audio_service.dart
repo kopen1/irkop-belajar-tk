@@ -8,84 +8,58 @@ class AudioService {
   final FlutterTts _tts = FlutterTts();
 
   bool backgroundOn = true;
-
-  bool _initialized = false;
-  int _requestId = 0;
+  bool _ready = false;
 
   Future<void> init() async {
-    if (_initialized) return;
+    if (_ready) return;
 
     try {
       await _tts.setLanguage('id-ID');
-      await _tts.setSpeechRate(0.48);
-      await _tts.setVolume(1.0);
+      await _tts.setSpeechRate(0.52);
       await _tts.setPitch(1.08);
+      await _tts.setVolume(1.0);
+
+      // Jangan menunggu suara selesai.
+      // Ini membuat UI dan pertanyaan berikutnya tidak terasa lambat.
       await _tts.awaitSpeakCompletion(false);
-      _initialized = true;
+
+      _ready = true;
     } catch (_) {}
   }
 
   Future<void> stop() async {
-    _requestId++;
     try {
       await _tts.stop();
     } catch (_) {}
   }
 
-  Future<void> speak(
-    String text, {
-    bool interrupt = true,
-  }) async {
+  Future<void> speak(String text) async {
     if (text.trim().isEmpty) return;
 
     await init();
 
-    final request = ++_requestId;
+    // Hentikan suara sebelumnya agar tidak mengantre.
+    await stop();
 
     try {
-      if (interrupt) {
-        await _tts.stop();
-      }
-
-      if (request != _requestId) return;
-
       await _tts.speak(text);
     } catch (_) {}
   }
 
   Future<void> question(String text) async {
-    await speak(
-      text,
-      interrupt: true,
-    );
+    await speak(text);
   }
 
   Future<void> correct() async {
-    await speak(
-      'Hebat! Jawaban kamu benar!',
-      interrupt: true,
-    );
+    await speak('Hebat! Jawaban kamu benar!');
   }
 
   Future<void> wrong() async {
-    await speak(
-      'Belum tepat. Coba lagi ya.',
-      interrupt: true,
-    );
+    await speak('Belum tepat. Coba lagi ya.');
   }
 
   Future<void> click() async {
-    if (!backgroundOn) return;
-
-    await init();
-
-    try {
-      await _tts.setPitch(1.3);
-      await _tts.setSpeechRate(0.55);
-      await _tts.speak('klik');
-      await _tts.setPitch(1.08);
-      await _tts.setSpeechRate(0.48);
-    } catch (_) {}
+    await speak('Ya!');
   }
 
   void toggleBackground() {

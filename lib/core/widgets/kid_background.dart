@@ -10,88 +10,64 @@ class KidBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF86D8FF),
-                Color(0xFFDDF7FF),
-                Color(0xFFFFF7D6),
-                Color(0xFFCFF3BE),
-              ],
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF74CFFF),
+            Color(0xFFC8F2FF),
+            Color(0xFFFFF8D5),
+            Color(0xFFA9E59B),
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          const Positioned(
+            top: 35,
+            left: 15,
+            child: Text(
+              '☁️',
+              style: TextStyle(fontSize: 50),
             ),
           ),
-        ),
-
-        const Positioned(
-          top: 28,
-          left: 12,
-          child: Text(
-            '☁️',
-            style: TextStyle(fontSize: 56),
-          ),
-        ),
-
-        const Positioned(
-          top: 82,
-          right: 18,
-          child: Text(
-            '☁️',
-            style: TextStyle(fontSize: 42),
-          ),
-        ),
-
-        const Positioned(
-          top: 145,
-          left: 26,
-          child: Text(
-            '🌈',
-            style: TextStyle(fontSize: 44),
-          ),
-        ),
-
-        const Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: SizedBox(
-            height: 70,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(42),
-                ),
-                color: Color(0xFF9CDE8D),
-              ),
+          const Positioned(
+            top: 80,
+            right: 20,
+            child: Text(
+              '☁️',
+              style: TextStyle(fontSize: 42),
             ),
           ),
-        ),
-
-        const Positioned(
-          bottom: 12,
-          left: 16,
-          child: Text(
-            '🌼 🌷 🌼',
-            style: TextStyle(fontSize: 28),
+          const Positioned(
+            top: 135,
+            right: 40,
+            child: Text(
+              '🌈',
+              style: TextStyle(fontSize: 48),
+            ),
           ),
-        ),
-
-        const Positioned(
-          bottom: 12,
-          right: 16,
-          child: Text(
-            '🌷 🌼 🌸',
-            style: TextStyle(fontSize: 28),
+          const Positioned(
+            bottom: 8,
+            left: 10,
+            child: Text(
+              '🌼 🌷 🌸',
+              style: TextStyle(fontSize: 25),
+            ),
           ),
-        ),
-
-        SafeArea(child: child),
-      ],
+          const Positioned(
+            bottom: 8,
+            right: 10,
+            child: Text(
+              '🌷 🌼 🌸',
+              style: TextStyle(fontSize: 25),
+            ),
+          ),
+          SafeArea(child: child),
+        ],
+      ),
     );
   }
 }

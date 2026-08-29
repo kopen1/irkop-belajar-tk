@@ -23,30 +23,30 @@ class _KidHeaderState extends State<KidHeader> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _roundButton(
-          icon: Icons.arrow_back_rounded,
-          onTap: () {
-            audio.click();
-            Navigator.of(context).maybePop();
-          },
-        ),
-
-        const SizedBox(width: 10),
+        if (Navigator.of(context).canPop())
+          _circle(
+            Icons.arrow_back_rounded,
+            () {
+              audio.click();
+              Navigator.of(context).maybePop();
+            },
+          ),
 
         Expanded(
           child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 10,
+              horizontal: 18,
+              vertical: 12,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(24),
+              color: Colors.white.withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 5),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
                 ),
               ],
             ),
@@ -55,22 +55,17 @@ class _KidHeaderState extends State<KidHeader> {
               children: [
                 Text(
                   widget.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
+                    fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    fontSize: 23,
-                    color: Color(0xFF2F4F6B),
+                    color: Color(0xFF31536D),
                   ),
                 ),
                 Text(
                   widget.subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: Color(0xFF57728A),
+                    color: Color(0xFF668398),
                   ),
                 ),
               ],
@@ -78,13 +73,11 @@ class _KidHeaderState extends State<KidHeader> {
           ),
         ),
 
-        const SizedBox(width: 10),
-
-        _roundButton(
-          icon: audio.backgroundOn
+        _circle(
+          audio.backgroundOn
               ? Icons.music_note_rounded
               : Icons.music_off_rounded,
-          onTap: () {
+          () {
             setState(audio.toggleBackground);
           },
         ),
@@ -92,10 +85,10 @@ class _KidHeaderState extends State<KidHeader> {
     );
   }
 
-  Widget _roundButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+  Widget _circle(
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return Material(
       color: Colors.white.withValues(alpha: 0.95),
       shape: const CircleBorder(),
@@ -107,8 +100,7 @@ class _KidHeaderState extends State<KidHeader> {
           padding: const EdgeInsets.all(12),
           child: Icon(
             icon,
-            size: 26,
-            color: const Color(0xFF2F4F6B),
+            color: const Color(0xFF31536D),
           ),
         ),
       ),

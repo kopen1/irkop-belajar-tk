@@ -1,25 +1,26 @@
 import 'dart:math';
-import 'package:confetti/confetti.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../core/models/learning_item.dart';
 import '../../core/services/audio_service.dart';
-import '../../core/widgets/answer_button.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../core/widgets/kid_header.dart';
 
+enum LearningType {
+  huruf,
+  angka,
+  hijaiyah,
+  gambar,
+  warna,
+}
+
 class LearningPage extends StatefulWidget {
-  final String title;
-  final String subtitle;
-  final List<LearningItem> items;
-  final bool colorMode;
+  final LearningType type;
 
   const LearningPage({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.items,
-    this.colorMode = false,
+    required this.type,
   });
 
   @override
@@ -28,138 +29,288 @@ class LearningPage extends StatefulWidget {
 
 class _LearningPageState extends State<LearningPage>
     with SingleTickerProviderStateMixin {
-  late TabController _tabs;
-  late ConfettiController _confetti;
-  int _index = 0;
-  LearningItem? _question;
-  List<LearningItem> _answers = [];
-  String _feedback = '';
+  final audio = AudioService.instance;
+  final random = Random();
+
+  late TabController tabs;
+
+  int index = 0;
+  int score = 0;
+
+  int? selected;
+
+  List<LearningItem> get items {
+    switch (widget.type) {
+      case LearningType.huruf:
+        return List.generate(
+          26,
+          (i) {
+            final letter =
+                String.fromCharCode(65 + i);
+
+            final examples = [
+              '🍎 Apel',
+              '⚽ Bola',
+              '🐊 Cicak',
+              '🦆 Bebek',
+              '🐘 Gajah',
+              '🌸 Bunga',
+              '🐱 Kucing',
+              '🐟 Ikan',
+              '🌞 Matahari',
+              '🚗 Mobil',
+              '🍌 Pisang',
+              '🏠 Rumah',
+              '⭐ Bintang',
+              '🌈 Pelangi',
+              '🦁 Singa',
+              '🐼 Panda',
+              '🐰 Kelinci',
+              '🐮 Sapi',
+              '🐢 Kura-kura',
+              '🌷 Bunga',
+              '🍇 Anggur',
+              '🐯 Harimau',
+              '🍉 Semangka',
+              '🎁 Hadiah',
+              '🚀 Roket',
+              '🦓 Zebra',
+            ];
+
+            return LearningItem(
+              title: letter,
+              visual: examples[i],
+              sound: 'Huruf $letter',
+            );
+          },
+        );
+
+      case LearningType.angka:
+        return List.generate(
+          10,
+          (i) {
+            final n = i + 1;
+
+            return LearningItem(
+              title: '$n',
+              visual: List.filled(
+                n,
+                '⭐',
+              ).join(' '),
+              sound: 'Angka $n',
+            );
+          },
+        );
+
+      case LearningType.hijaiyah:
+        const letters = [
+          'ا',
+          'ب',
+          'ت',
+          'ث',
+          'ج',
+          'ح',
+          'خ',
+          'د',
+          'ذ',
+          'ر',
+          'ز',
+          'س',
+          'ش',
+          'ص',
+          'ض',
+          'ط',
+          'ظ',
+          'ع',
+          'غ',
+          'ف',
+          'ق',
+          'ك',
+          'ل',
+          'م',
+          'ن',
+          'و',
+          'ه',
+          'لا',
+          'ي',
+        ];
+
+        return letters
+            .map(
+              (e) => LearningItem(
+                title: e,
+                visual: '🕌',
+                sound: 'Huruf Hijaiyah $e',
+              ),
+            )
+            .toList();
+
+      case LearningType.gambar:
+        const data = [
+          ['🐱', 'Kucing'],
+          ['🐶', 'Anjing'],
+          ['🐘', 'Gajah'],
+          ['🦁', 'Singa'],
+          ['🐟', 'Ikan'],
+          ['🍎', 'Apel'],
+          ['🍌', 'Pisang'],
+          ['🍊', 'Jeruk'],
+          ['🍇', 'Anggur'],
+          ['🍉', 'Semangka'],
+          ['🚗', 'Mobil'],
+          ['🚌', 'Bus'],
+          ['🚆', 'Kereta'],
+          ['✈️', 'Pesawat'],
+          ['🏠', 'Rumah'],
+          ['📚', 'Buku'],
+          ['⏰', 'Jam'],
+          ['⚽', 'Bola'],
+        ];
+
+        return data
+            .map(
+              (e) => LearningItem(
+                title: e[1],
+                visual: e[0],
+                sound: e[1],
+              ),
+            )
+            .toList();
+
+      case LearningType.warna:
+        const data = [
+          ['🔴', 'Merah'],
+          ['🔵', 'Biru'],
+          ['🟡', 'Kuning'],
+          ['🟢', 'Hijau'],
+          ['🟣', 'Ungu'],
+          ['🟠', 'Oranye'],
+          ['🩷', 'Merah Muda'],
+          ['🟤', 'Cokelat'],
+          ['⚪', 'Putih'],
+          ['⚫', 'Hitam'],
+        ];
+
+        return data
+            .map(
+              (e) => LearningItem(
+                title: e[1],
+                visual: e[0],
+                sound: e[1],
+              ),
+            )
+            .toList();
+    }
+  }
+
+  String get title {
+    switch (widget.type) {
+      case LearningType.huruf:
+        return 'Dunia Huruf 🔤';
+      case LearningType.angka:
+        return 'Dunia Angka 🔢';
+      case LearningType.hijaiyah:
+        return 'Dunia Hijaiyah 🕌';
+      case LearningType.gambar:
+        return 'Dunia Gambar 🐱';
+      case LearningType.warna:
+        return 'Dunia Warna 🎨';
+    }
+  }
+
+  Color get selectedColor {
+    final title = items[index].title;
+
+    const colors = {
+      'Merah': Color(0xFFFF6B6B),
+      'Biru': Color(0xFF6CA8FF),
+      'Kuning': Color(0xFFFFD94D),
+      'Hijau': Color(0xFF7DD87D),
+      'Ungu': Color(0xFFB08CFF),
+      'Oranye': Color(0xFFFFA64D),
+      'Merah Muda': Color(0xFFFF9EC9),
+      'Cokelat': Color(0xFFB9825A),
+      'Putih': Color(0xFFFFFFFF),
+      'Hitam': Color(0xFF424242),
+    };
+
+    return colors[title] ?? Colors.transparent;
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 2, vsync: this);
-    _confetti = ConfettiController(duration: const Duration(seconds: 2));
-    _newQuestion();
-    AudioService.instance.init();
+
+    tabs = TabController(
+      length: 2,
+      vsync: this,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => audio.speak(items[index].sound),
+    );
   }
 
   @override
   void dispose() {
-    _tabs.dispose();
-    _confetti.dispose();
+    tabs.dispose();
     super.dispose();
   }
 
-  void _newQuestion() {
-    final random = Random();
-    _question = widget.items[random.nextInt(widget.items.length)];
-
-    final pool = [...widget.items]..remove(_question);
-    pool.shuffle(random);
-
-    _answers = [
-      _question!,
-      ...pool.take(3),
-    ]..shuffle(random);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AudioService.instance.question(
-        'Mana ${_question!.title}?',
-      );
-    });
-
+  void next() {
     setState(() {
-      _feedback = '';
+      index = (index + 1) % items.length;
     });
+
+    audio.speak(items[index].sound);
   }
 
-  void _answer(LearningItem item) {
-    final correct = item.title == _question!.title;
+  void previous() {
+    setState(() {
+      index =
+          (index - 1 + items.length) % items.length;
+    });
 
-    if (correct) {
-      AudioService.instance.correct();
-      _confetti.play();
-
-      setState(() {
-        _feedback = '🎉 HEBAT! BENAR! ⭐';
-      });
-
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) _newQuestion();
-      });
-    } else {
-      AudioService.instance.wrong();
-
-      setState(() {
-        _feedback = '😊 Coba lagi ya!';
-      });
-    }
-  }
-
-  Color _hex(String value) {
-    final hex = value.replaceAll('#', '');
-    return Color(int.parse('FF$hex', radix: 16));
+    audio.speak(items[index].sound);
   }
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.items[_index];
+    final item = items[index];
 
     return Scaffold(
       body: KidBackground(
-        child: Stack(
-          alignment: Alignment.topCenter,
+        child: Column(
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: KidHeader(
-                    title: widget.title,
-                    subtitle: widget.subtitle,
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: KidHeader(
+                title: title,
+                subtitle:
+                    'Belajar dan bermain bersama',
+              ),
+            ),
 
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 18),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .88),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: TabBar(
-                    controller: _tabs,
-                    indicator: BoxDecoration(
-                      color: const Color(0xFFFFC94D),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    labelColor: const Color(0xFF354B5E),
-                    unselectedLabelColor: const Color(0xFF78909C),
-                    tabs: const [
-                      Tab(text: '📚 Belajar'),
-                      Tab(text: '🎮 Mini Game'),
-                    ],
-                  ),
+            TabBar(
+              controller: tabs,
+              tabs: const [
+                Tab(
+                  text: '📚 Belajar',
                 ),
-
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabs,
-                    children: [
-                      _buildLearn(item),
-                      _buildGame(),
-                    ],
-                  ),
+                Tab(
+                  text: '🎮 Mini Game',
                 ),
               ],
             ),
 
-            ConfettiWidget(
-              confettiController: _confetti,
-              blastDirectionality: BlastDirectionality.explosive,
-              numberOfParticles: 30,
-              gravity: 0.25,
-              emissionFrequency: 0.03,
+            Expanded(
+              child: TabBarView(
+                controller: tabs,
+                children: [
+                  _learn(item),
+                  _game(),
+                ],
+              ),
             ),
           ],
         ),
@@ -167,215 +318,229 @@ class _LearningPageState extends State<LearningPage>
     );
   }
 
-  Widget _buildLearn(LearningItem item) {
-    final bg = widget.colorMode ? _hex(item.colorHex) : Colors.white;
+  Widget _learn(LearningItem item) {
+    final background =
+        widget.type == LearningType.warna
+            ? selectedColor.withValues(alpha: 0.45)
+            : Colors.white.withValues(alpha: 0.93);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      color: widget.colorMode ? bg.withValues(alpha: .25) : Colors.transparent,
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Container(
-                width: 290,
-                padding: const EdgeInsets.all(28),
-                decoration: BoxDecoration(
-                  color: widget.colorMode ? bg : Colors.white,
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 5,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        children: [
+          AnimatedContainer(
+            duration:
+                const Duration(milliseconds: 300),
+            width: double.infinity,
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius:
+                  BorderRadius.circular(36),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  item.visual,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 80,
                   ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x33000000),
-                      blurRadius: 16,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
                 ),
-                child: Column(
-                  children: [
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontSize: widget.colorMode ? 34 : 92,
-                        fontWeight: FontWeight.w900,
-                        color: widget.colorMode
-                            ? Colors.white
-                            : const Color(0xFF354B5E),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      item.visual,
-                      style: const TextStyle(fontSize: 80),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      item.subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w900,
-                        color: widget.colorMode
-                            ? Colors.white
-                            : const Color(0xFF546E7A),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
-              FilledButton.icon(
-                onPressed: () {
-                  AudioService.instance.speak(
-                    '${item.title}. ${item.subtitle}',
-                  );
-                },
-                icon: const Icon(Icons.volume_up_rounded),
-                label: const Text(
-                  'Dengarkan',
-                  style: TextStyle(
+                Text(
+                  item.title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 48,
                     fontWeight: FontWeight.w900,
-                    fontSize: 18,
+                    color: Color(0xFF31536D),
                   ),
                 ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF9F43),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 17,
+
+                const SizedBox(height: 14),
+
+                FilledButton.icon(
+                  onPressed: () {
+                    audio.speak(item.sound);
+                  },
+                  icon: const Icon(
+                    Icons.volume_up_rounded,
                   ),
+                  label: const Text(
+                    'Dengarkan',
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: previous,
+                  child: const Text('⬅ Sebelumnya'),
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton.filled(
-                    onPressed: _index > 0
-                        ? () => setState(() => _index--)
-                        : null,
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
-                  const SizedBox(width: 22),
-                  Text(
-                    '${_index + 1} / ${widget.items.length}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 19,
-                    ),
-                  ),
-                  const SizedBox(width: 22),
-                  IconButton.filled(
-                    onPressed: _index < widget.items.length - 1
-                        ? () => setState(() => _index++)
-                        : null,
-                    icon: const Icon(Icons.arrow_forward_rounded),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: next,
+                  child: const Text('Selanjutnya ➡'),
+                ),
               ),
             ],
           ),
-        ),
+
+          const SizedBox(height: 20),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: List.generate(
+              items.length,
+              (i) => GestureDetector(
+                onTap: () {
+                  setState(() {
+                    index = i;
+                  });
+
+                  audio.speak(
+                    items[i].sound,
+                  );
+                },
+                child: Container(
+                  width: 54,
+                  height: 54,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: i == index
+                        ? const Color(0xFFFFD65C)
+                        : Colors.white,
+                    borderRadius:
+                        BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    items[i].title,
+                    style: const TextStyle(
+                      fontWeight:
+                          FontWeight.w900,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildGame() {
-    if (_question == null) return const SizedBox();
+  Widget _game() {
+    final correct =
+        items[random.nextInt(items.length)];
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Text(
-              '🎮 MINI GAME',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 28,
-                color: Color(0xFF354B5E),
+    final wrong = [...items]
+      ..removeWhere(
+        (e) => e.title == correct.title,
+      )
+      ..shuffle(random);
+
+    final options = [
+      correct,
+      ...wrong.take(3),
+    ]..shuffle(random);
+
+    return StatefulBuilder(
+      builder: (context, setGameState) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            children: [
+              const Text(
+                '🧠 Pilih Jawaban yang Benar!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF31536D),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
 
-            IconButton.filled(
-              onPressed: () {
-                AudioService.instance.question(
-                  'Mana ${_question!.title}?',
-                );
-              },
-              icon: const Icon(Icons.volume_up_rounded),
-            ),
+              const SizedBox(height: 18),
 
-            const SizedBox(height: 12),
-
-            Text(
-              'Mana ${_question!.title}?',
-              style: const TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 26,
+              Text(
+                correct.visual,
+                style: const TextStyle(
+                  fontSize: 90,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
-            Text(
-              _question!.visual,
-              style: const TextStyle(fontSize: 90),
-            ),
+              FilledButton(
+                onPressed: () {
+                  audio.question(
+                    'Mana ${correct.title}?',
+                  );
+                },
+                child: const Text(
+                  '🔊 Dengarkan Pertanyaan',
+                ),
+              ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 18),
 
-            if (_feedback.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: Text(
-                  _feedback,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
+              ...options.map(
+                (option) => Padding(
+                  padding:
+                      const EdgeInsets.only(
+                    bottom: 12,
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () async {
+                        if (option.title ==
+                            correct.title) {
+                          setGameState(
+                            () => score++,
+                          );
+
+                          await audio.correct();
+
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        } else {
+                          await audio.wrong();
+                        }
+                      },
+                      child: Text(
+                        option.title,
+                      ),
+                    ),
                   ),
                 ),
               ),
 
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _answers.length,
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.6,
+              Text(
+                '⭐ Skor: $score',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-              itemBuilder: (context, index) {
-                final answer = _answers[index];
-
-                return AnswerButton(
-                  text: answer.title,
-                  color: const [
-                    Color(0xFF5BA9F7),
-                    Color(0xFFFF9F43),
-                    Color(0xFF7ACB72),
-                    Color(0xFFB082F5),
-                  ][index],
-                  onTap: () => _answer(answer),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -1,39 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
-import '../angka/angka_page.dart';
-import '../gambar/gambar_page.dart';
-import '../hijaiyah/hijaiyah_page.dart';
-import '../huruf/huruf_page.dart';
-import '../kuis/kuis_page.dart';
+import '../learning/learning_page.dart';
 import '../mewarnai/mewarnai_page.dart';
 import '../titik_garis/titik_garis_page.dart';
-import '../warna/warna_page.dart';
+import '../kuis/kuis_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await AudioService.instance.init();
-      AudioService.instance.speak(
-        'Halo teman-teman! Selamat datang di IRKOP Belajar TK!',
-      );
-    });
-  }
-
-  void open(Widget page, String sound) {
-    AudioService.instance.speak(sound);
-
+  void _go(BuildContext context, Widget page) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => page,
@@ -43,182 +19,164 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final menus = [
-      _Menu(
-        '🔤',
-        'Dunia Huruf',
-        const Color(0xFF5BA9F7),
-        const HurufPage(),
-      ),
-      _Menu(
-        '🔢',
-        'Dunia Angka',
-        const Color(0xFFFFA24C),
-        const AngkaPage(),
-      ),
-      _Menu(
-        '🕌',
-        'Hijaiyah',
-        const Color(0xFF9B7BEA),
-        const HijaiyahPage(),
-      ),
-      _Menu(
-        '🐱',
-        'Dunia Gambar',
-        const Color(0xFF63C174),
-        const GambarPage(),
-      ),
-      _Menu(
-        '🎨',
-        'Dunia Warna',
-        const Color(0xFFFF7FA3),
-        const WarnaPage(),
-      ),
-      _Menu(
-        '🖍️',
-        'Mewarnai',
-        const Color(0xFFEF8F5A),
-        const MewarnaiPage(),
-      ),
-      _Menu(
-        '🔗',
-        'Titik & Garis',
-        const Color(0xFF48BFC0),
-        const TitikGarisPage(),
-      ),
-      _Menu(
-        '🧠',
-        'Kuis Seru',
-        const Color(0xFFFFC94D),
-        const KuisPage(),
-      ),
-    ];
-
     return Scaffold(
       body: KidBackground(
-        child: Column(
-          children: [
-            const SizedBox(height: 15),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
 
-            const Text(
-              'IRKOP',
-              style: TextStyle(
-                fontSize: 39,
-                fontWeight: FontWeight.w900,
-                color: Color(0xFF2E4B63),
-              ),
-            ),
-
-            const Text(
-              'Bermain Sambil Belajar',
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF486B82),
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            const Text(
-              '🐼',
-              style: TextStyle(fontSize: 75),
-            ),
-
-            const Text(
-              'Ayo pilih dunia bermainmu!',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 19,
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                  18,
-                  0,
-                  18,
-                  20,
+              const Text(
+                '🎓 IRKOP Belajar TK',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF31536D),
                 ),
-                itemCount: menus.length,
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.12,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                ),
-                itemBuilder: (_, index) {
-                  final menu = menus[index];
-
-                  return InkWell(
-                    onTap: () => open(
-                      menu.page,
-                      menu.title,
-                    ),
-                    borderRadius:
-                        BorderRadius.circular(28),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: menu.color,
-                        borderRadius:
-                            BorderRadius.circular(28),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33000000),
-                            blurRadius: 9,
-                            offset: Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment:
-                            MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            menu.icon,
-                            style: const TextStyle(
-                              fontSize: 54,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            menu.title,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontWeight:
-                                  FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
               ),
-            ),
-          ],
+
+              const SizedBox(height: 4),
+
+              const Text(
+                'Ayo bermain sambil belajar! 🌈',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF55758C),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              _card(
+                context,
+                '🔤',
+                'Dunia Huruf',
+                'Belajar A sampai Z',
+                const LearningPage(type: LearningType.huruf),
+              ),
+
+              _card(
+                context,
+                '🔢',
+                'Dunia Angka',
+                'Belajar angka sambil bermain',
+                const LearningPage(type: LearningType.angka),
+              ),
+
+              _card(
+                context,
+                '🕌',
+                'Hijaiyah',
+                'Kenali huruf Hijaiyah',
+                const LearningPage(type: LearningType.hijaiyah),
+              ),
+
+              _card(
+                context,
+                '🐱',
+                'Dunia Gambar',
+                'Hewan, buah dan benda',
+                const LearningPage(type: LearningType.gambar),
+              ),
+
+              _card(
+                context,
+                '🎨',
+                'Dunia Warna',
+                'Klik warna, background berubah!',
+                const LearningPage(type: LearningType.warna),
+              ),
+
+              _card(
+                context,
+                '🖍️',
+                'Mewarnai',
+                'Pilih warna dan gambar',
+                const MewarnaiPage(),
+              ),
+
+              _card(
+                context,
+                '🔗',
+                'Titik & Garis',
+                'Tarik garis mengikuti urutan',
+                const TitikGarisPage(),
+              ),
+
+              _card(
+                context,
+                '🧠',
+                'Kuis Seru',
+                'Pertanyaan tanpa batas',
+                const KuisPage(),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-class _Menu {
-  final String icon;
-  final String title;
-  final Color color;
-  final Widget page;
-
-  const _Menu(
-    this.icon,
-    this.title,
-    this.color,
-    this.page,
-  );
+  Widget _card(
+    BuildContext context,
+    String emoji,
+    String title,
+    String subtitle,
+    Widget page,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Material(
+        color: Colors.white.withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(28),
+        elevation: 5,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(28),
+          onTap: () => _go(context, page),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 48),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF31536D),
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF668398),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Color(0xFF5EA8F5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
