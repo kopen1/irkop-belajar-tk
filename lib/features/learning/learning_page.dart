@@ -33,7 +33,6 @@ class _LearningPageState extends State<LearningPage>
   int _index = 0;
   LearningItem? _question;
   List<LearningItem> _answers = [];
-  Color _background = const Color(0xFFEAF8FF);
   String _feedback = '';
 
   @override
@@ -125,7 +124,7 @@ class _LearningPageState extends State<LearningPage>
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 18),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.88),
+                    color: Colors.white.withValues(alpha: .88),
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: TabBar(
@@ -173,7 +172,7 @@ class _LearningPageState extends State<LearningPage>
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
-      color: widget.colorMode ? bg.withOpacity(.25) : Colors.transparent,
+      color: widget.colorMode ? bg.withValues(alpha: .25) : Colors.transparent,
       child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
