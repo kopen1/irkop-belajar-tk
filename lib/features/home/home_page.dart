@@ -118,51 +118,47 @@ class _HomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white.withValues(alpha: 0.94),
-      borderRadius: BorderRadius.circular(30),
-      elevation: 5,
+      color: Colors.white.withValues(alpha: 0.96),
+      borderRadius: BorderRadius.circular(28),
+      elevation: 6,
       shadowColor: const Color(0x440D405C),
       child: InkWell(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(28),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(entry.emoji, style: const TextStyle(fontSize: 52)),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 23,
-                        fontWeight: FontWeight.w900,
-                        color: Color(0xFF31536D),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      entry.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF668398),
-                      ),
-                    ),
-                  ],
+              Text(entry.emoji, style: const TextStyle(fontSize: 54)),
+              const SizedBox(height: 8),
+              Text(
+                entry.title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF31536D),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(height: 5),
+              Text(
+                entry.subtitle,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  height: 1.15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF668398),
+                ),
+              ),
+              const SizedBox(height: 6),
               const Icon(
-                Icons.arrow_forward_ios_rounded,
+                Icons.arrow_forward_rounded,
                 color: Color(0xFF5EA8F5),
                 size: 26,
               ),
