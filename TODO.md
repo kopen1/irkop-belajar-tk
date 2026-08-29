@@ -10,41 +10,41 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
 - Contoh: `Komentar: Dunia Gambar masih 1 kolom di HP.`
 
 ### 1. Home
-- [ ] Background langit, awan, pelangi, rumput, dan bunga tampil
+- [X] Background langit, awan, pelangi, rumput, dan bunga tampil
   - Komentar:
-- [ ] Judul dan subtitle tidak terpotong di layar HP
+- [X] Judul dan subtitle tidak terpotong di layar HP
   - Komentar:
 - [ ] Kartu menu rapi dan proporsional
   - Komentar:
-- [ ] Tidak ada elemen keluar layar/overflow
+- [X] Tidak ada elemen keluar layar/overflow
   - Komentar:
 
 ### 2. Dunia Gambar
-- [ ] Di HP, 1 baris berisi tepat 2 visual
+- [X] Di HP, 1 baris berisi tepat 2 visual
   - Komentar:
-- [ ] Gambar dan label tidak terpotong
+- [X] Gambar dan label tidak terpotong
   - Komentar:
-- [ ] Spacing dan ukuran kartu sudah sesuai blueprint
-  - Komentar:
+- [X] Spacing dan ukuran kartu sudah sesuai blueprint
+  - Komentar:        
 
 ### 3. Dunia Warna
-- [ ] Kotak pilihan menampilkan warna asli
+- [X] Kotak pilihan menampilkan warna asli
   - Komentar:
-- [ ] Nama warna mudah dibaca
+- [X] Nama warna mudah dibaca
   - Komentar:
-- [ ] Label panjang tidak pecah aneh
+- [X] Label panjang tidak pecah aneh
   - Komentar:
-- [ ] Warna aktif memiliki indikator/border yang jelas
+- [X] Warna aktif memiliki indikator/border yang jelas
   - Komentar:
 
 ### 4. Header semua halaman
-- [ ] Tombol kembali berfungsi
+- [X] Tombol kembali berfungsi
   - Komentar:
-- [ ] Judul dan subtitle tidak bertabrakan dengan tombol
+- [X] Judul dan subtitle tidak bertabrakan dengan tombol
   - Komentar:
 - [ ] Tombol musik tampil dan dapat ditekan
-  - Komentar:
-- [ ] Layar HP sempit tetap rapi
+  - Komentar: Musik tidak ada suaranya 
+- [X] Layar HP sempit tetap rapi
   - Komentar:
 
 ### 5. Dunia Huruf, Angka, dan Hijaiyah
