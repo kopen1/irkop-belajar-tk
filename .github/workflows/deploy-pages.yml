@@ -1,4 +1,4 @@
-name: IRKOP Deploy GitHub Pages
+name: Deploy IRKOP Flutter ke GitHub Pages
 
 on:
   push:
@@ -12,12 +12,54 @@ permissions:
   id-token: write
 
 concurrency:
-  group: irkop-pages
+  group: github-pages
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Flutter Analyze
+        run: flutter analyze
+
+      - name: Flutter Test
+        run: flutter test
+
+      - name: Build Flutter Web
+        run: |
+          flutter build web \
+            --release \
+            --base-href "/irkop-belajar-tk/"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Flutter Web
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
 
   deploy:
+    needs: build
 
     runs-on: ubuntu-latest
 
@@ -26,25 +68,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Prepare Website
-        run: |
-          mkdir -p dist
-          cp index.html dist/
-          cp style.css dist/
-          cp app.js dist/
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: Deploy
+      - name: Deploy ke GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
