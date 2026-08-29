@@ -22,6 +22,17 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
   ];
   int index = 0;
 
+  List<int> get _gridOrder {
+    final result = <int>[];
+    for (var start = 0; start < letters.length; start += 7) {
+      final end = start + 7 > letters.length ? letters.length : start + 7;
+      for (var i = end - 1; i >= start; i--) {
+        result.add(i);
+      }
+    }
+    return result;
+  }
+
   void select(int value) {
     setState(() => index = value);
     audio.speak('Huruf ${names[index]}');
@@ -41,7 +52,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                 padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 24),
                 child: Column(children: [
                   _header(w, s),
-                  SizedBox(height: 16 * s),
+                  SizedBox(height: 14 * s),
                   Container(
                     height: w * .49,
                     padding: EdgeInsets.all(18 * s),
@@ -50,13 +61,19 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                       Expanded(child: Container(
                         alignment: Alignment.center,
                         decoration: _card(s),
-                        child: Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 190 * s, height: .9, fontWeight: FontWeight.w700, color: const Color(0xFF8A22C8))),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10 * s),
+                          child: Text(item, textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 176 * s, height: 1, fontWeight: FontWeight.w800, color: const Color(0xFF8A22C8))),
+                        ),
                       )),
                       SizedBox(width: 16 * s),
                       Expanded(child: Container(
                         decoration: _card(s),
                         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 74 * s, color: const Color(0xFF8A22C8), fontWeight: FontWeight.w900)),
+                          Transform.translate(
+                            offset: Offset(0, -3 * s),
+                            child: Text(item, textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 72 * s, height: .95, color: const Color(0xFF8A22C8), fontWeight: FontWeight.w900)),
+                          ),
                           SizedBox(height: 8 * s),
                           Text(names[index], style: TextStyle(fontSize: 34 * s, color: const Color(0xFF201B2A), fontWeight: FontWeight.w900)),
                           Text('"${names[index]}"', style: TextStyle(fontSize: 24 * s, color: const Color(0xFF8421B6), fontWeight: FontWeight.w800)),
@@ -79,18 +96,19 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                     child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: letters.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, crossAxisSpacing: 12 * s, mainAxisSpacing: 14 * s, childAspectRatio: .95),
-                      itemBuilder: (context, i) {
+                      itemCount: _gridOrder.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, crossAxisSpacing: 10 * s, mainAxisSpacing: 12 * s, childAspectRatio: .92),
+                      itemBuilder: (context, displayIndex) {
+                        final i = _gridOrder[displayIndex];
                         final palette = [const Color(0xFFE8B6F4), const Color(0xFFB9DCF5), const Color(0xFFB8F0D6), const Color(0xFFFFD0A5), const Color(0xFFC9C4F6), const Color(0xFFF5C1E5)];
                         return Material(
-                          color: i == index ? const Color(0xFFE4A7F2) : palette[i % palette.length],
+                          color: i == index ? const Color(0xFFE4A7F2) : palette[displayIndex % palette.length],
                           borderRadius: BorderRadius.circular(22 * s),
                           elevation: i == index ? 7 : 3,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(22 * s),
                             onTap: () => select(i),
-                            child: Center(child: Text(letters[i], textDirection: TextDirection.rtl, style: TextStyle(fontSize: 42 * s, color: Colors.black, fontWeight: FontWeight.w900))),
+                            child: Center(child: Padding(padding: EdgeInsets.only(top: 2 * s), child: Text(letters[i], textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: TextStyle(fontSize: 40 * s, height: 1, color: Colors.black, fontWeight: FontWeight.w900)))),
                           ),
                         );
                       },
