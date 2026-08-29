@@ -440,7 +440,7 @@ class _LearningPageState extends State<LearningPage>
                     icon: const Icon(Icons.volume_up_rounded, size: 26),
                     label: Text(
                       widget.type == LearningType.hijaiyah
-                          ? 'Dengarkan ' + item.sound
+                          ? 'Dengarkan ${item.sound}'
                           : 'Dengarkan',
                       style: const TextStyle(
                         fontSize: 17,
