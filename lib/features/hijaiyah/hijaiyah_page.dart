@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../learning/learning_data.dart';
 import '../learning/learning_page.dart';
 
 class HijaiyahPage extends StatelessWidget {
@@ -9,9 +8,7 @@ class HijaiyahPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LearningPage(
-      title: 'Belajar Hijaiyah 🕌',
-      subtitle: 'Mengenal Huruf Arab',
-      items: hijaiyahItems,
+      type: LearningType.hijaiyah,
     );
   }
 }

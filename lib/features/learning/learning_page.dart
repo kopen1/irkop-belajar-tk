@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/models/learning_item.dart';
@@ -12,14 +11,12 @@ class LearningPage extends StatefulWidget {
   final String title;
   final String subtitle;
   final List<LearningItem> items;
-  final bool colorMode;
 
   const LearningPage({
     super.key,
     required this.title,
     required this.subtitle,
     required this.items,
-    this.colorMode = false,
   });
 
   @override
@@ -28,221 +25,161 @@ class LearningPage extends StatefulWidget {
 
 class _LearningPageState extends State<LearningPage>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabs;
-  late final ConfettiController _confetti;
+  final audio = AudioService.instance;
+  final random = Random();
 
-  final Random _random = Random();
+  late final TabController tabs;
 
-  int _index = 0;
-  int _score = 0;
+  int index = 0;
+  int score = 0;
 
-  LearningItem? _question;
-  List<LearningItem> _answers = [];
+  late LearningItem gameCorrect;
+  late List<LearningItem> gameOptions;
+
+  bool get isColorMode {
+    const colorNames = {
+      'Merah',
+      'Biru',
+      'Kuning',
+      'Hijau',
+      'Ungu',
+      'Oranye',
+      'Merah Muda',
+      'Cokelat',
+      'Putih',
+      'Hitam',
+    };
+
+    return widget.items.isNotEmpty &&
+        colorNames.contains(widget.items.first.title);
+  }
+
+  Color get selectedColor {
+    final title = widget.items[index].title;
+
+    const colors = {
+      'Merah': Color(0xFFFF6B6B),
+      'Biru': Color(0xFF6CA8FF),
+      'Kuning': Color(0xFFFFD94D),
+      'Hijau': Color(0xFF7DD87D),
+      'Ungu': Color(0xFFB08CFF),
+      'Oranye': Color(0xFFFFA64D),
+      'Merah Muda': Color(0xFFFF9EC9),
+      'Cokelat': Color(0xFFB9825A),
+      'Putih': Color(0xFFFFFFFF),
+      'Hitam': Color(0xFF424242),
+    };
+
+    return colors[title] ?? Colors.transparent;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    _tabs = TabController(
+    tabs = TabController(
       length: 2,
       vsync: this,
     );
 
-    _confetti = ConfettiController(
-      duration: const Duration(seconds: 2),
-    );
-
-    AudioService.instance.init();
-
     _newQuestion();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.items.isNotEmpty) {
+        audio.speak(widget.items[index].sound);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _tabs.dispose();
-    _confetti.dispose();
+    tabs.dispose();
     super.dispose();
   }
 
-  Color _colorOf(LearningItem item) {
-    final value = item.colorHex;
-
-    if (value == null || value.isEmpty) {
-      return Colors.white;
-    }
-
-    final hex = value.replaceAll('#', '');
-
-    return Color(
-      int.parse('FF$hex', radix: 16),
-    );
-  }
-
-  Future<void> _speakCurrent() async {
-    final item = widget.items[_index];
-
-    await AudioService.instance.speak(
-      item.speakText,
-    );
-  }
-
-  void _next() {
-    setState(() {
-      _index = (_index + 1) % widget.items.length;
-    });
-
-    _speakCurrent();
-  }
-
-  void _previous() {
-    setState(() {
-      _index =
-          (_index - 1 + widget.items.length) %
-              widget.items.length;
-    });
-
-    _speakCurrent();
-  }
-
-  void _selectItem(int value) {
-    setState(() {
-      _index = value;
-    });
-
-    _speakCurrent();
-  }
-
   void _newQuestion() {
-    final question =
-        widget.items[_random.nextInt(widget.items.length)];
+    if (widget.items.isEmpty) return;
+
+    gameCorrect = widget.items[
+      random.nextInt(widget.items.length)
+    ];
 
     final wrong = [...widget.items]
       ..removeWhere(
-        (item) => item.title == question.title,
+        (item) => item.title == gameCorrect.title,
       )
-      ..shuffle(_random);
+      ..shuffle(random);
 
-    setState(() {
-      _question = question;
-
-      _answers = [
-        question,
-        ...wrong.take(3),
-      ]..shuffle(_random);
-    });
+    gameOptions = [
+      gameCorrect,
+      ...wrong.take(3),
+    ]..shuffle(random);
   }
 
-  Future<void> _answer(
-    LearningItem answer,
-  ) async {
-    if (_question == null) return;
+  void next() {
+    if (widget.items.isEmpty) return;
 
-    final correct =
-        answer.title == _question!.title;
+    setState(() {
+      index = (index + 1) % widget.items.length;
+    });
 
-    if (correct) {
-      setState(() {
-        _score++;
-      });
+    audio.speak(widget.items[index].sound);
+  }
 
-      _confetti.play();
+  void previous() {
+    if (widget.items.isEmpty) return;
 
-      await AudioService.instance.correct();
+    setState(() {
+      index =
+          (index - 1 + widget.items.length) %
+          widget.items.length;
+    });
 
-      if (!mounted) return;
-
-      Future.delayed(
-        const Duration(milliseconds: 900),
-        () {
-          if (mounted) {
-            _newQuestion();
-          }
-        },
-      );
-    } else {
-      await AudioService.instance.wrong();
-    }
+    audio.speak(widget.items[index].sound);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.items.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Text('Belum ada materi'),
+        ),
+      );
+    }
+
+    final item = widget.items[index];
+
     return Scaffold(
       body: KidBackground(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    14,
-                    12,
-                    14,
-                    8,
-                  ),
-                  child: KidHeader(
-                    title: widget.title,
-                    subtitle: widget.subtitle,
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: KidHeader(
+                title: widget.title,
+                subtitle: widget.subtitle,
+              ),
+            ),
 
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                  ),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(
-                      alpha: 0.88,
-                    ),
-                    borderRadius:
-                        BorderRadius.circular(22),
-                  ),
-                  child: TabBar(
-                    controller: _tabs,
-                    indicator: BoxDecoration(
-                      color:
-                          const Color(0xFFFFC94D),
-                      borderRadius:
-                          BorderRadius.circular(17),
-                    ),
-                    labelColor:
-                        const Color(0xFF243B53),
-                    unselectedLabelColor:
-                        const Color(0xFF607D8B),
-                    labelStyle: const TextStyle(
-                      fontWeight:
-                          FontWeight.w900,
-                    ),
-                    tabs: const [
-                      Tab(
-                        text: '📚 Belajar',
-                      ),
-                      Tab(
-                        text: '🎮 Mini Game',
-                      ),
-                    ],
-                  ),
-                ),
-
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabs,
-                    children: [
-                      _buildLearn(),
-                      _buildGame(),
-                    ],
-                  ),
-                ),
+            TabBar(
+              controller: tabs,
+              labelColor: const Color(0xFF31536D),
+              indicatorColor: const Color(0xFFFFB703),
+              tabs: const [
+                Tab(text: '📚 Belajar'),
+                Tab(text: '🎮 Mini Game'),
               ],
             ),
 
-            ConfettiWidget(
-              confettiController: _confetti,
-              blastDirectionality:
-                  BlastDirectionality.explosive,
-              numberOfParticles: 28,
-              gravity: 0.25,
-              emissionFrequency: 0.04,
+            Expanded(
+              child: TabBarView(
+                controller: tabs,
+                children: [
+                  _learn(item),
+                  _game(),
+                ],
+              ),
             ),
           ],
         ),
@@ -250,251 +187,152 @@ class _LearningPageState extends State<LearningPage>
     );
   }
 
-  Widget _buildLearn() {
-    final item = widget.items[_index];
+  Widget _learn(LearningItem item) {
+    final background = isColorMode
+        ? selectedColor.withValues(alpha: 0.45)
+        : Colors.white.withValues(alpha: 0.93);
 
-    final itemColor =
-        widget.colorMode
-            ? _colorOf(item)
-            : Colors.white;
-
-    final textColor =
-        widget.colorMode &&
-                itemColor.computeLuminance() < 0.55
+    final titleColor =
+        item.title == 'Hitam'
             ? Colors.white
-            : const Color(0xFF243B53);
+            : const Color(0xFF31536D);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       child: Column(
         children: [
           AnimatedContainer(
-            duration:
-                const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 180),
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: itemColor,
-              borderRadius:
-                  BorderRadius.circular(30),
+              color: background,
+              borderRadius: BorderRadius.circular(36),
               border: Border.all(
-                color: Colors.white,
-                width: 4,
+                color: Colors.white.withValues(alpha: 0.7),
+                width: 3,
               ),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x22000000),
-                  blurRadius: 14,
-                  offset: Offset(0, 6),
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 5),
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: Text(
-                    item.visual,
-                    textAlign:
-                        TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 82,
-                    ),
+                Text(
+                  item.visual,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: isColorMode ? 110 : 90,
                   ),
                 ),
 
-                Container(
-                  width: 2,
-                  height: 130,
-                  color: Colors.white.withValues(
-                    alpha: 0.7,
+                const SizedBox(height: 12),
+
+                Text(
+                  item.title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w900,
+                    color: titleColor,
                   ),
                 ),
 
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        item.title,
-                        textAlign:
-                            TextAlign.center,
-                        style: TextStyle(
-                          fontSize:
-                              widget.colorMode
-                                  ? 32
-                                  : 76,
-                          fontWeight:
-                              FontWeight.w900,
-                          color: textColor,
-                        ),
-                      ),
+                const SizedBox(height: 14),
 
-                      const SizedBox(
-                        height: 8,
-                      ),
-
-                      Text(
-                        item.subtitle,
-                        textAlign:
-                            TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight:
-                              FontWeight.w800,
-                          color: textColor,
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 14,
-                      ),
-
-                      FilledButton(
-                        onPressed:
-                            _speakCurrent,
-                        style:
-                            FilledButton.styleFrom(
-                          backgroundColor:
-                              const Color(
-                            0xFF31B94D,
-                          ),
-                          shape:
-                              RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(16),
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons
-                              .volume_up_rounded,
-                        ),
-                      ),
-                    ],
+                FilledButton.icon(
+                  onPressed: () {
+                    audio.speak(item.sound);
+                  },
+                  icon: const Icon(
+                    Icons.volume_up_rounded,
+                  ),
+                  label: const Text(
+                    'Dengarkan',
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
           Row(
             children: [
               Expanded(
-                child: FilledButton.icon(
-                  onPressed: _previous,
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                  ),
-                  label: const Text(
-                    'Sebelumnya',
-                  ),
-                  style:
-                      FilledButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFFFFB52E),
+                child: FilledButton(
+                  onPressed: previous,
+                  child: const Text(
+                    '⬅ Sebelumnya',
                   ),
                 ),
               ),
 
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 14,
-                ),
-                child: Text(
-                  '${_index + 1} / ${widget.items.length}',
-                  style: const TextStyle(
-                    fontWeight:
-                        FontWeight.w900,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
+              const SizedBox(width: 12),
 
               Expanded(
-                child: FilledButton.icon(
-                  onPressed: _next,
-                  icon: const Icon(
-                    Icons.arrow_forward_rounded,
-                  ),
-                  label: const Text(
-                    'Selanjutnya',
-                  ),
-                  style:
-                      FilledButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFFFFB52E),
+                child: FilledButton(
+                  onPressed: next,
+                  child: const Text(
+                    'Selanjutnya ➡',
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment:
-                WrapAlignment.center,
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
             children: List.generate(
               widget.items.length,
-              (index) {
-                final selected =
-                    index == _index;
+              (i) => GestureDetector(
+                onTap: () {
+                  setState(() {
+                    index = i;
+                  });
 
-                return InkWell(
-                  onTap: () =>
-                      _selectItem(index),
-                  borderRadius:
-                      BorderRadius.circular(14),
-                  child: AnimatedContainer(
-                    duration:
-                        const Duration(
-                      milliseconds: 180,
-                    ),
-                    width: 52,
-                    height: 52,
-                    alignment:
-                        Alignment.center,
-                    decoration:
-                        BoxDecoration(
-                      color: selected
-                          ? const Color(
-                              0xFFFFC94D,
-                            )
-                          : Colors.white,
-                      borderRadius:
-                          BorderRadius
-                              .circular(14),
-                      border: Border.all(
-                        color: selected
-                            ? const Color(
-                                0xFFF5A623,
-                              )
-                            : const Color(
-                                0x22000000,
-                              ),
-                        width: 2,
-                      ),
-                    ),
-                    child: Text(
-                      widget.items[index]
-                          .title,
-                      textAlign:
-                          TextAlign.center,
-                      style: const TextStyle(
-                        fontWeight:
-                            FontWeight.w900,
-                        fontSize: 18,
-                        color:
-                            Color(0xFF243B53),
-                      ),
+                  audio.speak(
+                    widget.items[i].sound,
+                  );
+                },
+                child: AnimatedContainer(
+                  duration:
+                      const Duration(milliseconds: 150),
+                  width: 54,
+                  height: 54,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: i == index
+                        ? const Color(0xFFFFD65C)
+                        : Colors.white,
+                    borderRadius:
+                        BorderRadius.circular(16),
+                    border: Border.all(
+                      color: i == index
+                          ? const Color(0xFFFFB703)
+                          : const Color(0xFFD6E4EE),
+                      width: 2,
                     ),
                   ),
-                );
-              },
+                  child: Text(
+                    widget.items[i].title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight:
+                          FontWeight.w900,
+                      fontSize: 17,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -502,155 +340,106 @@ class _LearningPageState extends State<LearningPage>
     );
   }
 
-  Widget _buildGame() {
-    final question = _question;
-
-    if (question == null) {
-      return const SizedBox();
-    }
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        children: [
-          const Text(
-            '🧠 Pilih Jawaban yang Benar!',
-            textAlign:
-                TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight:
-                  FontWeight.w900,
-              color:
-                  Color(0xFF243B53),
-            ),
-          ),
-
-          const SizedBox(height: 14),
-
-          Container(
-            width: double.infinity,
-            padding:
-                const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(
-                alpha: 0.92,
+  Widget _game() {
+    return StatefulBuilder(
+      builder: (context, setGameState) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            children: [
+              const Text(
+                '🧠 Pilih Jawaban yang Benar!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF31536D),
+                ),
               ),
-              borderRadius:
-                  BorderRadius.circular(28),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  question.visual,
+
+              const SizedBox(height: 18),
+
+              AnimatedSwitcher(
+                duration:
+                    const Duration(milliseconds: 180),
+                child: Text(
+                  gameCorrect.visual,
+                  key: ValueKey(
+                    gameCorrect.title,
+                  ),
                   style: const TextStyle(
-                    fontSize: 88,
+                    fontSize: 100,
                   ),
                 ),
+              ),
 
-                const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
-                FilledButton.icon(
-                  onPressed: () {
-                    AudioService.instance
-                        .question(
-                      'Mana ${question.title}?',
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.volume_up_rounded,
+              FilledButton.icon(
+                onPressed: () {
+                  audio.question(
+                    'Mana ${gameCorrect.title}?',
+                  );
+                },
+                icon: const Icon(
+                  Icons.volume_up_rounded,
+                ),
+                label: const Text(
+                  'Dengarkan Pertanyaan',
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              ...gameOptions.map(
+                (option) => Padding(
+                  padding:
+                      const EdgeInsets.only(
+                    bottom: 12,
                   ),
-                  label: const Text(
-                    'Dengarkan Pertanyaan',
-                  ),
-                  style:
-                      FilledButton.styleFrom(
-                    backgroundColor:
-                        const Color(
-                      0xFF31B94D,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () async {
+                        if (option.title ==
+                            gameCorrect.title) {
+                          await audio.correct();
+
+                          if (!mounted) return;
+
+                          setGameState(() {
+                            score++;
+                            _newQuestion();
+                          });
+                        } else {
+                          await audio.wrong();
+                        }
+                      },
+                      child: Text(
+                        option.title,
+                        style: const TextStyle(
+                          fontWeight:
+                              FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          GridView.builder(
-            shrinkWrap: true,
-            physics:
-                const NeverScrollableScrollPhysics(),
-            itemCount: _answers.length,
-            gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.65,
-            ),
-            itemBuilder:
-                (context, index) {
-              final item =
-                  _answers[index];
-
-              final colors = [
-                const Color(0xFFFF6B6B),
-                const Color(0xFFFFA940),
-                const Color(0xFF53B85D),
-                const Color(0xFF5A9CF6),
-              ];
-
-              return FilledButton(
-                onPressed: () =>
-                    _answer(item),
-                style:
-                    FilledButton.styleFrom(
-                  backgroundColor:
-                      colors[index],
-                  shape:
-                      RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius
-                            .circular(20),
-                  ),
-                ),
-                child: Text(
-                  item.title,
-                  style: const TextStyle(
-                    fontWeight:
-                        FontWeight.w900,
-                    fontSize: 20,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 16),
-
-          Container(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.circular(20),
-            ),
-            child: Text(
-              '⭐ Skor: $_score',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight:
-                    FontWeight.w900,
               ),
-            ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                '⭐ Skor: $score',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF31536D),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
