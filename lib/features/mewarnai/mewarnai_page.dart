@@ -23,6 +23,8 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
   bool eraser = false;
   int clearSignal = 0;
   int drawingIndex = 0;
+  // Daftar terus berputar, jadi setelah gambar terakhir kembali ke awal.
+  // Anak dapat berpindah gambar kapan saja lewat pilihan di atas.
   static const drawings = [
     ('🦖', 'Dinosaurus'),
     ('🐟', 'Ikan'),
@@ -36,6 +38,14 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
     ('⚽', 'Bola'),
     ('☀️', 'Matahari'),
     ('🐦', 'Burung'),
+    ('🪁', 'Layangan'),
+    ('❤️', 'Hati'),
+    ('🌳', 'Pohon'),
+    ('🎈', 'Balon'),
+    ('🍦', 'Es Krim'),
+    ('⛵', 'Perahu'),
+    ('🌙', 'Bulan'),
+    ('☁️', 'Awan'),
   ];
 
   void _selectDrawing(int index) => setState(() {
@@ -430,6 +440,37 @@ class _DinoOutlinePainter extends CustomPainter {
         break;
       case 10: // sun
         canvas.drawCircle(Offset(cx,cy),r,line); for(var i=0;i<10;i++){final a=i*math.pi/5; canvas.drawLine(Offset(cx+math.cos(a)*r*1.4,cy+math.sin(a)*r*1.4),Offset(cx+math.cos(a)*r*2.1,cy+math.sin(a)*r*2.1),line);}
+        break;
+      case 12: // kite
+        canvas.drawPath(Path()..moveTo(cx,cy-r*1.8)..lineTo(cx+r*1.2,cy)..lineTo(cx,cy+r*1.8)..lineTo(cx-r*1.2,cy)..close(),line);
+        canvas.drawLine(Offset(cx,cy+r*1.8),Offset(cx+r*.9,cy+r*3),line);
+        break;
+      case 13: // heart
+        canvas.drawPath(Path()..moveTo(cx,cy+r*1.5)..cubicTo(cx-r*2,cy,cx-r*1.2,cy-r*1.7,cx,cy-r*.5)..cubicTo(cx+r*1.2,cy-r*1.7,cx+r*2,cy,cx,cy+r*1.5),line);
+        break;
+      case 14: // tree
+        canvas.drawCircle(Offset(cx,cy-r*.6),r*1.1,line); canvas.drawCircle(Offset(cx-r*.8,cy-r*.1),r*.8,line); canvas.drawCircle(Offset(cx+r*.8,cy-r*.1),r*.8,line);
+        canvas.drawRect(Rect.fromCenter(center: Offset(cx,cy+r*1.5),width:r*.65,height:r*2.1),line);
+        break;
+      case 15: // balloon
+        canvas.drawOval(Rect.fromCenter(center: Offset(cx,cy-r*.3),width:r*2,height:r*2.7),line);
+        canvas.drawLine(Offset(cx,cy+r*1.05),Offset(cx+r*.25,cy+r*2.7),line);
+        break;
+      case 16: // ice cream
+        canvas.drawPath(Path()..moveTo(cx-r,cy)..lineTo(cx+r,cy)..lineTo(cx,cy+r*2.4)..close(),line);
+        canvas.drawCircle(Offset(cx,cy-r*.55),r*1.05,line);
+        break;
+      case 17: // boat
+        canvas.drawPath(Path()..moveTo(cx-r*2,cy+r)..lineTo(cx+r*2,cy+r)..lineTo(cx+r*1.3,cy+r*1.9)..lineTo(cx-r*1.3,cy+r*1.9)..close(),line);
+        canvas.drawLine(Offset(cx,cy+r),Offset(cx,cy-r*2),line);
+        canvas.drawPath(Path()..moveTo(cx,cy-r*1.9)..lineTo(cx+r*1.5,cy-r*.4)..lineTo(cx,cy-r*.4)..close(),line);
+        break;
+      case 18: // moon
+        canvas.drawArc(Rect.fromCenter(center: Offset(cx,cy),width:r*3,height:r*3),math.pi*.25,math.pi*1.5,false,line);
+        canvas.drawArc(Rect.fromCenter(center: Offset(cx+r*.65,cy-r*.25),width:r*2.4,height:r*2.4),math.pi*.25,math.pi*1.5,false,line);
+        break;
+      case 19: // cloud
+        canvas.drawPath(Path()..moveTo(cx-r*1.9,cy+r*.6)..quadraticBezierTo(cx-r*2,cy-r*.4,cx-r*1.1,cy-r*.35)..quadraticBezierTo(cx-r*.7,cy-r*1.5,cx,cy-r*.55)..quadraticBezierTo(cx+r*.8,cy-r*1.5,cx+r*1.1,cy-r*.35)..quadraticBezierTo(cx+r*2,cy-r*.3,cx+r*1.8,cy+r*.6)..close(),line);
         break;
       default: // bird
         canvas.drawArc(Rect.fromCenter(center: Offset(cx-r*.45,cy),width:r*1.8,height:r*1.2),math.pi,math.pi,false,line); canvas.drawArc(Rect.fromCenter(center: Offset(cx+r*.45,cy),width:r*1.8,height:r*1.2),math.pi,math.pi,false,line);
