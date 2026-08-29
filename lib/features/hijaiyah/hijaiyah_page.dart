@@ -24,7 +24,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
 
   void select(int value) {
     setState(() => index = value);
-    audio.speak(names[index] + '. ' + letters[index]);
+    audio.speak(${names[index]}. ${letters[index]});
   }
 
   @override
@@ -50,8 +50,8 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                       Expanded(child: Container(
                         alignment: Alignment.center,
                         decoration: _card(s),
-                        child: Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 190 * s, height: .9, fontWeight: FontWeight.w700, color: const Color(0xFF8A22C8)),
-                      )),
+                        child: Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 190 * s, height: .9, fontWeight: FontWeight.w700, color: const Color(0xFF8A22C8))),
+                      ),
                       SizedBox(width: 16 * s),
                       Expanded(child: Container(
                         decoration: _card(s),
@@ -59,17 +59,17 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                           Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 74 * s, color: const Color(0xFF8A22C8), fontWeight: FontWeight.w900)),
                           SizedBox(height: 8 * s),
                           Text(names[index], style: TextStyle(fontSize: 34 * s, color: const Color(0xFF201B2A), fontWeight: FontWeight.w900)),
-                          Text('"' + names[index] + '"', style: TextStyle(fontSize: 24 * s, color: const Color(0xFF8421B6), fontWeight: FontWeight.w800)),
+                          Text('"${names[index]}"', style: TextStyle(fontSize: 24 * s, color: const Color(0xFF8421B6), fontWeight: FontWeight.w800)),
                           SizedBox(height: 12 * s),
                           _soundButton(() => audio.speak(names[index]), s),
                         ]),
-                      )),
+                      ),
                     ]),
                   ),
                   SizedBox(height: 14 * s),
                   Row(children: [
                     _round(w * .13, Icons.chevron_left_rounded, () { setState(() => index = (index - 1 + letters.length) % letters.length); }),
-                    Expanded(child: Center(child: _counter((index + 1).toString() + ' / ' + letters.length.toString(), s))),
+                    Expanded(child: Center(child: _counter('${index + 1} / ${letters.length}', s))),
                     _round(w * .13, Icons.chevron_right_rounded, () { setState(() => index = (index + 1) % letters.length); }),
                   ]),
                   SizedBox(height: 20 * s),
