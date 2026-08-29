@@ -24,7 +24,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
 
   void select(int value) {
     setState(() => index = value);
-    audio.speak('Huruf ' + names[index]);
+    audio.speak('Huruf ${names[index]}');
   }
 
   @override
@@ -51,7 +51,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                         alignment: Alignment.center,
                         decoration: _card(s),
                         child: Text(item, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 190 * s, height: .9, fontWeight: FontWeight.w700, color: const Color(0xFF8A22C8))),
-                      ),
+                      )),
                       SizedBox(width: 16 * s),
                       Expanded(child: Container(
                         decoration: _card(s),
@@ -63,7 +63,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                           SizedBox(height: 12 * s),
                           _soundButton(() => audio.speak(names[index]), s),
                         ]),
-                      ),
+                      )),
                     ]),
                   ),
                   SizedBox(height: 14 * s),
