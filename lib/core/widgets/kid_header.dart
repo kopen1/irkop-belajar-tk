@@ -34,18 +34,18 @@ class _KidHeaderState extends State<KidHeader> {
             },
           ),
 
-        if (canPop) const SizedBox(width: 10),
+        if (canPop) const SizedBox(width: 8),
 
         Expanded(
           child: Container(
-            height: 104,
+            height: 88,
             padding: const EdgeInsets.symmetric(
-              horizontal: 18,
-              vertical: 12,
+              horizontal: 16,
+              vertical: 10,
             ),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.94),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(26),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
@@ -63,18 +63,18 @@ class _KidHeaderState extends State<KidHeader> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF31536D),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   widget.subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF668398),
                   ),
@@ -84,7 +84,7 @@ class _KidHeaderState extends State<KidHeader> {
           ),
         ),
 
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
 
         _circle(
           audio.backgroundOn
@@ -111,11 +111,11 @@ class _KidHeaderState extends State<KidHeader> {
         customBorder: const CircleBorder(),
         onTap: onTap,
         child: SizedBox(
-          width: 70,
-          height: 70,
+          width: 58,
+          height: 58,
           child: Icon(
             icon,
-            size: 32,
+            size: 28,
             color: const Color(0xFF31536D),
           ),
         ),

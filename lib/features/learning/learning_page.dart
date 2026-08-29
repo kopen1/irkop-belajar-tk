@@ -294,14 +294,14 @@ class _LearningPageState extends State<LearningPage>
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
               child: KidHeader(
                 title: title,
                 subtitle: 'Belajar dan bermain bersama',
               ),
             ),
             SizedBox(
-              height: 58,
+              height: 52,
               child: TabBar(
                 controller: tabs,
                 labelColor: const Color(0xFF31536D),
@@ -309,7 +309,7 @@ class _LearningPageState extends State<LearningPage>
                 indicatorColor: const Color(0xFF31536D),
                 indicatorWeight: 4,
                 labelStyle: const TextStyle(
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
                 tabs: const [
@@ -338,19 +338,19 @@ class _LearningPageState extends State<LearningPage>
         ? selectedColor.withValues(alpha: 0.45)
         : Colors.white.withValues(alpha: 0.93);
 
-    final visualSize = widget.type == LearningType.hijaiyah ? 120.0 : 80.0;
+    final visualSize = widget.type == LearningType.hijaiyah ? 96.0 : 70.0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
       child: Column(
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 250),
             width: double.infinity,
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
               color: background,
-              borderRadius: BorderRadius.circular(36),
+              borderRadius: BorderRadius.circular(30),
             ),
             child: Column(
               children: [
@@ -364,12 +364,12 @@ class _LearningPageState extends State<LearningPage>
                   item.title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 48,
+                    fontSize: 42,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF31536D),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
                 FilledButton.icon(
                   onPressed: () => audio.speak(item.sound),
                   icon: const Icon(Icons.volume_up_rounded),
@@ -378,7 +378,7 @@ class _LearningPageState extends State<LearningPage>
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
@@ -396,7 +396,7 @@ class _LearningPageState extends State<LearningPage>
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -412,8 +412,8 @@ class _LearningPageState extends State<LearningPage>
                   audio.speak(items[i].sound);
                 },
                 child: Container(
-                  width: 54,
-                  height: 54,
+                  width: 50,
+                  height: 50,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: i == index
@@ -441,27 +441,28 @@ class _LearningPageState extends State<LearningPage>
     return StatefulBuilder(
       builder: (context, setGameState) {
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
           child: Column(
             children: [
               const Text(
                 '🧠 Pilih Jawaban yang Benar!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: Color(0xFF31536D),
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
               Text(
                 correct.visual,
                 style: TextStyle(
                   fontSize: widget.type == LearningType.hijaiyah
-                      ? 120
-                      : 90,
+                      ? 96
+                      : 72,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               FilledButton(
                 onPressed: () {
                   audio.question(
@@ -472,10 +473,10 @@ class _LearningPageState extends State<LearningPage>
                   '🔊 Dengarkan Pertanyaan',
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
               ...options.map(
                 (option) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton(
@@ -499,7 +500,7 @@ class _LearningPageState extends State<LearningPage>
               Text(
                 '⭐ Skor: $score',
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
               ),
