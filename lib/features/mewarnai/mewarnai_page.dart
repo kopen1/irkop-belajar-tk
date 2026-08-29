@@ -20,6 +20,28 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
   Color selected = colors.first;
   bool eraser = false;
   int clearSignal = 0;
+  int drawingIndex = 0;
+  static const drawings = [
+    ('🦖', 'Dinosaurus'),
+    ('🐟', 'Ikan'),
+    ('🐱', 'Kucing'),
+    ('🚗', 'Mobil'),
+    ('🌼', 'Bunga'),
+    ('🏠', 'Rumah'),
+    ('🦋', 'Kupu-kupu'),
+    ('🍎', 'Apel'),
+    ('🚀', 'Roket'),
+    ('⚽', 'Bola'),
+    ('☀️', 'Matahari'),
+    ('🐦', 'Burung'),
+  ];
+
+  void _selectDrawing(int index) => setState(() {
+    drawingIndex = index;
+    clearSignal++;
+  });
+
+  void _nextDrawing() => _selectDrawing((drawingIndex + 1) % drawings.length);
 
   void _pick(Color color) => setState(() { selected = color; eraser = false; });
   void _useBrush() => setState(() => eraser = false);
@@ -37,6 +59,7 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
             return Column(
               children: [
                 _header(w, s),
+                _drawingSelector(s),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 16 * s),
@@ -45,6 +68,8 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
                         _drawingPanel(s),
                         SizedBox(height: 14 * s),
                         _toolbar(s),
+                        SizedBox(height: 10 * s),
+                        _nextButton(s),
                       ],
                     ),
                   ),
@@ -57,7 +82,47 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
     ),
   );
 
-  Widget _drawingPanel(double s) => AspectRatio(
+  Widget _drawingSelector(double s) => SizedBox(
+    height: 64 * s,
+    child: ListView.separated(
+      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+      scrollDirection: Axis.horizontal,
+      itemCount: drawings.length,
+      separatorBuilder: (context, index) => SizedBox(width: 8 * s),
+      itemBuilder: (context, index) {
+        final active = index == drawingIndex;
+        return GestureDetector(
+          onTap: () => _selectDrawing(index),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 14 * s),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: active ? const Color(0xFF278AC3) : Colors.white.withValues(alpha: .92),
+              borderRadius: BorderRadius.circular(18 * s),
+              border: Border.all(color: active ? Colors.white : const Color(0xFFD4DEE6), width: 2),
+            ),
+            child: Text(
+              drawings[index].$1 + ' ' + (index + 1).toString(),
+              style: TextStyle(color: active ? Colors.white : const Color(0xFF26324A), fontWeight: FontWeight.w900, fontSize: 18 * s),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+
+  Widget _drawingPanel(double s) => Column(
+    children: [
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 7 * s),
+        decoration: BoxDecoration(color: Colors.white.withValues(alpha: .9), borderRadius: BorderRadius.circular(18 * s)),
+        child: Text(
+          drawings[drawingIndex].$1 + ' Warnai ' + drawings[drawingIndex].$2,
+          style: TextStyle(color: const Color(0xFF24354C), fontSize: 18 * s, fontWeight: FontWeight.w900),
+        ),
+      ),
+      SizedBox(height: 7 * s),
+      AspectRatio(
     aspectRatio: 1.18,
     child: Container(
     width: double.infinity,
@@ -72,12 +137,29 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
       borderRadius: BorderRadius.circular(22 * s),
       child: Stack(
         children: [
-          Positioned.fill(child: CustomPaint(painter: _DinoOutlinePainter())),
+          Positioned.fill(child: CustomPaint(painter: _DinoOutlinePainter(kind: drawingIndex))),
           Positioned.fill(child: PaintingCanvas(color: eraser ? Colors.white : selected, clearSignal: clearSignal)),
         ],
       ),
     ),
-  ));
+  ),
+    ],
+  );
+
+  Widget _nextButton(double s) => SizedBox(
+    width: double.infinity,
+    child: ElevatedButton.icon(
+      onPressed: _nextDrawing,
+      icon: const Icon(Icons.arrow_forward_rounded),
+      label: const Text('Gambar Berikutnya'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFFFB91D),
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(vertical: 14 * s),
+        textStyle: TextStyle(fontSize: 19 * s, fontWeight: FontWeight.w900),
+      ),
+    ),
+  );
 
   Widget _toolbar(double s) => Container(
     width: double.infinity,
@@ -183,6 +265,8 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
 }
 
 class _DinoOutlinePainter extends CustomPainter {
+  final int kind;
+  _DinoOutlinePainter({this.kind = 0});
   @override
   void paint(Canvas canvas, Size size) {
     final line = Paint()
@@ -193,6 +277,11 @@ class _DinoOutlinePainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
 
     Offset p(double x, double y) => Offset(size.width * x, size.height * y);
+
+    if (kind != 0) {
+      _simplePicture(canvas, size, kind, line, p);
+      return;
+    }
 
     // Clouds and sun from the reference scene.
     canvas.drawPath(Path()
@@ -283,8 +372,54 @@ class _DinoOutlinePainter extends CustomPainter {
     }
   }
 
+  void _simplePicture(Canvas canvas, Size size, int kind, Paint line, Offset Function(double, double) p) {
+    final cx = size.width * .5;
+    final cy = size.height * .5;
+    final r = size.shortestSide * .18;
+    switch (kind) {
+      case 1: // fish
+        canvas.drawOval(Rect.fromCenter(center: Offset(cx - r * .25, cy), width: r * 2.5, height: r * 1.4), line);
+        canvas.drawPath(Path()..moveTo(cx + r, cy)..lineTo(cx + r * 2.1, cy - r)..lineTo(cx + r * 2.1, cy + r)..close(), line);
+        canvas.drawCircle(Offset(cx - r * .7, cy - r * .2), r * .10, line..style = PaintingStyle.fill); line.style = PaintingStyle.stroke;
+        break;
+      case 2: // cat
+        canvas.drawCircle(Offset(cx, cy), r * 1.25, line);
+        canvas.drawPath(Path()..moveTo(cx-r,cy-r)..lineTo(cx-r*.8,cy-r*2)..lineTo(cx-r*.1,cy-r), line);
+        canvas.drawPath(Path()..moveTo(cx+r,cy-r)..lineTo(cx+r*.8,cy-r*2)..lineTo(cx+r*.1,cy-r), line);
+        canvas.drawCircle(Offset(cx-r*.45,cy-r*.15),r*.1,line..style=PaintingStyle.fill); canvas.drawCircle(Offset(cx+r*.45,cy-r*.15),r*.1,line); line.style=PaintingStyle.stroke;
+        break;
+      case 3: // car
+        canvas.drawPath(Path()..moveTo(cx-r*2,cy+r*.5)..lineTo(cx-r*1.4,cy-r*.5)..lineTo(cx+r,cy-r*.5)..lineTo(cx+r*1.7,cy+r*.5)..close(),line);
+        canvas.drawCircle(Offset(cx-r,cy+r*.55),r*.35,line); canvas.drawCircle(Offset(cx+r,cy+r*.55),r*.35,line);
+        break;
+      case 4: // flower
+        for (var i=0;i<6;i++){final a=i*math.pi/3; canvas.drawCircle(Offset(cx+math.cos(a)*r,cy+math.sin(a)*r),r*.7,line);} canvas.drawCircle(Offset(cx,cy),r*.6,line); canvas.drawLine(Offset(cx,cy+r*1.6),Offset(cx,cy+r*3),line);
+        break;
+      case 5: // house
+        canvas.drawRect(Rect.fromCenter(center: Offset(cx,cy+r*.4),width:r*3,height:r*2),line); canvas.drawPath(Path()..moveTo(cx-r*1.8,cy-r*.5)..lineTo(cx,cy-r*2)..lineTo(cx+r*1.8,cy-r*.5),line); canvas.drawRect(Rect.fromCenter(center: Offset(cx,cy+r*.8),width:r*.7,height:r*1.2),line);
+        break;
+      case 6: // butterfly
+        canvas.drawOval(Rect.fromCenter(center: Offset(cx-r*.7,cy),width:r*1.5,height:r*2.2),line); canvas.drawOval(Rect.fromCenter(center: Offset(cx+r*.7,cy),width:r*1.5,height:r*2.2),line); canvas.drawLine(Offset(cx,cy-r*1.4),Offset(cx,cy+r*1.5),line);
+        break;
+      case 7: // apple
+        canvas.drawCircle(Offset(cx-r*.5,cy),r*1.1,line); canvas.drawCircle(Offset(cx+r*.5,cy),r*1.1,line); canvas.drawLine(Offset(cx,cy-r),Offset(cx+r*.2,cy-r*2),line);
+        break;
+      case 8: // rocket
+        canvas.drawPath(Path()..moveTo(cx,cy-r*2)..quadraticBezierTo(cx+r*1.5,cy-r*.3,cx+r*.6,cy+r*1.6)..lineTo(cx-r*.6,cy+r*1.6)..quadraticBezierTo(cx-r*1.5,cy-r*.3,cx,cy-r*2)..close(),line); canvas.drawCircle(Offset(cx,cy-r*.2),r*.35,line);
+        break;
+      case 9: // ball
+        canvas.drawCircle(Offset(cx,cy),r*1.5,line); canvas.drawLine(Offset(cx-r,cy-r),Offset(cx+r,cy+r),line); canvas.drawLine(Offset(cx+r,cy-r),Offset(cx-r,cy+r),line);
+        break;
+      case 10: // sun
+        canvas.drawCircle(Offset(cx,cy),r,line); for(var i=0;i<10;i++){final a=i*math.pi/5; canvas.drawLine(Offset(cx+math.cos(a)*r*1.4,cy+math.sin(a)*r*1.4),Offset(cx+math.cos(a)*r*2.1,cy+math.sin(a)*r*2.1),line);}
+        break;
+      default: // bird
+        canvas.drawArc(Rect.fromCenter(center: Offset(cx-r*.45,cy),width:r*1.8,height:r*1.2),math.pi,math.pi,false,line); canvas.drawArc(Rect.fromCenter(center: Offset(cx+r*.45,cy),width:r*1.8,height:r*1.2),math.pi,math.pi,false,line);
+    }
+  }
+
   @override
-  bool shouldRepaint(covariant _DinoOutlinePainter oldDelegate) => false;
+  bool shouldRepaint(covariant _DinoOutlinePainter oldDelegate) => oldDelegate.kind != kind;
 }
 
 class Math {
