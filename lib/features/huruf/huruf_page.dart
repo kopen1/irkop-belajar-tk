@@ -34,7 +34,7 @@ class _HurufPageState extends State<HurufPage> {
 
   void _select(int index) {
     setState(() => _index = index);
-    audio.speak('Huruf ${_letters[index]}. ${_words[index]}');
+    _speakCurrent();
   }
 
   void _previous() {
@@ -58,25 +58,22 @@ class _HurufPageState extends State<HurufPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxWidth < 390;
+              final w = constraints.maxWidth;
+              final scale = (w / 868).clamp(0.70, 1.0);
+
               return Column(
                 children: [
-                  _header(compact),
+                  _header(w, scale),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        compact ? 10 : 16,
-                        10,
-                        compact ? 10 : 16,
-                        24,
-                      ),
+                      padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24),
                       child: Column(
                         children: [
-                          _lessonPanel(compact),
-                          const SizedBox(height: 14),
-                          _pager(compact),
-                          const SizedBox(height: 18),
-                          _alphabetPanel(compact),
+                          _lessonPanel(w, scale),
+                          SizedBox(height: 18 * scale),
+                          _pager(w, scale),
+                          SizedBox(height: 24 * scale),
+                          _alphabetPanel(w, scale),
                         ],
                       ),
                     ),
@@ -90,78 +87,105 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _header(bool compact) {
-    final side = compact ? 58.0 : 68.0;
+  Widget _header(double w, double scale) {
+    final side = w * .125;
+    final headerHeight = w * .19;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(compact ? 14 : 18, 12, compact ? 14 : 18, 6),
-      child: Row(
+    return SizedBox(
+      height: headerHeight,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          _roundButton(
-            size: side,
-            color: const Color(0xFFFFC62E),
-            icon: Icons.arrow_back_rounded,
-            onTap: () => Navigator.of(context).maybePop(),
+          Positioned(
+            left: w * .035,
+            top: (headerHeight - side) / 2,
+            child: _roundButton(
+              size: side,
+              color: const Color(0xFFFFC62E),
+              icon: Icons.arrow_back_rounded,
+              onTap: () => Navigator.of(context).maybePop(),
+            ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
+          Positioned(
+            right: w * .035,
+            top: (headerHeight - side) / 2,
+            child: _roundButton(
+              size: side,
+              color: const Color(0xFF2DCA43),
+              icon: Icons.music_note_rounded,
+              onTap: () => audio.speak('Belajar Huruf. Mengenal Huruf A sampai Z.'),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: w * .20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Belajar Huruf',
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: compact ? 31 : 38,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFFFFD82F),
-                    shadows: const [
-                      Shadow(
-                        color: Color(0xFF173A79),
-                        blurRadius: 2,
-                        offset: Offset(2, 3),
+                SizedBox(
+                  height: 54 * scale,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Belajar Huruf',
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 54 * scale,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFFFFD82F),
+                        shadows: const [
+                          Shadow(
+                            color: Color(0xFF173A79),
+                            blurRadius: 2,
+                            offset: Offset(2, 3),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'Mengenal Huruf A - Z',
-                  style: TextStyle(
-                    fontSize: compact ? 17 : 21,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0xFF174981),
-                        blurRadius: 2,
-                        offset: Offset(1, 2),
+                SizedBox(height: 2 * scale),
+                SizedBox(
+                  height: 30 * scale,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'Mengenal Huruf A - Z',
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 26 * scale,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        shadows: const [
+                          Shadow(
+                            color: Color(0xFF174981),
+                            blurRadius: 2,
+                            offset: Offset(1, 2),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 10),
-          _roundButton(
-            size: side,
-            color: const Color(0xFF2DCA43),
-            icon: Icons.music_note_rounded,
-            onTap: () => audio.speak('Belajar Huruf. Mengenal Huruf A sampai Z.'),
           ),
         ],
       ),
     );
   }
 
-  Widget _lessonPanel(bool compact) {
+  Widget _lessonPanel(double w, double scale) {
+    final panelHeight = w * .60;
+    final padding = w * .035;
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(compact ? 12 : 18),
+      height: panelHeight,
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF1D8),
-        borderRadius: BorderRadius.circular(34),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.85), width: 3),
+        borderRadius: BorderRadius.circular(34 * scale),
+        border: Border.all(color: Colors.white.withValues(alpha: .85), width: 3),
         boxShadow: const [
           BoxShadow(
             color: Color(0x330A3B67),
@@ -172,19 +196,17 @@ class _HurufPageState extends State<HurufPage> {
       ),
       child: Row(
         children: [
-          Expanded(child: _wordCard(compact)),
-          SizedBox(width: compact ? 10 : 16),
-          Expanded(child: _letterCard(compact)),
+          Expanded(child: _wordCard(scale)),
+          SizedBox(width: w * .025),
+          Expanded(child: _letterCard(scale)),
         ],
       ),
     );
   }
 
-  Widget _wordCard(bool compact) {
+  Widget _wordCard(double scale) {
     return Container(
-      height: compact ? 250 : 310,
-      padding: EdgeInsets.all(compact ? 12 : 18),
-      decoration: _whiteCardDecoration(),
+      decoration: _whiteCardDecoration(scale),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -193,18 +215,23 @@ class _HurufPageState extends State<HurufPage> {
             child: Text(
               _emoji[_index],
               key: ValueKey('emoji-$_index'),
-              style: TextStyle(fontSize: compact ? 92 : 120),
+              style: TextStyle(fontSize: 118 * scale),
             ),
           ),
-          SizedBox(height: compact ? 10 : 14),
-          Text(
-            _words[_index],
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: compact ? 26 : 34,
-              fontWeight: FontWeight.w900,
-              color: const Color(0xFF281A18),
+          SizedBox(height: 14 * scale),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8 * scale),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                _words[_index],
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 38 * scale,
+                  fontWeight: FontWeight.w900,
+                  color: const Color(0xFF281A18),
+                ),
+              ),
             ),
           ),
         ],
@@ -212,11 +239,9 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _letterCard(bool compact) {
+  Widget _letterCard(double scale) {
     return Container(
-      height: compact ? 250 : 310,
-      padding: EdgeInsets.all(compact ? 12 : 18),
-      decoration: _whiteCardDecoration(),
+      decoration: _whiteCardDecoration(scale),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -226,8 +251,8 @@ class _HurufPageState extends State<HurufPage> {
               _letters[_index],
               key: ValueKey('letter-$_index'),
               style: TextStyle(
-                fontSize: compact ? 128 : 165,
-                height: 0.9,
+                fontSize: 180 * scale,
+                height: .9,
                 fontWeight: FontWeight.w900,
                 color: const Color(0xFFFF2638),
                 shadows: const [
@@ -240,21 +265,21 @@ class _HurufPageState extends State<HurufPage> {
               ),
             ),
           ),
-          SizedBox(height: compact ? 24 : 30),
+          SizedBox(height: 28 * scale),
           Material(
             color: const Color(0xFF2DCA43),
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(28 * scale),
             elevation: 5,
             child: InkWell(
-              borderRadius: BorderRadius.circular(26),
+              borderRadius: BorderRadius.circular(28 * scale),
               onTap: _speakCurrent,
               child: SizedBox(
-                width: compact ? 104 : 124,
-                height: compact ? 58 : 68,
-                child: const Icon(
+                width: 130 * scale,
+                height: 72 * scale,
+                child: Icon(
                   Icons.volume_up_rounded,
                   color: Colors.white,
-                  size: 38,
+                  size: 42 * scale,
                 ),
               ),
             ),
@@ -264,10 +289,10 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  BoxDecoration _whiteCardDecoration() {
+  BoxDecoration _whiteCardDecoration(double scale) {
     return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.94),
-      borderRadius: BorderRadius.circular(30),
+      color: Colors.white.withValues(alpha: .94),
+      borderRadius: BorderRadius.circular(30 * scale),
       border: Border.all(color: const Color(0xFFF2E5D5), width: 2),
       boxShadow: const [
         BoxShadow(
@@ -279,11 +304,13 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _pager(bool compact) {
+  Widget _pager(double w, double scale) {
+    final button = w * .14;
+
     return Row(
       children: [
         _roundButton(
-          size: compact ? 82 : 96,
+          size: button,
           color: const Color(0xFFFFC62E),
           icon: Icons.arrow_back_ios_new_rounded,
           onTap: _previous,
@@ -292,12 +319,12 @@ class _HurufPageState extends State<HurufPage> {
           child: Center(
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: compact ? 24 : 30,
-                vertical: compact ? 14 : 17,
+                horizontal: 34 * scale,
+                vertical: 18 * scale,
               ),
               decoration: BoxDecoration(
                 color: const Color(0xFF124B7B),
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(28 * scale),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x330A3156),
@@ -310,7 +337,7 @@ class _HurufPageState extends State<HurufPage> {
                 '${_index + 1} / 26',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: compact ? 22 : 28,
+                  fontSize: 29 * scale,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -318,7 +345,7 @@ class _HurufPageState extends State<HurufPage> {
           ),
         ),
         _roundButton(
-          size: compact ? 82 : 96,
+          size: button,
           color: const Color(0xFFFFC62E),
           icon: Icons.arrow_forward_ios_rounded,
           onTap: _next,
@@ -327,13 +354,13 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _alphabetPanel(bool compact) {
+  Widget _alphabetPanel(double w, double scale) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(compact ? 14 : 20),
+      padding: EdgeInsets.all(20 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.96),
-        borderRadius: BorderRadius.circular(34),
+        color: Colors.white.withValues(alpha: .96),
+        borderRadius: BorderRadius.circular(34 * scale),
         boxShadow: const [
           BoxShadow(
             color: Color(0x330A3B67),
@@ -348,18 +375,16 @@ class _HurufPageState extends State<HurufPage> {
         itemCount: _letters.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 7,
-          crossAxisSpacing: compact ? 8 : 12,
-          mainAxisSpacing: compact ? 12 : 16,
-          childAspectRatio: 0.92,
+          crossAxisSpacing: 12 * scale,
+          mainAxisSpacing: 16 * scale,
+          childAspectRatio: .92,
         ),
-        itemBuilder: (context, index) {
-          return _letterTile(index, compact);
-        },
+        itemBuilder: (context, index) => _letterTile(index, scale),
       ),
     );
   }
 
-  Widget _letterTile(int index, bool compact) {
+  Widget _letterTile(int index, double scale) {
     const colors = [
       Color(0xFFFF3044), Color(0xFFFF8B0A), Color(0xFFFFC62E),
       Color(0xFF31C842), Color(0xFF2399D8), Color(0xFF4655D6),
@@ -372,18 +397,18 @@ class _HurufPageState extends State<HurufPage> {
 
     return Material(
       color: color,
-      borderRadius: BorderRadius.circular(compact ? 16 : 20),
+      borderRadius: BorderRadius.circular(20 * scale),
       elevation: selected ? 7 : 4,
       shadowColor: const Color(0x55072440),
       child: InkWell(
-        borderRadius: BorderRadius.circular(compact ? 16 : 20),
+        borderRadius: BorderRadius.circular(20 * scale),
         onTap: () => _select(index),
         child: Center(
           child: Text(
             _letters[index],
             style: TextStyle(
               color: Colors.white,
-              fontSize: compact ? 27 : 34,
+              fontSize: 36 * scale,
               fontWeight: FontWeight.w900,
               shadows: const [
                 Shadow(
@@ -419,7 +444,7 @@ class _HurufPageState extends State<HurufPage> {
           child: Icon(
             icon,
             color: Colors.white,
-            size: size * 0.54,
+            size: size * .54,
             shadows: const [
               Shadow(
                 color: Color(0x55000000),
