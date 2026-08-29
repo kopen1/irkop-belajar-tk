@@ -68,9 +68,14 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                   ),
                   child: Stack(children: [
                     if (progress >= points.length) const Center(child: Text('⭐', style: TextStyle(fontSize: 180))),
-                    for (var i = 0; i < points.length; i++) {
-                      Positioned(left: p(i).dx - 24, top: p(i).dy - 24, child: _dot(i + 1, i < progress, s)),
-                    }
+                    ...List.generate(
+                      points.length,
+                      (i) => Positioned(
+                        left: p(i).dx - 24,
+                        top: p(i).dy - 24,
+                        child: _dot(i + 1, i < progress, s),
+                      ),
+                    ),
                   ]),
                 ),
               ),
