@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../features/home/home_page.dart';
+import '../features/splash/splash_page.dart';
 
 class IrkopApp extends StatelessWidget {
   const IrkopApp({super.key});
@@ -8,7 +8,7 @@ class IrkopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'IRKOP Belajar TK',
+      title: 'Belajar TK',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -17,7 +17,7 @@ class IrkopApp extends StatelessWidget {
           seedColor: const Color(0xFF5EA8F5),
         ),
       ),
-      home: const HomePage(),
+      home: const SplashPage(),
     );
   }
 }
