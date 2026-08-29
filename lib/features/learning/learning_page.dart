@@ -338,9 +338,7 @@ class _LearningPageState extends State<LearningPage>
   }
 
   Widget _learn(LearningItem item) {
-    final background = widget.type == LearningType.warna
-        ? selectedColor.withValues(alpha: 0.45)
-        : Colors.white.withValues(alpha: 0.93);
+    final background = Colors.white.withValues(alpha: 0.94);
 
     final visualSize = widget.type == LearningType.hijaiyah ? 96.0 : 70.0;
 
@@ -358,37 +356,52 @@ class _LearningPageState extends State<LearningPage>
             ),
             child: Column(
               children: [
-                Text(
-                  item.visual,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: visualSize),
-                ),
+                if (widget.type == LearningType.warna)
+                  Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: selectedColor,
+                      borderRadius: BorderRadius.circular(26),
+                      border: Border.all(color: const Color(0xFF31536D), width: 3),
+                    ),
+                  )
+                else if (widget.type == LearningType.angka)
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(
+                      int.parse(item.title),
+                      (_) => const Text('⭐', style: TextStyle(fontSize: 42)),
+                    ),
+                  )
+                else
+                  Text(
+                    item.visual,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: visualSize),
+                  ),
                 const SizedBox(height: 12),
                 if (widget.type == LearningType.gambar)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 22,
-                      vertical: 10,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     decoration: BoxDecoration(
                       color: const Color(0xFFEAF6FF),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: const Color(0xFF9FD3F5),
-                        width: 2,
-                      ),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: const Color(0xFF9FD3F5), width: 2),
                     ),
                     child: Text(
                       item.title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 26,
+                        fontSize: 22,
                         fontWeight: FontWeight.w900,
                         color: Color(0xFF31536D),
                       ),
                     ),
                   )
-                else
+                else ...[
                   Text(
                     item.title,
                     textAlign: TextAlign.center,
@@ -398,11 +411,43 @@ class _LearningPageState extends State<LearningPage>
                       color: Color(0xFF31536D),
                     ),
                   ),
+                  if (widget.type == LearningType.hijaiyah) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      item.sound,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF55758C),
+                      ),
+                    ),
+                  ],
+                ],
                 const SizedBox(height: 10),
-                FilledButton.icon(
-                  onPressed: () => audio.speak(item.sound),
-                  icon: const Icon(Icons.volume_up_rounded),
-                  label: const Text('Dengarkan'),
+                const SizedBox(height: 2),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF5EA8F5),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed: () => audio.speak(item.sound),
+                    icon: const Icon(Icons.volume_up_rounded, size: 26),
+                    label: Text(
+                      widget.type == LearningType.hijaiyah
+                          ? 'Dengarkan ' + item.sound
+                          : 'Dengarkan',
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

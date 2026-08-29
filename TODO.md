@@ -160,3 +160,12 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
 - [x] Jangan mengandalkan file perbaikan sementara yang harus dibuat ulang saat build APK
 - [ ] Sebelum menandai pekerjaan selesai, verifikasi hasil visual/fungsi
 - [ ] Setiap pekerjaan baru ditambahkan ke checklist sebelum atau saat pengerjaan
+
+
+## Batch terbaru — audit visual belajar
+- [ ] Dunia Gambar: nama gambar tampil sebagai label/pill yang rapi dan proporsional
+- [ ] Dunia Hijaiyah: nama Latin (Alif, Ba, Ta, dst.) terlihat di bawah huruf Arab
+- [ ] Dunia Hijaiyah: tombol Dengarkan menyebut nama huruf yang sesuai
+- [ ] Dunia Angka: jumlah bintang membungkus rapi dan tidak overflow
+- [ ] Dunia Warna: warna aktif tampil sebagai panel warna besar dan jelas
+- [ ] Semua halaman belajar: tombol Dengarkan lebih besar dan mudah ditekan
