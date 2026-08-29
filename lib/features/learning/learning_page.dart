@@ -429,10 +429,9 @@ class _LearningPageState extends State<LearningPage>
                   ),
                   child: Text(
                     items[i].title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: widget.type == LearningType.warna ? 14 : 18,
-                      ),
                     ),
                   ),
                 ),
