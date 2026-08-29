@@ -26,7 +26,6 @@ class _KidHeaderState extends State<KidHeader> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 390;
-        final buttonSize = compact ? 52.0 : 62.0;
         final titleSize = compact ? 20.0 : 24.0;
         final subtitleSize = compact ? 13.0 : 16.0;
 
@@ -40,7 +39,7 @@ class _KidHeaderState extends State<KidHeader> {
         Expanded(
           child: Container(
             height: compact ? 82 : 92,
-            padding: const EdgeInsets.symmetric(horizontal: compact ? 12 : 18, vertical: compact ? 8 : 12),
+            padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 18, vertical: compact ? 8 : 12),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.94),
               borderRadius: BorderRadius.circular(28),
@@ -60,7 +59,7 @@ class _KidHeaderState extends State<KidHeader> {
                   widget.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: titleSize,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF31536D),
@@ -71,7 +70,7 @@ class _KidHeaderState extends State<KidHeader> {
                   widget.subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: subtitleSize,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF668398),
