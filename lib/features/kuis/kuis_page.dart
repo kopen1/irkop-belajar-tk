@@ -81,7 +81,8 @@ class _KuisPageState extends State<KuisPage> {
               const SizedBox(height: 16),
               Text(question.prompt, textAlign: TextAlign.center, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF17223B))),
               const SizedBox(height: 20),
-              Row(children: question.options.map((o) => Expanded(child: Padding(
+              Row(children: question.options.map((o) {
+                return Expanded(child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Material(color: Colors.white, borderRadius: BorderRadius.circular(22), elevation: 3, child: InkWell(
                   onTap: () => choose(o.$2),
@@ -90,8 +91,8 @@ class _KuisPageState extends State<KuisPage> {
                     Text(o.$1, style: const TextStyle(fontSize: 62)),
                     Text(o.$2, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
                   ])),
-                )),
-              )).toList()),
+                ));
+              }).toList()),
             ]),
           ),
         ),
