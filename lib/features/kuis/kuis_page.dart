@@ -237,7 +237,7 @@ class _KuisPageState extends State<KuisPage> {
                   ),
                 ),
 
-                const SizedBox(height: 18),
+                const SizedBox(height: 12),
 
                 Expanded(
                   child:
@@ -265,6 +265,13 @@ class _KuisPageState extends State<KuisPage> {
                                     .circular(
                               32,
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x220D405C),
+                                blurRadius: 12,
+                                offset: Offset(0, 6),
+                              ),
+                            ],
                           ),
                           child: Column(
                             children: [

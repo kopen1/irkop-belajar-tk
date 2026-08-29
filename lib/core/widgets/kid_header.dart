@@ -25,32 +25,23 @@ class _KidHeaderState extends State<KidHeader> {
 
     return Row(
       children: [
-        if (canPop)
-          _circle(
-            Icons.arrow_back_rounded,
-            () {
-              audio.click();
-              Navigator.of(context).maybePop();
-            },
-          ),
-
-        if (canPop) const SizedBox(width: 8),
-
+        if (canPop) _circle(Icons.arrow_back_rounded, () {
+          audio.click();
+          Navigator.of(context).maybePop();
+        }),
+        if (canPop) const SizedBox(width: 10),
         Expanded(
           child: Container(
-            height: 88,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 10,
-            ),
+            height: 92,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.94),
-              borderRadius: BorderRadius.circular(26),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 5),
+                  color: Color(0x300D405C),
+                  blurRadius: 14,
+                  offset: Offset(0, 6),
                 ),
               ],
             ),
@@ -63,18 +54,18 @@ class _KidHeaderState extends State<KidHeader> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF31536D),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Text(
                   widget.subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF668398),
                   ),
@@ -83,41 +74,28 @@ class _KidHeaderState extends State<KidHeader> {
             ),
           ),
         ),
-
-        const SizedBox(width: 8),
-
+        const SizedBox(width: 10),
         _circle(
-          audio.backgroundOn
-              ? Icons.music_note_rounded
-              : Icons.music_off_rounded,
-          () {
-            setState(audio.toggleBackground);
-          },
+          audio.backgroundOn ? Icons.music_note_rounded : Icons.music_off_rounded,
+          () => setState(audio.toggleBackground),
         ),
       ],
     );
   }
 
-  Widget _circle(
-    IconData icon,
-    VoidCallback onTap,
-  ) {
+  Widget _circle(IconData icon, VoidCallback onTap) {
     return Material(
       color: Colors.white.withValues(alpha: 0.95),
       shape: const CircleBorder(),
       elevation: 4,
-      shadowColor: Colors.black26,
+      shadowColor: const Color(0x330D405C),
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
         child: SizedBox(
-          width: 58,
-          height: 58,
-          child: Icon(
-            icon,
-            size: 28,
-            color: const Color(0xFF31536D),
-          ),
+          width: 62,
+          height: 62,
+          child: Icon(icon, size: 30, color: const Color(0xFF31536D)),
         ),
       ),
     );

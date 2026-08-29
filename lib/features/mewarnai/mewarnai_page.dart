@@ -72,13 +72,13 @@ class _MewarnaiPageState
                     duration: const Duration(
                       milliseconds: 250,
                     ),
-                    width: 230,
-                    height: 230,
+                    width: 250,
+                    height: 250,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: painted
-                          ? color
-                          : Colors.white,
+                          ? color.withValues(alpha: 0.82)
+                          : Colors.white.withValues(alpha: 0.94),
                       borderRadius:
                           BorderRadius.circular(
                         100,
@@ -120,8 +120,8 @@ class _MewarnaiPageState
                           color: c,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white,
-                            width: 3,
+                            color: c == color ? const Color(0xFF31536D) : Colors.white,
+                            width: c == color ? 5 : 3,
                           ),
                         ),
                       ),

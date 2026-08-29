@@ -16,56 +16,23 @@ class KidBackground extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF74CFFF),
-            Color(0xFFC8F2FF),
-            Color(0xFFFFF8D5),
-            Color(0xFFA9E59B),
+            Color(0xFF63B8E6),
+            Color(0xFFB9E8F7),
+            Color(0xFFFFF6C9),
+            Color(0xFFA8E39B),
           ],
+          stops: [0.0, 0.42, 0.72, 1.0],
         ),
       ),
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          const Positioned(
-            top: 35,
-            left: 15,
-            child: Text(
-              '☁️',
-              style: TextStyle(fontSize: 50),
-            ),
-          ),
-          const Positioned(
-            top: 80,
-            right: 20,
-            child: Text(
-              '☁️',
-              style: TextStyle(fontSize: 42),
-            ),
-          ),
-          const Positioned(
-            top: 135,
-            right: 40,
-            child: Text(
-              '🌈',
-              style: TextStyle(fontSize: 48),
-            ),
-          ),
-          const Positioned(
-            bottom: 8,
-            left: 10,
-            child: Text(
-              '🌼 🌷 🌸',
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          const Positioned(
-            bottom: 8,
-            right: 10,
-            child: Text(
-              '🌷 🌼 🌸',
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          SafeArea(child: child),
+          const Positioned(top: 42, left: 16, child: Text('☁️', style: TextStyle(fontSize: 48))),
+          const Positioned(top: 112, right: 18, child: Text('☁️', style: TextStyle(fontSize: 40))),
+          const Positioned(top: 150, right: 42, child: Text('🌈', style: TextStyle(fontSize: 58))),
+          const Positioned(bottom: 10, left: 10, child: Text('🌼 🌷 🌸', style: TextStyle(fontSize: 24))),
+          const Positioned(bottom: 10, right: 10, child: Text('🌷 🌼 🌸', style: TextStyle(fontSize: 24))),
+          child,
         ],
       ),
     );

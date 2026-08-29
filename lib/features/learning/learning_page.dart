@@ -418,8 +418,8 @@ class _LearningPageState extends State<LearningPage>
                   audio.speak(items[i].sound);
                 },
                 child: Container(
-                  width: 50,
-                  height: 50,
+                  width: widget.type == LearningType.warna ? 112 : 50,
+                  height: widget.type == LearningType.warna ? 56 : 50,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: i == index
@@ -431,7 +431,8 @@ class _LearningPageState extends State<LearningPage>
                     items[i].title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w900,
-                      fontSize: 18,
+                      fontSize: widget.type == LearningType.warna ? 14 : 18,
+                      ),
                     ),
                   ),
                 ),
@@ -451,7 +452,7 @@ class _LearningPageState extends State<LearningPage>
         crossAxisCount: 2,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
-        childAspectRatio: 0.88,
+        childAspectRatio: 0.96,
       ),
       itemBuilder: (context, i) {
         final visualItem = items[i];
