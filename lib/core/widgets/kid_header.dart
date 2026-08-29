@@ -21,112 +21,101 @@ class _KidHeaderState extends State<KidHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 14, 18, 8),
-        child: Row(
-          children: [
-            if (Navigator.of(context).canPop())
-              _roundButton(
-                icon: Icons.arrow_back_rounded,
-                onTap: () {
-                  audio.click();
-                  Navigator.of(context).maybePop();
-                },
-              ),
+    final canPop = Navigator.of(context).canPop();
 
-            if (Navigator.of(context).canPop())
-              const SizedBox(width: 12),
+    return Row(
+      children: [
+        if (canPop)
+          _circle(
+            Icons.arrow_back_rounded,
+            () {
+              audio.click();
+              Navigator.of(context).maybePop();
+            },
+          ),
 
-            Expanded(
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 92),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 14,
+        if (canPop) const SizedBox(width: 10),
+
+        Expanded(
+          child: Container(
+            height: 104,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 5),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.93),
-                  borderRadius: BorderRadius.circular(34),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.85),
-                    width: 2,
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF31536D),
                   ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x33000000),
-                      blurRadius: 16,
-                      offset: Offset(0, 7),
-                    ),
-                  ],
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 27,
-                        fontWeight: FontWeight.w900,
-                        color: Color(0xFF31536D),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF668398),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 4),
+                Text(
+                  widget.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF668398),
+                  ),
                 ),
-              ),
+              ],
             ),
-
-            const SizedBox(width: 12),
-
-            _roundButton(
-              icon: audio.backgroundOn
-                  ? Icons.music_note_rounded
-                  : Icons.music_off_rounded,
-              onTap: () {
-                setState(() {
-                  audio.toggleBackground();
-                });
-              },
-            ),
-          ],
+          ),
         ),
-      ),
+
+        const SizedBox(width: 10),
+
+        _circle(
+          audio.backgroundOn
+              ? Icons.music_note_rounded
+              : Icons.music_off_rounded,
+          () {
+            setState(audio.toggleBackground);
+          },
+        ),
+      ],
     );
   }
 
-  Widget _roundButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+  Widget _circle(
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return Material(
-      color: Colors.white.withValues(alpha: 0.94),
+      color: Colors.white.withValues(alpha: 0.95),
       shape: const CircleBorder(),
-      elevation: 5,
-      shadowColor: Colors.black38,
+      elevation: 4,
+      shadowColor: Colors.black26,
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
         child: SizedBox(
-          width: 72,
-          height: 72,
+          width: 70,
+          height: 70,
           child: Icon(
             icon,
-            size: 34,
+            size: 32,
             color: const Color(0xFF31536D),
           ),
         ),

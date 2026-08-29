@@ -294,18 +294,29 @@ class _LearningPageState extends State<LearningPage>
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
               child: KidHeader(
                 title: title,
                 subtitle: 'Belajar dan bermain bersama',
               ),
             ),
-            TabBar(
-              controller: tabs,
-              tabs: const [
-                Tab(text: '📚 Belajar'),
-                Tab(text: '🎮 Mini Game'),
-              ],
+            SizedBox(
+              height: 58,
+              child: TabBar(
+                controller: tabs,
+                labelColor: const Color(0xFF31536D),
+                unselectedLabelColor: const Color(0xFF55758C),
+                indicatorColor: const Color(0xFF31536D),
+                indicatorWeight: 4,
+                labelStyle: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+                tabs: const [
+                  Tab(text: '📚 Belajar'),
+                  Tab(text: '🎮 Mini Game'),
+                ],
+              ),
             ),
             Expanded(
               child: TabBarView(
