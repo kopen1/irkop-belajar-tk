@@ -33,8 +33,10 @@ class AudioService {
   }
 
   Future<void> click() async {
+    await init();
     try {
       await _tts.stop();
+      await _tts.speak('Klik');
     } catch (_) {}
   }
 

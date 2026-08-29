@@ -22,6 +22,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
   - Komentar:
 
 ### 2. Dunia Gambar
+- [ ] PERUBAHAN TERBARU: label nama gambar diperhalus menjadi badge agar lebih rapi
+  - Komentar:
 - [ ] PERUBAHAN TERBARU: Dunia Gambar kembali ke mode belajar per item dengan tombol Sebelumnya/Selanjutnya
   - Komentar:
 - [X] Di HP, 1 baris berisi tepat 2 visual
@@ -42,6 +44,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
   - Komentar:
 
 ### 4. Header semua halaman
+- [ ] PERUBAHAN TERBARU: tombol musik memberi umpan balik suara aktif/dimatikan
+  - Komentar:
 - [ ] PERUBAHAN TERBARU: tombol Sebelumnya/Selanjutnya diperindah dengan warna, ikon, gradient, dan shadow
   - Komentar:
 - [X] Tombol kembali berfungsi
@@ -54,6 +58,8 @@ Checklist proyek ini dipakai sebagai patokan kerja. Setiap pekerjaan yang benar-
   - Komentar:
 
 ### 5. Dunia Huruf, Angka, dan Hijaiyah
+- [ ] PERUBAHAN TERBARU: audio Hijaiyah harus menyebut nama huruf (Alif, Ba, Ta, dst.), bukan mengulang teks Huruf Hijaiyah
+  - Komentar:
 - [ ] Grid dan kartu tampil rapi
   - Komentar:
 - [ ] Visual/teks mudah dibaca

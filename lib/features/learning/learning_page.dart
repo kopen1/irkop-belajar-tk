@@ -101,43 +101,43 @@ class _LearningPageState extends State<LearningPage>
 
       case LearningType.hijaiyah:
         const letters = [
-          'ا',
-          'ب',
-          'ت',
-          'ث',
-          'ج',
-          'ح',
-          'خ',
-          'د',
-          'ذ',
-          'ر',
-          'ز',
-          'س',
-          'ش',
-          'ص',
-          'ض',
-          'ط',
-          'ظ',
-          'ع',
-          'غ',
-          'ف',
-          'ق',
-          'ك',
-          'ل',
-          'م',
-          'ن',
-          'و',
-          'ه',
-          'لا',
-          'ي',
+          ['ا', 'Alif'],
+          ['ب', 'Ba'],
+          ['ت', 'Ta'],
+          ['ث', 'Tsa'],
+          ['ج', 'Jim'],
+          ['ح', 'Ha'],
+          ['خ', 'Kha'],
+          ['د', 'Dal'],
+          ['ذ', 'Dzal'],
+          ['ر', 'Ra'],
+          ['ز', 'Zai'],
+          ['س', 'Sin'],
+          ['ش', 'Syin'],
+          ['ص', 'Shad'],
+          ['ض', 'Dhad'],
+          ['ط', 'Tha'],
+          ['ظ', 'Zha'],
+          ['ع', 'Ain'],
+          ['غ', 'Ghain'],
+          ['ف', 'Fa'],
+          ['ق', 'Qaf'],
+          ['ك', 'Kaf'],
+          ['ل', 'Lam'],
+          ['م', 'Mim'],
+          ['ن', 'Nun'],
+          ['و', 'Wau'],
+          ['ه', 'Ha'],
+          ['لا', 'Lam Alif'],
+          ['ي', 'Ya'],
         ];
 
         return letters
             .map(
-              (letter) => LearningItem(
-                title: letter,
-                visual: letter,
-                sound: 'Huruf Hijaiyah $letter',
+              (item) => LearningItem(
+                title: item[0],
+                visual: item[0],
+                sound: item[1],
               ),
             )
             .toList();
@@ -364,15 +364,40 @@ class _LearningPageState extends State<LearningPage>
                   style: TextStyle(fontSize: visualSize),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  item.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 42,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF31536D),
+                if (widget.type == LearningType.gambar)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 22,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAF6FF),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: const Color(0xFF9FD3F5),
+                        width: 2,
+                      ),
+                    ),
+                    child: Text(
+                      item.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF31536D),
+                      ),
+                    ),
+                  )
+                else
+                  Text(
+                    item.title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF31536D),
+                    ),
                   ),
-                ),
                 const SizedBox(height: 10),
                 FilledButton.icon(
                   onPressed: () => audio.speak(item.sound),

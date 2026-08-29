@@ -83,7 +83,13 @@ class _KidHeaderState extends State<KidHeader> {
         const SizedBox(width: 10),
         _circle(
           audio.backgroundOn ? Icons.music_note_rounded : Icons.music_off_rounded,
-          () => setState(audio.toggleBackground),
+          () async {
+            audio.toggleBackground();
+            setState(() {});
+            await audio.speak(
+              audio.backgroundOn ? 'Suara aktif' : 'Suara dimatikan',
+            );
+          },
         ),
       ],
     );
