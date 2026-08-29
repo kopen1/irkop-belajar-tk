@@ -70,7 +70,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
       drag = null;
       showSuccess = false;
     });
-    audio.speak('Mulai gambar \${levels[index].name}. Tarik garis sesuai urutan nomor.');
+    audio.speak('Mulai gambar ${levels[index].name}. Tarik garis sesuai urutan nomor.');
   }
 
   void _nextLevel() {
@@ -84,7 +84,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
       showSuccess = true;
     });
     await audio.correct();
-    await audio.speak('Hebat! \${level.name} selesai.');
+    await audio.speak('Hebat! ${level.name} selesai.');
   }
 
   @override
@@ -110,7 +110,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                             borderRadius: BorderRadius.circular(22 * s),
                           ),
                           child: Text(
-                            'Tarik garis dari titik \$progress ke titik \${progress + 1}',
+                            'Tarik garis dari titik $progress ke titik ${progress + 1}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 20 * s, fontWeight: FontWeight.w900, color: const Color(0xFF28354D)),
                           ),
@@ -234,7 +234,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                     Text(levels[i].icon, style: TextStyle(fontSize: 24 * s)),
                     SizedBox(width: 5 * s),
                     Text(
-                      '\${i + 1}',
+                      '${i + 1}',
                       style: TextStyle(
                         fontSize: 18 * s,
                         fontWeight: FontWeight.w900,
@@ -274,7 +274,7 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
                   SizedBox(height: 4 * s),
                   Text('Hebat!', style: TextStyle(color: const Color(0xFF159A35), fontSize: 30 * s, fontWeight: FontWeight.w900)),
                   SizedBox(height: 6 * s),
-                  Text('\${level.name} selesai!', textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFF26324A), fontSize: 17 * s, fontWeight: FontWeight.w800)),
+                  Text('${level.name} selesai!', textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFF26324A), fontSize: 17 * s, fontWeight: FontWeight.w800)),
                   SizedBox(height: 16 * s),
                   SizedBox(
                     width: double.infinity,
