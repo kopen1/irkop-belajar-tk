@@ -125,25 +125,41 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
       ),
       SizedBox(height: 7 * s),
       AspectRatio(
-    aspectRatio: 1.18,
-    child: Container(
-    width: double.infinity,
-    padding: EdgeInsets.all(14 * s),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .96),
-      borderRadius: BorderRadius.circular(30 * s),
-      border: Border.all(color: const Color(0xFFEAF2F7), width: 3),
-      boxShadow: const [BoxShadow(color: Color(0x330D405C), blurRadius: 12, offset: Offset(0, 5))],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(22 * s),
-      child: Stack(
-        children: [
-          Positioned.fill(child: CustomPaint(painter: _DinoOutlinePainter(kind: drawingIndex))),
-          Positioned.fill(child: PaintingCanvas(color: eraser ? Colors.white : selected, clearSignal: clearSignal)),
-        ],
-      ),
-    ),
+        aspectRatio: 1.18,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(14 * s),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: .96),
+            borderRadius: BorderRadius.circular(30 * s),
+            border: Border.all(color: const Color(0xFFEAF2F7), width: 3),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x330D405C),
+                blurRadius: 12,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22 * s),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: _DinoOutlinePainter(kind: drawingIndex),
+                  ),
+                ),
+                Positioned.fill(
+                  child: PaintingCanvas(
+                    color: eraser ? Colors.white : selected,
+                    clearSignal: clearSignal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     ],
   );
