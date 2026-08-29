@@ -283,15 +283,6 @@ class _KuisPageState extends State<KuisPage> {
                         child: Icon(Icons.close_rounded, color: Colors.white, size: 30),
                       ),
                     ),
-                  if (selectedWrong)
-                    const Positioned(
-                      top: -20,
-                      child: CircleAvatar(
-                        radius: 22,
-                        backgroundColor: Color(0xFFE4544D),
-                        child: Icon(Icons.close_rounded, color: Colors.white, size: 30),
-                      ),
-                    ),
                   if (selectedCorrect)
                     const Positioned(
                       top: -20,
@@ -337,7 +328,31 @@ class _KuisPageState extends State<KuisPage> {
       ),
       child: Row(
         children: [
-          Text(ok ? '🦖' : '🦖💧', style: const TextStyle(fontSize: 64)),
+          SizedBox(
+            width: 118,
+            height: 150,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/quiz_dino_happy.jpg',
+                  fit: BoxFit.contain,
+                ),
+                if (!ok) ...[
+                  const Positioned(
+                    top: 52,
+                    left: 42,
+                    child: Icon(Icons.water_drop_rounded, color: Color(0xFF4DB8FF), size: 24),
+                  ),
+                  const Positioned(
+                    top: 60,
+                    right: 38,
+                    child: Icon(Icons.water_drop_rounded, color: Color(0xFF4DB8FF), size: 20),
+                  ),
+                ],
+              ],
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
