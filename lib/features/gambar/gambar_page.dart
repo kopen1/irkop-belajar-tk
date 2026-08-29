@@ -206,7 +206,7 @@ class _GambarPageState extends State<GambarPage> {
                 ),
                 child: Center(
                   child: Text(
-                    categoryItem.$1 + ' ' + categoryItem.$2,
+                    '${categoryItem.$1} ${categoryItem.$2}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -288,7 +288,7 @@ class _GambarPageState extends State<GambarPage> {
                   ],
                 ),
                 child: Text(
-                  (page + 1).toString() + ' / ' + totalPages.toString(),
+                  '${page + 1} / $totalPages',
                   style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w900),
                 ),
               ),
