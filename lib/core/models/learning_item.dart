@@ -1,19 +1,11 @@
 class LearningItem {
   final String title;
-  final String subtitle;
   final String visual;
-  final String? sound;
-  final String? category;
-  final String? colorHex;
+  final String sound;
 
   const LearningItem({
     required this.title,
-    required this.subtitle,
     required this.visual,
-    this.sound,
-    this.category,
-    this.colorHex,
+    required this.sound,
   });
-
-  String get speakText => sound ?? '$title. $subtitle';
 }

@@ -8,17 +8,14 @@ class AudioService {
   final FlutterTts _tts = FlutterTts();
 
   bool _initialized = false;
-  bool _backgroundOn = true;
-
-  bool get backgroundOn => _backgroundOn;
 
   Future<void> init() async {
     if (_initialized) return;
 
     await _tts.setLanguage('id-ID');
-    await _tts.setSpeechRate(0.85);
+    await _tts.setSpeechRate(0.72);
     await _tts.setVolume(1.0);
-    await _tts.setPitch(1.05);
+    await _tts.setPitch(1.08);
     await _tts.awaitSpeakCompletion(false);
 
     _initialized = true;
@@ -35,12 +32,6 @@ class AudioService {
     } catch (_) {}
   }
 
-  Future<void> click() async {}
-
-  void toggleBackground() {
-    _backgroundOn = !_backgroundOn;
-  }
-
   Future<void> question(String text) async {
     await speak(text);
   }
@@ -52,6 +43,14 @@ class AudioService {
   Future<void> wrong() async {
     await speak('Belum tepat. Coba lagi ya.');
   }
+
+  Future<void> click() async {
+    await init();
+  }
+
+  bool get backgroundOn => false;
+
+  void toggleBackground() {}
 
   Future<void> stop() async {
     try {

@@ -7,16 +7,20 @@ import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../core/widgets/kid_header.dart';
 
+enum LearningType {
+  huruf,
+  angka,
+  hijaiyah,
+  gambar,
+  warna,
+}
+
 class LearningPage extends StatefulWidget {
-  final String title;
-  final String subtitle;
-  final List<LearningItem> items;
+  final LearningType type;
 
   const LearningPage({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.items,
+    required this.type,
   });
 
   @override
@@ -28,35 +32,187 @@ class _LearningPageState extends State<LearningPage>
   final audio = AudioService.instance;
   final random = Random();
 
-  late final TabController tabs;
+  late TabController tabs;
 
   int index = 0;
   int score = 0;
 
-  late LearningItem gameCorrect;
-  late List<LearningItem> gameOptions;
+  List<LearningItem> get items {
+    switch (widget.type) {
+      case LearningType.huruf:
+        const examples = [
+          '🍎 Apel',
+          '⚽ Bola',
+          '🐊 Cicak',
+          '🦆 Bebek',
+          '🐘 Gajah',
+          '🌸 Bunga',
+          '🐱 Kucing',
+          '🐟 Ikan',
+          '🌞 Matahari',
+          '🚗 Mobil',
+          '🍌 Pisang',
+          '🏠 Rumah',
+          '⭐ Bintang',
+          '🌈 Pelangi',
+          '🦁 Singa',
+          '🐼 Panda',
+          '🐰 Kelinci',
+          '🐮 Sapi',
+          '🐢 Kura-kura',
+          '🌷 Bunga',
+          '🍇 Anggur',
+          '🐯 Harimau',
+          '🍉 Semangka',
+          '🎁 Hadiah',
+          '🚀 Roket',
+          '🦓 Zebra',
+        ];
 
-  bool get isColorMode {
-    const colorNames = {
-      'Merah',
-      'Biru',
-      'Kuning',
-      'Hijau',
-      'Ungu',
-      'Oranye',
-      'Merah Muda',
-      'Cokelat',
-      'Putih',
-      'Hitam',
-    };
+        return List.generate(
+          26,
+          (i) {
+            final letter = String.fromCharCode(65 + i);
 
-    return widget.items.isNotEmpty &&
-        colorNames.contains(widget.items.first.title);
+            return LearningItem(
+              title: letter,
+              visual: examples[i],
+              sound: 'Huruf $letter',
+            );
+          },
+        );
+
+      case LearningType.angka:
+        return List.generate(
+          10,
+          (i) {
+            final number = i + 1;
+
+            return LearningItem(
+              title: '$number',
+              visual: List.filled(number, '⭐').join(' '),
+              sound: 'Angka $number',
+            );
+          },
+        );
+
+      case LearningType.hijaiyah:
+        const letters = [
+          'ا',
+          'ب',
+          'ت',
+          'ث',
+          'ج',
+          'ح',
+          'خ',
+          'د',
+          'ذ',
+          'ر',
+          'ز',
+          'س',
+          'ش',
+          'ص',
+          'ض',
+          'ط',
+          'ظ',
+          'ع',
+          'غ',
+          'ف',
+          'ق',
+          'ك',
+          'ل',
+          'م',
+          'ن',
+          'و',
+          'ه',
+          'لا',
+          'ي',
+        ];
+
+        return letters
+            .map(
+              (letter) => LearningItem(
+                title: letter,
+                visual: '🕌',
+                sound: 'Huruf Hijaiyah $letter',
+              ),
+            )
+            .toList();
+
+      case LearningType.gambar:
+        const data = [
+          ['🐱', 'Kucing'],
+          ['🐶', 'Anjing'],
+          ['🐘', 'Gajah'],
+          ['🦁', 'Singa'],
+          ['🐟', 'Ikan'],
+          ['🍎', 'Apel'],
+          ['🍌', 'Pisang'],
+          ['🍊', 'Jeruk'],
+          ['🍇', 'Anggur'],
+          ['🍉', 'Semangka'],
+          ['🚗', 'Mobil'],
+          ['🚌', 'Bus'],
+          ['🚆', 'Kereta'],
+          ['✈️', 'Pesawat'],
+          ['🏠', 'Rumah'],
+          ['📚', 'Buku'],
+          ['⏰', 'Jam'],
+          ['⚽', 'Bola'],
+        ];
+
+        return data
+            .map(
+              (item) => LearningItem(
+                title: item[1],
+                visual: item[0],
+                sound: item[1],
+              ),
+            )
+            .toList();
+
+      case LearningType.warna:
+        const data = [
+          ['🔴', 'Merah'],
+          ['🔵', 'Biru'],
+          ['🟡', 'Kuning'],
+          ['🟢', 'Hijau'],
+          ['🟣', 'Ungu'],
+          ['🟠', 'Oranye'],
+          ['🩷', 'Merah Muda'],
+          ['🟤', 'Cokelat'],
+          ['⚪', 'Putih'],
+          ['⚫', 'Hitam'],
+        ];
+
+        return data
+            .map(
+              (item) => LearningItem(
+                title: item[1],
+                visual: item[0],
+                sound: item[1],
+              ),
+            )
+            .toList();
+    }
+  }
+
+  String get title {
+    switch (widget.type) {
+      case LearningType.huruf:
+        return 'Dunia Huruf 🔤';
+      case LearningType.angka:
+        return 'Dunia Angka 🔢';
+      case LearningType.hijaiyah:
+        return 'Dunia Hijaiyah 🕌';
+      case LearningType.gambar:
+        return 'Dunia Gambar 🐱';
+      case LearningType.warna:
+        return 'Dunia Warna 🎨';
+    }
   }
 
   Color get selectedColor {
-    final title = widget.items[index].title;
-
     const colors = {
       'Merah': Color(0xFFFF6B6B),
       'Biru': Color(0xFF6CA8FF),
@@ -70,7 +226,7 @@ class _LearningPageState extends State<LearningPage>
       'Hitam': Color(0xFF424242),
     };
 
-    return colors[title] ?? Colors.transparent;
+    return colors[items[index].title] ?? Colors.transparent;
   }
 
   @override
@@ -82,13 +238,9 @@ class _LearningPageState extends State<LearningPage>
       vsync: this,
     );
 
-    _newQuestion();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.items.isNotEmpty) {
-        audio.speak(widget.items[index].sound);
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => audio.speak(items[index].sound),
+    );
   }
 
   @override
@@ -97,58 +249,25 @@ class _LearningPageState extends State<LearningPage>
     super.dispose();
   }
 
-  void _newQuestion() {
-    if (widget.items.isEmpty) return;
-
-    gameCorrect = widget.items[
-      random.nextInt(widget.items.length)
-    ];
-
-    final wrong = [...widget.items]
-      ..removeWhere(
-        (item) => item.title == gameCorrect.title,
-      )
-      ..shuffle(random);
-
-    gameOptions = [
-      gameCorrect,
-      ...wrong.take(3),
-    ]..shuffle(random);
-  }
-
   void next() {
-    if (widget.items.isEmpty) return;
-
     setState(() {
-      index = (index + 1) % widget.items.length;
+      index = (index + 1) % items.length;
     });
 
-    audio.speak(widget.items[index].sound);
+    audio.speak(items[index].sound);
   }
 
   void previous() {
-    if (widget.items.isEmpty) return;
-
     setState(() {
-      index =
-          (index - 1 + widget.items.length) %
-          widget.items.length;
+      index = (index - 1 + items.length) % items.length;
     });
 
-    audio.speak(widget.items[index].sound);
+    audio.speak(items[index].sound);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.items.isEmpty) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Belum ada materi'),
-        ),
-      );
-    }
-
-    final item = widget.items[index];
+    final item = items[index];
 
     return Scaffold(
       body: KidBackground(
@@ -157,21 +276,17 @@ class _LearningPageState extends State<LearningPage>
             Padding(
               padding: const EdgeInsets.all(14),
               child: KidHeader(
-                title: widget.title,
-                subtitle: widget.subtitle,
+                title: title,
+                subtitle: 'Belajar dan bermain bersama',
               ),
             ),
-
             TabBar(
               controller: tabs,
-              labelColor: const Color(0xFF31536D),
-              indicatorColor: const Color(0xFFFFB703),
               tabs: const [
                 Tab(text: '📚 Belajar'),
                 Tab(text: '🎮 Mini Game'),
               ],
             ),
-
             Expanded(
               child: TabBarView(
                 controller: tabs,
@@ -188,124 +303,82 @@ class _LearningPageState extends State<LearningPage>
   }
 
   Widget _learn(LearningItem item) {
-    final background = isColorMode
+    final background = widget.type == LearningType.warna
         ? selectedColor.withValues(alpha: 0.45)
         : Colors.white.withValues(alpha: 0.93);
-
-    final titleColor =
-        item.title == 'Hitam'
-            ? Colors.white
-            : const Color(0xFF31536D);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(18),
       child: Column(
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 300),
             width: double.infinity,
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
               color: background,
               borderRadius: BorderRadius.circular(36),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.7),
-                width: 3,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 5),
-                ),
-              ],
             ),
             child: Column(
               children: [
                 Text(
                   item.visual,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: isColorMode ? 110 : 90,
-                  ),
+                  style: const TextStyle(fontSize: 80),
                 ),
-
                 const SizedBox(height: 12),
-
                 Text(
                   item.title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.w900,
-                    color: titleColor,
+                    color: Color(0xFF31536D),
                   ),
                 ),
-
                 const SizedBox(height: 14),
-
                 FilledButton.icon(
-                  onPressed: () {
-                    audio.speak(item.sound);
-                  },
-                  icon: const Icon(
-                    Icons.volume_up_rounded,
-                  ),
-                  label: const Text(
-                    'Dengarkan',
-                  ),
+                  onPressed: () => audio.speak(item.sound),
+                  icon: const Icon(Icons.volume_up_rounded),
+                  label: const Text('Dengarkan'),
                 ),
               ],
             ),
           ),
-
           const SizedBox(height: 20),
-
           Row(
             children: [
               Expanded(
                 child: FilledButton(
                   onPressed: previous,
-                  child: const Text(
-                    '⬅ Sebelumnya',
-                  ),
+                  child: const Text('⬅ Sebelumnya'),
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: FilledButton(
                   onPressed: next,
-                  child: const Text(
-                    'Selanjutnya ➡',
-                  ),
+                  child: const Text('Selanjutnya ➡'),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
           Wrap(
             spacing: 10,
             runSpacing: 10,
             alignment: WrapAlignment.center,
             children: List.generate(
-              widget.items.length,
+              items.length,
               (i) => GestureDetector(
                 onTap: () {
                   setState(() {
                     index = i;
                   });
 
-                  audio.speak(
-                    widget.items[i].sound,
-                  );
+                  audio.speak(items[i].sound);
                 },
-                child: AnimatedContainer(
-                  duration:
-                      const Duration(milliseconds: 150),
+                child: Container(
                   width: 54,
                   height: 54,
                   alignment: Alignment.center,
@@ -313,22 +386,13 @@ class _LearningPageState extends State<LearningPage>
                     color: i == index
                         ? const Color(0xFFFFD65C)
                         : Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(16),
-                    border: Border.all(
-                      color: i == index
-                          ? const Color(0xFFFFB703)
-                          : const Color(0xFFD6E4EE),
-                      width: 2,
-                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
-                    widget.items[i].title,
-                    textAlign: TextAlign.center,
+                    items[i].title,
                     style: const TextStyle(
-                      fontWeight:
-                          FontWeight.w900,
-                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
                     ),
                   ),
                 ),
@@ -341,6 +405,17 @@ class _LearningPageState extends State<LearningPage>
   }
 
   Widget _game() {
+    final correct = items[random.nextInt(items.length)];
+
+    final wrong = [...items]
+      ..removeWhere((item) => item.title == correct.title)
+      ..shuffle(random);
+
+    final options = [
+      correct,
+      ...wrong.take(3),
+    ]..shuffle(random);
+
     return StatefulBuilder(
       builder: (context, setGameState) {
         return SingleChildScrollView(
@@ -355,85 +430,47 @@ class _LearningPageState extends State<LearningPage>
                   color: Color(0xFF31536D),
                 ),
               ),
-
               const SizedBox(height: 18),
-
-              AnimatedSwitcher(
-                duration:
-                    const Duration(milliseconds: 180),
-                child: Text(
-                  gameCorrect.visual,
-                  key: ValueKey(
-                    gameCorrect.title,
-                  ),
-                  style: const TextStyle(
-                    fontSize: 100,
-                  ),
-                ),
+              Text(
+                correct.visual,
+                style: const TextStyle(fontSize: 90),
               ),
-
               const SizedBox(height: 12),
-
-              FilledButton.icon(
+              FilledButton(
                 onPressed: () {
-                  audio.question(
-                    'Mana ${gameCorrect.title}?',
-                  );
+                  audio.question('Mana ${correct.title}?');
                 },
-                icon: const Icon(
-                  Icons.volume_up_rounded,
-                ),
-                label: const Text(
-                  'Dengarkan Pertanyaan',
-                ),
+                child: const Text('🔊 Dengarkan Pertanyaan'),
               ),
-
               const SizedBox(height: 18),
-
-              ...gameOptions.map(
+              ...options.map(
                 (option) => Padding(
-                  padding:
-                      const EdgeInsets.only(
-                    bottom: 12,
-                  ),
+                  padding: const EdgeInsets.only(bottom: 12),
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () async {
-                        if (option.title ==
-                            gameCorrect.title) {
+                        if (option.title == correct.title) {
+                          setGameState(() => score++);
                           await audio.correct();
 
-                          if (!mounted) return;
-
-                          setGameState(() {
-                            score++;
-                            _newQuestion();
-                          });
+                          if (mounted) {
+                            setState(() {});
+                          }
                         } else {
                           await audio.wrong();
                         }
                       },
-                      child: Text(
-                        option.title,
-                        style: const TextStyle(
-                          fontWeight:
-                              FontWeight.w800,
-                        ),
-                      ),
+                      child: Text(option.title),
                     ),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 8),
-
               Text(
                 '⭐ Skor: $score',
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFF31536D),
                 ),
               ),
             ],
