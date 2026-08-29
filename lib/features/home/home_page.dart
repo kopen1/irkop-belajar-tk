@@ -146,11 +146,7 @@ class _HomeHero extends StatelessWidget {
                             ),
                             children: const [
                               TextSpan(
-                                text: 'IRKOP ',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              TextSpan(
-                                text: 'BELAJAR',
+                                text: 'BELAJAR TK',
                                 style: TextStyle(color: Color(0xFFFFE12E)),
                               ),
                             ],
@@ -172,6 +168,15 @@ class _HomeHero extends StatelessWidget {
                                 offset: Offset(0, 2),
                               ),
                             ],
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'by IRKOP',
+                          style: TextStyle(
+                            fontSize: compact ? 8 : 10,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white70,
                           ),
                         ),
                       ],
