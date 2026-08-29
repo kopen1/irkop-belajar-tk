@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../learning/learning_data.dart';
+
 import '../learning/learning_page.dart';
 
 class GambarPage extends StatelessWidget {
@@ -8,9 +8,7 @@ class GambarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const LearningPage(
-      title: 'Dunia Gambar',
-      subtitle: 'Kenali gambar dan namanya',
-      items: gambarItems,
+      type: LearningType.gambar,
     );
   }
 }
