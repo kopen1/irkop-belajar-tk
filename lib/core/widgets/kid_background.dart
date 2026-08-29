@@ -11,40 +11,85 @@ class KidBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Container(
-          decoration: const BoxDecoration(
+        const DecoratedBox(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFF9FE7FF),
-                Color(0xFFEAF9FF),
-                Color(0xFFCFF6C5),
+                Color(0xFF86D8FF),
+                Color(0xFFDDF7FF),
+                Color(0xFFFFF7D6),
+                Color(0xFFCFF3BE),
               ],
             ),
           ),
         ),
+
         const Positioned(
-          top: 40,
-          left: 20,
-          child: Text('☁️', style: TextStyle(fontSize: 48)),
+          top: 28,
+          left: 12,
+          child: Text(
+            '☁️',
+            style: TextStyle(fontSize: 56),
+          ),
         ),
+
         const Positioned(
-          top: 70,
-          right: 20,
-          child: Text('☁️', style: TextStyle(fontSize: 38)),
+          top: 82,
+          right: 18,
+          child: Text(
+            '☁️',
+            style: TextStyle(fontSize: 42),
+          ),
         ),
+
         const Positioned(
-          bottom: 10,
-          left: 20,
-          child: Text('🌼 🌷 🌼', style: TextStyle(fontSize: 25)),
+          top: 145,
+          left: 26,
+          child: Text(
+            '🌈',
+            style: TextStyle(fontSize: 44),
+          ),
         ),
+
         const Positioned(
-          bottom: 10,
-          right: 20,
-          child: Text('🌷 🌼', style: TextStyle(fontSize: 25)),
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: SizedBox(
+            height: 70,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(42),
+                ),
+                color: Color(0xFF9CDE8D),
+              ),
+            ),
+          ),
         ),
+
+        const Positioned(
+          bottom: 12,
+          left: 16,
+          child: Text(
+            '🌼 🌷 🌼',
+            style: TextStyle(fontSize: 28),
+          ),
+        ),
+
+        const Positioned(
+          bottom: 12,
+          right: 16,
+          child: Text(
+            '🌷 🌼 🌸',
+            style: TextStyle(fontSize: 28),
+          ),
+        ),
+
         SafeArea(child: child),
       ],
     );
