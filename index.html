@@ -2,411 +2,621 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,viewport-fit=cover">
+
   <title>IRKOP Belajar TK</title>
+
+  <meta name="theme-color" content="#69d8ff">
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="app">
+<div id="app">
 
-    <header class="header">
-      <div class="mascot">🐼</div>
+  <!-- ===================================================== -->
+  <!-- SPLASH -->
+  <!-- ===================================================== -->
 
-      <div class="title-box">
-        <h1>🌈 IRKOP BELAJAR 🌈</h1>
-        <p>Ayo Bermain & Belajar!</p>
+  <section id="splashScreen" class="screen splash-screen active">
+
+    <div class="sky-decoration cloud cloud-a">☁️</div>
+    <div class="sky-decoration cloud cloud-b">☁️</div>
+    <div class="sun">☀️</div>
+
+    <div class="splash-rainbow">🌈</div>
+
+    <div class="mascot-big">
+      🐼
+    </div>
+
+    <h1>IRKOP<br>BELAJAR</h1>
+
+    <p class="splash-text">
+      Ayo Bermain dan Belajar Bersama!
+    </p>
+
+    <button class="play-button"
+            onclick="startAdventure()">
+      ▶ MULAI BERMAIN
+    </button>
+
+    <div class="grass-decoration">
+      🌸 🦋 🌿 ⭐ 🐝 🌸 🦄
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- MAP -->
+  <!-- ===================================================== -->
+
+  <section id="mapScreen" class="screen map-screen">
+
+    <header class="top-bar">
+
+      <button class="home-logo"
+              onclick="showScreen('mapScreen')">
+        🐼
+      </button>
+
+      <div class="top-title">
+        <strong>🗺️ PETA PETUALANGAN</strong>
+        <small>Ayo pilih dunia!</small>
       </div>
 
-      <button
-        id="soundButton"
-        class="sound-button"
-        onclick="toggleSound()"
-      >
-        🎵 ON
+      <button id="soundButton"
+              class="sound-button"
+              onclick="toggleSound()">
+        🎵
       </button>
+
     </header>
 
-    <main id="mainContent">
-
-      <section id="homePage" class="page active">
-
-        <div class="hero">
-          <div class="hero-cloud cloud1">☁️</div>
-          <div class="hero-cloud cloud2">☁️</div>
-
-          <div class="rainbow">🌈</div>
-
-          <h2>
-            Halo Anak Pintar! 👋
-          </h2>
-
-          <p>
-            Pilih permainan yang kamu suka!
-          </p>
-        </div>
-
-        <div class="menu-grid">
-
-          <button
-            class="menu-card"
-            onclick="openPage('hurufPage')"
-          >
-            <span>🔤</span>
-            <b>Huruf</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('angkaPage')"
-          >
-            <span>🔢</span>
-            <b>Angka</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('hijaiyahPage')"
-          >
-            <span>🕌</span>
-            <b>Hijaiyah</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('gambarPage')"
-          >
-            <span>🖼️</span>
-            <b>Gambar</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('warnaPage')"
-          >
-            <span>🎨</span>
-            <b>Warna</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('mewarnaiPage')"
-          >
-            <span>🖍️</span>
-            <b>Mewarnai</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('titikPage')"
-          >
-            <span>✏️</span>
-            <b>Titik & Garis</b>
-          </button>
-
-          <button
-            class="menu-card"
-            onclick="openPage('kuisPage')"
-          >
-            <span>🧠</span>
-            <b>Kuis Seru</b>
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <section id="hurufPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🔤 Belajar Huruf</h2>
-
-        <div class="lesson-grid">
-          <button onclick="speak('A')">A</button>
-          <button onclick="speak('B')">B</button>
-          <button onclick="speak('C')">C</button>
-          <button onclick="speak('D')">D</button>
-          <button onclick="speak('E')">E</button>
-          <button onclick="speak('F')">F</button>
-          <button onclick="speak('G')">G</button>
-          <button onclick="speak('H')">H</button>
-          <button onclick="speak('I')">I</button>
-          <button onclick="speak('J')">J</button>
-        </div>
-      </section>
-
-
-      <section id="angkaPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🔢 Belajar Angka</h2>
-
-        <div class="lesson-grid">
-          <button onclick="speak('Satu')">1</button>
-          <button onclick="speak('Dua')">2</button>
-          <button onclick="speak('Tiga')">3</button>
-          <button onclick="speak('Empat')">4</button>
-          <button onclick="speak('Lima')">5</button>
-          <button onclick="speak('Enam')">6</button>
-          <button onclick="speak('Tujuh')">7</button>
-          <button onclick="speak('Delapan')">8</button>
-          <button onclick="speak('Sembilan')">9</button>
-          <button onclick="speak('Sepuluh')">10</button>
-        </div>
-      </section>
-
-
-      <section id="hijaiyahPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🕌 Belajar Hijaiyah</h2>
-
-        <div class="lesson-grid arabic">
-          <button onclick="speak('Alif')">ا</button>
-          <button onclick="speak('Ba')">ب</button>
-          <button onclick="speak('Ta')">ت</button>
-          <button onclick="speak('Tsa')">ث</button>
-          <button onclick="speak('Jim')">ج</button>
-          <button onclick="speak('Ha')">ح</button>
-          <button onclick="speak('Kho')">خ</button>
-          <button onclick="speak('Dal')">د</button>
-        </div>
-      </section>
-
-
-      <section id="gambarPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🖼️ Belajar Gambar</h2>
-
-        <div class="picture-grid">
-
-          <button onclick="speak('Kucing')">
-            <span>🐱</span>
-            Kucing
-          </button>
-
-          <button onclick="speak('Ikan')">
-            <span>🐟</span>
-            Ikan
-          </button>
-
-          <button onclick="speak('Apel')">
-            <span>🍎</span>
-            Apel
-          </button>
-
-          <button onclick="speak('Mobil')">
-            <span>🚗</span>
-            Mobil
-          </button>
-
-        </div>
-      </section>
-
-
-      <section id="warnaPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🎨 Belajar Warna</h2>
 
-        <div
-          id="colorDisplay"
-          class="color-display"
-        >
-          Klik warna di bawah!
-        </div>
-
-        <div class="color-list">
-
-          <button
-            class="red"
-            onclick="changeColor('#ff8c8c','Merah')"
-          >
-            Merah
-          </button>
-
-          <button
-            class="orange"
-            onclick="changeColor('#ffbd59','Oranye')"
-          >
-            Oranye
-          </button>
-
-          <button
-            class="yellow"
-            onclick="changeColor('#fff176','Kuning')"
-          >
-            Kuning
-          </button>
-
-          <button
-            class="green"
-            onclick="changeColor('#a5e6a1','Hijau')"
-          >
-            Hijau
-          </button>
-
-          <button
-            class="blue"
-            onclick="changeColor('#90caf9','Biru')"
-          >
-            Biru
-          </button>
-
-          <button
-            class="purple"
-            onclick="changeColor('#d1b3ff','Ungu')"
-          >
-            Ungu
-          </button>
-
-        </div>
-      </section>
-
-
-      <section id="mewarnaiPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🖍️ Ayo Mewarnai</h2>
-
-        <div class="drawing-toolbar">
-
-          <button onclick="setDrawColor('red')">
-            🔴
-          </button>
-
-          <button onclick="setDrawColor('orange')">
-            🟠
-          </button>
-
-          <button onclick="setDrawColor('blue')">
-            🔵
-          </button>
-
-          <button onclick="setDrawColor('green')">
-            🟢
-          </button>
-
-          <button onclick="clearCanvas()">
-            🗑️ Bersihkan
-          </button>
-
-        </div>
-
-        <canvas id="paintCanvas"></canvas>
-      </section>
-
-
-      <section id="titikPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>✏️ Titik & Garis</h2>
-
-        <p id="dotInstruction">
-          Hubungkan titik nomor 1!
-        </p>
-
-        <div id="dotGame" class="dot-game">
-
-          <svg
-            id="dotLines"
-            width="100%"
-            height="100%"
-          ></svg>
-
-          <button
-            class="dot"
-            data-index="1"
-            style="top:10%;left:45%;"
-            onclick="clickDot(1,this)"
-          >
-            1
-          </button>
-
-          <button
-            class="dot"
-            data-index="2"
-            style="top:30%;left:70%;"
-            onclick="clickDot(2,this)"
-          >
-            2
-          </button>
-
-          <button
-            class="dot"
-            data-index="3"
-            style="top:65%;left:65%;"
-            onclick="clickDot(3,this)"
-          >
-            3
-          </button>
-
-          <button
-            class="dot"
-            data-index="4"
-            style="top:65%;left:30%;"
-            onclick="clickDot(4,this)"
-          >
-            4
-          </button>
-
-          <button
-            class="dot"
-            data-index="5"
-            style="top:30%;left:25%;"
-            onclick="clickDot(5,this)"
-          >
-            5
-          </button>
-
-        </div>
-      </section>
-
-
-      <section id="kuisPage" class="page">
-        <button class="back" onclick="goHome()">⬅ Kembali</button>
-
-        <h2>🧠 Kuis Seru</h2>
-
-        <div class="quiz-card">
-
-          <h3>Mana gambar Apel? 🍎</h3>
-
-          <div class="quiz-options">
-
-            <button onclick="quizAnswer(false)">
-              🐱
-            </button>
-
-            <button onclick="quizAnswer(true)">
-              🍎
-            </button>
-
-            <button onclick="quizAnswer(false)">
-              🚗
-            </button>
-
-          </div>
-
-          <div id="quizResult"></div>
-
-        </div>
-      </section>
+    <main class="adventure-map">
+
+      <div class="map-sky">
+        ☁️ 🌤️ ☁️
+      </div>
+
+
+      <button class="world-card world-letter"
+              onclick="openWorld('lettersScreen')">
+
+        <span class="world-icon">🔤</span>
+
+        <span class="world-name">
+          Dunia Huruf
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-number"
+              onclick="openWorld('numbersScreen')">
+
+        <span class="world-icon">🔢</span>
+
+        <span class="world-name">
+          Dunia Angka
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-hijaiyah"
+              onclick="openWorld('hijaiyahScreen')">
+
+        <span class="world-icon">🕌</span>
+
+        <span class="world-name">
+          Dunia Hijaiyah
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-picture"
+              onclick="openWorld('picturesScreen')">
+
+        <span class="world-icon">🐯</span>
+
+        <span class="world-name">
+          Dunia Gambar
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-color"
+              onclick="openWorld('colorsScreen')">
+
+        <span class="world-icon">🌈</span>
+
+        <span class="world-name">
+          Dunia Warna
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-paint"
+              onclick="openWorld('paintScreen')">
+
+        <span class="world-icon">🖍️</span>
+
+        <span class="world-name">
+          Dunia Mewarnai
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-line"
+              onclick="openWorld('traceScreen')">
+
+        <span class="world-icon">✏️</span>
+
+        <span class="world-name">
+          Titik & Garis
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <button class="world-card world-quiz"
+              onclick="openWorld('quizScreen')">
+
+        <span class="world-icon">🧠</span>
+
+        <span class="world-name">
+          Kuis Seru
+        </span>
+
+        <span class="world-stars">
+          ⭐ ⭐ ⭐
+        </span>
+
+      </button>
+
+
+      <div class="map-ground">
+        🌳 🌲 🌻 🏡 🌳 🦋 🌲 🌻
+      </div>
 
     </main>
 
-    <div id="effectLayer"></div>
+  </section>
 
+
+  <!-- ===================================================== -->
+  <!-- HURUF -->
+  <!-- ===================================================== -->
+
+  <section id="lettersScreen"
+           class="screen lesson-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🔤 Dunia Huruf</strong>
+        <small>Sentuh huruf untuk mendengarkan!</small>
+      </div>
+
+      <span>🦄</span>
+    </header>
+
+    <div class="hero-lesson">
+      <div id="letterHero"
+           class="big-character">
+        A
+      </div>
+
+      <div id="letterName"
+           class="character-name">
+        Huruf A
+      </div>
+    </div>
+
+    <div id="lettersGrid"
+         class="learning-grid alphabet-grid">
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- ANGKA -->
+  <!-- ===================================================== -->
+
+  <section id="numbersScreen"
+           class="screen lesson-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🔢 Dunia Angka</strong>
+        <small>Sentuh angka untuk mendengarkan!</small>
+      </div>
+
+      <span>🚀</span>
+    </header>
+
+    <div class="hero-lesson">
+      <div id="numberHero"
+           class="big-character">
+        1
+      </div>
+
+      <div id="numberName"
+           class="character-name">
+        Satu
+      </div>
+    </div>
+
+    <div id="numbersGrid"
+         class="learning-grid number-grid">
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- HIJAIYAH -->
+  <!-- ===================================================== -->
+
+  <section id="hijaiyahScreen"
+           class="screen lesson-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🕌 Dunia Hijaiyah</strong>
+        <small>Sentuh huruf untuk mendengarkan!</small>
+      </div>
+
+      <span>⭐</span>
+    </header>
+
+    <div class="hero-lesson">
+      <div id="hijaiyahHero"
+           class="big-character arabic-big">
+        ا
+      </div>
+
+      <div id="hijaiyahName"
+           class="character-name">
+        Alif
+      </div>
+    </div>
+
+    <div id="hijaiyahGrid"
+         class="learning-grid hijaiyah-grid">
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- GAMBAR -->
+  <!-- ===================================================== -->
+
+  <section id="picturesScreen"
+           class="screen lesson-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🐯 Dunia Gambar</strong>
+        <small>Sentuh gambar!</small>
+      </div>
+
+      <span>🦋</span>
+    </header>
+
+    <div id="pictureGrid"
+         class="picture-grid">
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- WARNA -->
+  <!-- ===================================================== -->
+
+  <section id="colorsScreen"
+           class="screen color-screen">
+
+    <header class="lesson-header color-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🌈 Dunia Warna</strong>
+        <small>Pilih warna kesukaanmu!</small>
+      </div>
+
+      <span>🎨</span>
+    </header>
+
+    <div class="color-world">
+
+      <div id="colorPreview"
+           class="color-preview">
+        <span id="colorEmoji">
+          🌈
+        </span>
+
+        <strong id="colorName">
+          PILIH WARNA!
+        </strong>
+      </div>
+
+      <div id="colorsGrid"
+           class="colors-grid">
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- MEWARNAI -->
+  <!-- ===================================================== -->
+
+  <section id="paintScreen"
+           class="screen paint-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🖍️ Dunia Mewarnai</strong>
+        <small>Pilih warna lalu gambar!</small>
+      </div>
+
+      <span>🌸</span>
+    </header>
+
+    <div class="paint-tools">
+
+      <button class="paint-color"
+              style="background:#ff4d6d"
+              onclick="setPaintColor('#ff4d6d')">
+      </button>
+
+      <button class="paint-color"
+              style="background:#ff9f1c"
+              onclick="setPaintColor('#ff9f1c')">
+      </button>
+
+      <button class="paint-color"
+              style="background:#ffe66d"
+              onclick="setPaintColor('#ffe66d')">
+      </button>
+
+      <button class="paint-color"
+              style="background:#2ec4b6"
+              onclick="setPaintColor('#2ec4b6')">
+      </button>
+
+      <button class="paint-color"
+              style="background:#3a86ff"
+              onclick="setPaintColor('#3a86ff')">
+      </button>
+
+      <button class="paint-color"
+              style="background:#9b5de5"
+              onclick="setPaintColor('#9b5de5')">
+      </button>
+
+      <button class="paint-action"
+              onclick="changePaintPicture()">
+        🔄 Ganti Gambar
+      </button>
+
+      <button class="paint-action"
+              onclick="clearPaintCanvas()">
+        🗑️ Bersihkan
+      </button>
+
+    </div>
+
+    <div class="canvas-wrap">
+
+      <canvas id="paintCanvas">
+      </canvas>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- TITIK GARIS -->
+  <!-- ===================================================== -->
+
+  <section id="traceScreen"
+           class="screen trace-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>✏️ Titik & Garis</strong>
+        <small>Tarik dari titik sesuai urutan!</small>
+      </div>
+
+      <span>🚂</span>
+    </header>
+
+    <div class="trace-top">
+
+      <div id="traceInstruction">
+        👉 Tahan titik 1 lalu tarik ke titik 2
+      </div>
+
+      <button class="next-trace"
+              onclick="resetTrace()">
+        🔄 Ulangi
+      </button>
+
+    </div>
+
+    <div id="traceBoard"
+         class="trace-board">
+
+      <svg id="traceSvg"
+           class="trace-svg">
+      </svg>
+
+      <div id="traceDots"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- KUIS -->
+  <!-- ===================================================== -->
+
+  <section id="quizScreen"
+           class="screen quiz-screen">
+
+    <header class="lesson-header">
+      <button class="back-button"
+              onclick="backToMap()">
+        ⬅
+      </button>
+
+      <div>
+        <strong>🧠 Kuis Petualangan</strong>
+        <small id="quizCounter">
+          Pertanyaan 1
+        </small>
+      </div>
+
+      <span>🏆</span>
+    </header>
+
+    <div class="quiz-score">
+
+      <span>
+        ⭐ Skor:
+        <strong id="quizScore">
+          0
+        </strong>
+      </span>
+
+      <span>
+        🔥
+        <strong id="quizStreak">
+          0
+        </strong>
+      </span>
+
+    </div>
+
+    <div class="quiz-card">
+
+      <div id="quizMascot"
+           class="quiz-mascot">
+        🐼
+      </div>
+
+      <h2 id="quizQuestion">
+        Memuat pertanyaan...
+      </h2>
+
+      <div id="quizOptions"
+           class="quiz-options">
+      </div>
+
+      <div id="quizFeedback"
+           class="quiz-feedback">
+      </div>
+
+      <button id="nextQuizButton"
+              class="next-quiz"
+              onclick="nextQuiz()">
+        Soal Berikutnya ➡
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- EFFECT -->
+  <!-- ===================================================== -->
+
+  <div id="effectLayer"
+       class="effect-layer">
   </div>
 
-  <script src="app.js"></script>
+</div>
+
+<script src="app.js"></script>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-name: Deploy IRKOP Belajar TK
+name: IRKOP Deploy GitHub Pages
 
 on:
   push:
@@ -12,10 +12,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages
+  group: irkop-pages
   cancel-in-progress: true
 
 jobs:
+
   deploy:
 
     runs-on: ubuntu-latest
@@ -29,13 +30,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare Website
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          cp style.css dist/
+          cp app.js dist/
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Website
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
 
       - name: Deploy
         id: deployment
