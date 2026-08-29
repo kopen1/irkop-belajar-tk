@@ -24,7 +24,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
 
   void select(int value) {
     setState(() => index = value);
-    audio.speak(${names[index]}. ${letters[index]});
+    audio.speak('Huruf ' + names[index]);
   }
 
   @override
