@@ -31,6 +31,20 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
   void _prev() { setState(() => _index = (_index + 9) % 10); }
   void _next() { setState(() { _index = (_index + 1) % 10; _selected = null; }); }
 
+  void _answerQuiz(int value, int target) {
+    if (_selected != null) return;
+    final correct = value == target;
+    setState(() {
+      _selected = value;
+      if (correct) { _correct++; _score++; }
+    });
+    correct ? audio.correct() : audio.wrong();
+    Future.delayed(Duration(milliseconds: correct ? 1100 : 900), () {
+      if (!mounted) return;
+      setState(() => _selected = null);
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: KidBackground(
@@ -185,13 +199,7 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
                   borderRadius: BorderRadius.circular(20 * s),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20 * s),
-                    onTap: answered ? null : () {
-                      setState(() {
-                        _selected = value;
-                        if (value == target) { _correct++; _score++; }
-                      });
-                      value == target ? audio.correct() : audio.wrong();
-                    },
+                    onTap: answered ? null : () => _answerQuiz(value, target),
                     child: Container(decoration: BoxDecoration(border: Border.all(color: border, width: 2), borderRadius: BorderRadius.circular(20 * s)), alignment: Alignment.center, child: Text(value.toString(), style: TextStyle(color: const Color(0xFF23486F), fontSize: 33 * s, fontWeight: FontWeight.w900))),
                   ),
                 );
@@ -199,10 +207,17 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
             ),
             if (answered) ...[
               SizedBox(height: 8 * s),
-              Container(width: double.infinity, padding: EdgeInsets.symmetric(vertical: 8 * s), decoration: BoxDecoration(color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE), borderRadius: BorderRadius.circular(16 * s), border: Border.all(color: correct ? const Color(0xFF8ED39B) : const Color(0xFFE89A93))), child: Text(correct ? '✓ Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', textAlign: TextAlign.center, style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900))),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 6 * s),
+                decoration: BoxDecoration(color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE), borderRadius: BorderRadius.circular(18 * s), border: Border.all(color: correct ? const Color(0xFF8ED39B) : const Color(0xFFE89A93))),
+                child: Row(children: [
+                  ClipRRect(borderRadius: BorderRadius.circular(14 * s), child: Image.asset(correct ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg', width: 62 * s, height: 62 * s, fit: BoxFit.cover)),
+                  SizedBox(width: 10 * s),
+                  Expanded(child: Text(correct ? 'Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900))),
+                ]),
+              ),
             ],
-            SizedBox(height: 8 * s),
-            _button('SOAL BERIKUTNYA', Icons.arrow_forward_rounded, const Color(0xFF2767C6), _next, s),
           ]),
         )),
         SizedBox(height: 8 * s),
