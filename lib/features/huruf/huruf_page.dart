@@ -61,6 +61,20 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
     audio.speak('Huruf ${_letters[_index]}. ${_words[_index]}');
   }
 
+  void _answerQuizLetter(bool correct) {
+    if (_quizCorrect != null) return;
+    setState(() => _quizCorrect = correct);
+    audio.speak(correct ? 'Hebat sekali! Jawaban kamu benar.' : 'Belum tepat. Coba lagi ya.');
+    Future.delayed(Duration(milliseconds: correct ? 1100 : 900), () {
+      if (!mounted) return;
+      if (correct) {
+        _next();
+      } else {
+        setState(() => _quizCorrect = null);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,6 +227,18 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
               color: _quizCorrect == true ? const Color(0xFF188D39) : _quizCorrect == false ? const Color(0xFFE04B3F) : const Color(0xFF213B59),
             ),
           ),
+          if (_quizCorrect != null) ...[
+            SizedBox(height: 10 * scale),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(18 * scale),
+              child: Image.asset(
+                _quizCorrect == true ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg',
+                width: w * .24,
+                height: w * .18,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
           SizedBox(height: 16 * scale),
           Container(
             width: w * .38,
@@ -254,32 +280,13 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
                 elevation: 5,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(24 * scale),
-                  onTap: () {
-                    final correct = x == answer;
-                    setState(() => _quizCorrect = correct);
-                    audio.speak(correct ? 'Hebat sekali! Jawaban kamu benar.' : 'Belum tepat. Coba lagi ya.');
-                  },
+                  onTap: _quizCorrect != null ? null : () => _answerQuizLetter(x == answer),
                   child: Center(child: Text(x, style: TextStyle(color: Colors.white, fontSize: 34 * scale, fontWeight: FontWeight.w900))),
                 ),
               );
             },
           ),
-          if (_quizCorrect == true) ...[
-            SizedBox(height: 20 * scale),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFB81F),
-                  padding: EdgeInsets.symmetric(vertical: 15 * scale),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * scale)),
-                ),
-                onPressed: _next,
-                icon: const Icon(Icons.arrow_forward_rounded, color: Colors.white),
-                label: Text('SOAL BERIKUTNYA', style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: Colors.white)),
-              ),
-            ),
-          ],
+
         ]),
       ),
     );
