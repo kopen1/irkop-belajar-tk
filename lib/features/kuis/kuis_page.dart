@@ -339,6 +339,7 @@ class _KuisPageState extends State<KuisPage> {
                   fit: BoxFit.contain,
                 ),
                 if (!ok) ...[
+                  const Positioned(top: 6, child: Text('😢', style: TextStyle(fontSize: 50))),
                   const Positioned(
                     top: 52,
                     left: 42,
