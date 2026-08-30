@@ -170,21 +170,12 @@ class _HomeHero extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'by IRKOP',
-                          style: TextStyle(
-                            fontSize: compact ? 8 : 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white70,
-                          ),
-                        ),
                       ],
                     ),
                   ),
                   _roundIcon(
                     icon: Icons.volume_up_rounded,
-                    onTap: () => audio.speak('IRKOP Belajar. Pilih permainan yang kamu suka.'),
+                    onTap: () => audio.speak('Belajar TK. Pilih permainan yang kamu suka.'),
                     compact: compact,
                   ),
                 ],
