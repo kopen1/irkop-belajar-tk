@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../services/background_music.dart';
 import '../home/home_page.dart';
 
 class PlayIntroPage extends StatelessWidget {
   const PlayIntroPage({super.key});
 
   void _openMenu(BuildContext context) {
+    BackgroundMusic.instance.start();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(builder: (_) => const HomePage()),
     );
