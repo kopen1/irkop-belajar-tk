@@ -13,6 +13,7 @@ class HurufPage extends StatefulWidget {
 class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMixin {
   final AudioService audio = AudioService.instance;
   int _index = 0;
+  bool? _quizCorrect;
   late final TabController _tabs;
 
   static const _analogyEmoji = ['🏠','8️⃣','🌙','🪜','📘','🪮','🪝','🎢','🕯️','🪝','🔑','🦵','⛰️','🧲','⚽','🚩','🎈','🌈','🐍','☂️','🥣','✌️','🌊','❎','🪀','⚡'];
@@ -42,17 +43,17 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
   void dispose() { _tabs.dispose(); super.dispose(); }
 
   void _select(int index) {
-    setState(() => _index = index);
+    setState(() { _index = index; _quizCorrect = null; });
     _speakCurrent();
   }
 
   void _previous() {
-    setState(() => _index = (_index - 1 + _letters.length) % _letters.length);
+    setState(() { _index = (_index - 1 + _letters.length) % _letters.length; _quizCorrect = null; });
     _speakCurrent();
   }
 
   void _next() {
-    setState(() => _index = (_index + 1) % _letters.length);
+    setState(() { _index = (_index + 1) % _letters.length; _quizCorrect = null; });
     _speakCurrent();
   }
 
@@ -176,7 +177,113 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
 
   Widget _tabBar(double w, double scale) => TabBar(controller: _tabs, isScrollable: true, tabAlignment: TabAlignment.center, tabs: const [Tab(text: 'BESAR'), Tab(text: 'KECIL'), Tab(text: 'MINI KUIS')]);
   Widget _lessonTab(double w, double scale, {required bool lowercase}) => SingleChildScrollView(padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24), child: Column(children: [_lessonPanel(w, scale, lowercase: lowercase), SizedBox(height: 18 * scale), _pager(w, scale), SizedBox(height: 24 * scale), _alphabetPanel(w, scale, lowercase: lowercase)]));
-  Widget _quizTab(double w, double scale) { final answer = _letters[_index]; final options = <String>{answer, _letters[(_index+1)%26], _letters[(_index+5)%26], _letters[(_index+10)%26]}.toList(); return Center(child: Container(margin: EdgeInsets.all(w*.05), padding: EdgeInsets.all(24*scale), decoration: BoxDecoration(color: Colors.white.withValues(alpha:.94), borderRadius: BorderRadius.circular(30)), child: Column(mainAxisSize: MainAxisSize.min, children: [Text('MINI KUIS', style: TextStyle(fontSize: 28*scale, fontWeight: FontWeight.w900)), const SizedBox(height: 10), Text('Pilih huruf untuk ${_words[_index]} ${_emoji[_index]}', textAlign: TextAlign.center), const SizedBox(height: 18), Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: options.map((x) => FilledButton(onPressed: () { if(x==answer){ audio.speak('Hebat, benar!'); _next(); } else { audio.speak('Coba lagi'); } }, child: Text(x, style: TextStyle(fontSize: 26*scale, fontWeight: FontWeight.w900)))).toList())]))); }
+  Widget _quizTab(double w, double scale) {
+    final answer = _letters[_index];
+    final options = [
+      _letters[(_index + 5) % 26],
+      answer,
+      _letters[(_index + 12) % 26],
+      _letters[(_index + 20) % 26],
+    ];
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(w * .055, 18, w * .055, 34),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(22 * scale),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .95),
+          borderRadius: BorderRadius.circular(34 * scale),
+          border: Border.all(color: Colors.white, width: 3),
+          boxShadow: const [BoxShadow(color: Color(0x330A3B67), blurRadius: 18, offset: Offset(0, 8))],
+        ),
+        child: Column(children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 22 * scale, vertical: 9 * scale),
+            decoration: BoxDecoration(color: const Color(0xFF7B57C8), borderRadius: BorderRadius.circular(22 * scale)),
+            child: Text('MINI KUIS', style: TextStyle(color: Colors.white, fontSize: 20 * scale, fontWeight: FontWeight.w900)),
+          ),
+          SizedBox(height: 18 * scale),
+          Text(
+            _quizCorrect == true ? 'Hebat Sekali! 🎉' : _quizCorrect == false ? 'Coba Lagi Ya! 💪' : 'Ayo Tebak Hurufnya!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 30 * scale,
+              fontWeight: FontWeight.w900,
+              color: _quizCorrect == true ? const Color(0xFF188D39) : _quizCorrect == false ? const Color(0xFFE04B3F) : const Color(0xFF213B59),
+            ),
+          ),
+          SizedBox(height: 16 * scale),
+          Container(
+            width: w * .38,
+            height: w * .38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF1D8),
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFFFD24A), width: 5),
+              boxShadow: const [BoxShadow(color: Color(0x220A3B67), blurRadius: 10, offset: Offset(0, 5))],
+            ),
+            child: Text(_emoji[_index], style: TextStyle(fontSize: 108 * scale)),
+          ),
+          SizedBox(height: 14 * scale),
+          Text(
+            'Huruf pertama dari ' + _words[_index] + ' apa ya?',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 21 * scale, fontWeight: FontWeight.w800, color: const Color(0xFF40516A)),
+          ),
+          SizedBox(height: 22 * scale),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: options.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 14 * scale,
+              mainAxisSpacing: 14 * scale,
+              childAspectRatio: 1.9,
+            ),
+            itemBuilder: (context, i) {
+              final x = options[i];
+              final isCorrect = x == answer;
+              final revealCorrect = _quizCorrect != null && isCorrect;
+              final color = revealCorrect ? const Color(0xFF2DBE4C) : const Color(0xFF5C4A96);
+              return Material(
+                color: color,
+                borderRadius: BorderRadius.circular(24 * scale),
+                elevation: 5,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24 * scale),
+                  onTap: () {
+                    final correct = x == answer;
+                    setState(() => _quizCorrect = correct);
+                    audio.speak(correct ? 'Hebat sekali! Jawaban kamu benar.' : 'Belum tepat. Coba lagi ya.');
+                  },
+                  child: Center(child: Text(x, style: TextStyle(color: Colors.white, fontSize: 34 * scale, fontWeight: FontWeight.w900))),
+                ),
+              );
+            },
+          ),
+          if (_quizCorrect == true) ...[
+            SizedBox(height: 20 * scale),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFB81F),
+                  padding: EdgeInsets.symmetric(vertical: 15 * scale),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 * scale)),
+                ),
+                onPressed: _next,
+                icon: const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+                label: Text('SOAL BERIKUTNYA', style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: Colors.white)),
+              ),
+            ),
+          ],
+        ]),
+      ),
+    );
+  }
 
   Widget _lessonPanel(double w, double scale, {bool lowercase = false}) {
     final panelHeight = w * .78;
@@ -203,7 +310,7 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
           Expanded(child: Row(children: [
             Expanded(child: _wordCard(scale)),
             SizedBox(width: w * .025),
-            Expanded(child: _letterCard(scale)),
+            Expanded(child: _letterCard(scale, lowercase: lowercase)),
           ])),
           SizedBox(height: 12 * scale),
           Container(
