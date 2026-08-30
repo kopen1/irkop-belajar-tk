@@ -300,49 +300,23 @@ class _TitikGarisPageState extends State<TitikGarisPage> {
   }
 
   Widget _successPopup(double s) {
-    return Positioned.fill(
-      child: ColoredBox(
-        color: Colors.black.withValues(alpha: .16),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 340),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 26),
-              padding: EdgeInsets.fromLTRB(24 * s, 20 * s, 24 * s, 18 * s),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(28 * s),
-                border: Border.all(color: const Color(0xFF2AB94A), width: 4),
-                boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 20, offset: Offset(0, 10))],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(level.icon, style: TextStyle(fontSize: 70 * s)),
-                  SizedBox(height: 4 * s),
-                  Text('Hebat!', style: TextStyle(color: const Color(0xFF159A35), fontSize: 30 * s, fontWeight: FontWeight.w900)),
-                  SizedBox(height: 6 * s),
-                  Text('${level.name} selesai!', textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFF26324A), fontSize: 17 * s, fontWeight: FontWeight.w800)),
-                  SizedBox(height: 16 * s),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _nextLevel,
-                      icon: const Icon(Icons.arrow_forward_rounded),
-                      label: const Text('Gambar Berikutnya'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFB91D),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14 * s),
-                        textStyle: TextStyle(fontSize: 18 * s, fontWeight: FontWeight.w900),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18 * s)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    return Positioned(
+      left: 18 * s, right: 18 * s, bottom: 18 * s,
+      child: Material(
+        color: Colors.white, elevation: 10, borderRadius: BorderRadius.circular(26 * s),
+        child: Container(
+          padding: EdgeInsets.all(14 * s),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(26 * s), border: Border.all(color: const Color(0xFF2AB94A), width: 3)),
+          child: Row(children: [
+            Container(width: 74 * s, height: 74 * s, alignment: Alignment.center, decoration: BoxDecoration(color: const Color(0xFFE8F8EB), borderRadius: BorderRadius.circular(20 * s)), child: Text(level.icon, style: TextStyle(fontSize: 52 * s))),
+            SizedBox(width: 12 * s),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Hasil Gambarmu', style: TextStyle(color: const Color(0xFF159A35), fontSize: 21 * s, fontWeight: FontWeight.w900)),
+              Text(level.name, style: TextStyle(color: const Color(0xFF26324A), fontSize: 17 * s, fontWeight: FontWeight.w900)),
+              Text('Kamu berhasil menyelesaikannya! 🎉', style: TextStyle(color: const Color(0xFF52677A), fontSize: 13 * s, fontWeight: FontWeight.w700)),
+            ])),
+            IconButton(onPressed: _nextLevel, icon: const Icon(Icons.arrow_forward_rounded, color: Color(0xFFFFA000))),
+          ]),
         ),
       ),
     );
