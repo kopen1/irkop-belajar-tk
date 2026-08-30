@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/kid_background.dart';
+import '../../services/background_music.dart';
 import '../../core/services/audio_service.dart';
 import '../angka/angka_page.dart';
 import '../gambar/gambar_page.dart';
@@ -100,6 +101,7 @@ class _HomeHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audio = AudioService.instance;
+    final music = BackgroundMusic.instance;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -173,10 +175,19 @@ class _HomeHero extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _roundIcon(
-                    icon: Icons.volume_up_rounded,
-                    onTap: () => audio.speak('Belajar TK. Pilih permainan yang kamu suka.'),
-                    compact: compact,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: music.enabled,
+                    builder: (context, musicOn, _) => _roundIcon(
+                      icon: musicOn
+                          ? Icons.music_note_rounded
+                          : Icons.music_off_rounded,
+                      onTap: () {
+                        music.toggle();
+                        if (music.enabled.value) music.start();
+                      },
+                      compact: compact,
+                      active: musicOn,
+                    ),
                   ),
                 ],
               ),
@@ -196,12 +207,15 @@ class _HomeHero extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
     required bool compact,
+    bool active = true,
   }) {
     final size = compact ? 54.0 : 66.0;
     return Material(
-      color: icon == Icons.volume_up_rounded
-          ? const Color(0xFF35C84A)
-          : const Color(0xFFFFD44B),
+      color: active
+          ? (icon == Icons.music_note_rounded
+              ? const Color(0xFF35C84A)
+              : const Color(0xFFFFD44B))
+          : const Color(0xFF8B96A6),
       shape: const CircleBorder(),
       elevation: 6,
       shadowColor: const Color(0x660D405C),
