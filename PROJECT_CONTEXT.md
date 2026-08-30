@@ -131,3 +131,16 @@ Asisten harus:
 - Setelah soal ke-10 tampil halaman Hasil Kuis dengan skor, benar, salah, bintang, dan Main Lagi.
 - Karakter feedback memakai `assets/images/quiz_wrong_tiger.jpg` dan `assets/images/quiz_correct_dino.jpg`.
 - Kuis Seru juga memakai karakter baru untuk hasil salah dan benar; gambar lama `quiz_dino_happy.jpg` tidak lagi dipakai untuk feedback.
+
+
+## Update batch 2026-08-31
+
+- Startup blank biru di web diganti splash visual bertema BELAJAR TK tanpa tulisan IRKOP.
+- Startup aplikasi masuk ke halaman intro BELAJAR TK sebelum menu utama.
+- Semua Mini Kuis memakai pertanyaan campuran sesuai materi, bukan satu pola berulang.
+- Angka mencampur Latin, Arab, jumlah benda, pasangan, dan urutan.
+- Huruf mencampur huruf besar/kecil, pasangan, dan gambar benda.
+- Hijaiyah mencampur huruf, nama, dan pertanyaan dengar.
+- Gambar mencampur nama, gambar, kategori, dan huruf awal.
+- Warna dan Mewarnai mencampur nama warna, benda, dan kecocokan warna.
+- Feedback benar/salah memakai layout overlay penuh dan BoxFit.contain agar karakter tidak terpotong.
