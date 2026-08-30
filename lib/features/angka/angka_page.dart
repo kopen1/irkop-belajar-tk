@@ -18,6 +18,10 @@ class _AngkaPageState extends State<AngkaPage>
   int _index = 0;
   int _score = 0;
 
+  static const _arabicNumbers = ['١','٢','٣','٤','٥','٦','٧','٨','٩','١٠'];
+  static const _analogyEmoji = ['✏️','🐍','🐦','🪑','🤡','🐍','🦯','🥜','🎈','🏑⚽'];
+  static const _analogyText = ['Seperti pensil atau lilin','Seperti ular yang meliuk','Seperti burung terbang','Seperti kursi terbalik','Seperti badut','Seperti ular yang melingkar','Seperti tongkat nenek','Seperti kacang','Seperti balon terbang','Seperti lidi dan bola'];
+
   static const _numberWords = [
     'Satu',
     'Dua',
@@ -36,7 +40,7 @@ class _AngkaPageState extends State<AngkaPage>
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 2, vsync: this);
+    _tabs = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => audio.speak('Angka $number'),
     );
@@ -80,6 +84,7 @@ class _AngkaPageState extends State<AngkaPage>
                       controller: _tabs,
                       children: [
                         _learn(compact),
+                        _learn(compact, arabic: true),
                         _game(compact),
                       ],
                     ),
@@ -184,19 +189,20 @@ class _AngkaPageState extends State<AngkaPage>
           fontWeight: FontWeight.w900,
         ),
         tabs: const [
-          Tab(text: '📚 Belajar'),
-          Tab(text: '🎮 Mini Game'),
+          Tab(text: 'ANGKA ID'),
+          Tab(text: 'ANGKA ARAB'),
+          Tab(text: 'KUIS MINI'),
         ],
       ),
     );
   }
 
-  Widget _learn(bool compact) {
+  Widget _learn(bool compact, {bool arabic = false}) {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(compact ? 12 : 18, 8, compact ? 12 : 18, 22),
       child: Column(
         children: [
-          _numberShowcase(compact),
+          _numberShowcase(compact, arabic: arabic),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -221,13 +227,13 @@ class _AngkaPageState extends State<AngkaPage>
             ],
           ),
           const SizedBox(height: 18),
-          _numberGrid(compact),
+          _numberGrid(compact, arabic: arabic),
         ],
       ),
     );
   }
 
-  Widget _numberShowcase(bool compact) {
+  Widget _numberShowcase(bool compact, {bool arabic = false}) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
@@ -252,8 +258,8 @@ class _AngkaPageState extends State<AngkaPage>
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 220),
             child: Text(
-              '$number',
-              key: ValueKey(number),
+              arabic ? _arabicNumbers[_index] : '$number',
+              key: ValueKey('${number}-$arabic'),
               style: TextStyle(
                 height: 1,
                 fontSize: compact ? 122 : 150,
@@ -280,6 +286,17 @@ class _AngkaPageState extends State<AngkaPage>
           ),
           const SizedBox(height: 14),
           _countVisual(compact),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: const Color(0xFFF4F8FB), borderRadius: BorderRadius.circular(20)),
+            child: Row(children: [
+              Text(_analogyEmoji[_index], style: TextStyle(fontSize: compact ? 36 : 44)),
+              const SizedBox(width: 10),
+              Expanded(child: Text(_analogyText[_index], style: TextStyle(fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900, color: const Color(0xFF42678F)))),
+            ]),
+          ),
           const SizedBox(height: 18),
           SizedBox(
             width: compact ? 230 : 270,
@@ -376,7 +393,7 @@ class _AngkaPageState extends State<AngkaPage>
     );
   }
 
-  Widget _numberGrid(bool compact) {
+  Widget _numberGrid(bool compact, {bool arabic = false}) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -399,7 +416,7 @@ class _AngkaPageState extends State<AngkaPage>
             onTap: () => _select(i),
             child: Center(
               child: Text(
-                '${i + 1}',
+                arabic ? _arabicNumbers[i] : '${i + 1}',
                 style: TextStyle(
                   fontSize: compact ? 26 : 31,
                   fontWeight: FontWeight.w900,
