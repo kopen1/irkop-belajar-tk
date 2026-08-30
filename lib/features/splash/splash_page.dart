@@ -11,39 +11,23 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _progressController;
-  Timer? _fallbackTimer;
+class _SplashPageState extends State<SplashPage> {
+  Timer? _timer;
   bool _opened = false;
 
   @override
   void initState() {
     super.initState();
-
-    _progressController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..forward();
-
-    _progressController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _openHome();
-      }
-    });
-
-    // Cadangan agar splash tidak pernah berhenti berputar.
-    _fallbackTimer = Timer(const Duration(seconds: 3), _openHome);
+    // Splash hanya tampil sebentar lalu pasti masuk ke beranda.
+    _timer = Timer(const Duration(milliseconds: 2300), _openHome);
   }
 
   void _openHome() {
-    if (_opened || !mounted) return;
+    if (!mounted || _opened) return;
     _opened = true;
-    _fallbackTimer?.cancel();
-
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
-        transitionDuration: const Duration(milliseconds: 300),
+        transitionDuration: const Duration(milliseconds: 250),
         pageBuilder: (_, __, ___) => const HomePage(),
         transitionsBuilder: (_, animation, __, child) =>
             FadeTransition(opacity: animation, child: child),
@@ -53,8 +37,7 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   void dispose() {
-    _fallbackTimer?.cancel();
-    _progressController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -67,117 +50,76 @@ class _SplashPageState extends State<SplashPage>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF2395D8),
-              Color(0xFF77C9EA),
-              Color(0xFF8DDB76),
+              Color(0xFF2195D6),
+              Color(0xFF6FC9E9),
+              Color(0xFF98D86D),
             ],
           ),
         ),
         child: SafeArea(
           child: Stack(
             children: [
+              const Positioned(left: -38, top: 38, child: _Cloud(width: 190)),
+              const Positioned(right: -48, top: 122, child: _Cloud(width: 175)),
+              const Positioned(right: 30, top: 20, child: _Sun()),
+              const Positioned(left: 30, top: 118, child: Text('🦋', style: TextStyle(fontSize: 42))),
+              const Positioned(right: 36, top: 290, child: Text('🦋', style: TextStyle(fontSize: 40))),
               const Positioned(
-                left: -50,
-                top: 110,
-                child: _Cloud(width: 210),
-              ),
-              const Positioned(
-                right: -55,
-                top: 175,
-                child: _Cloud(width: 190),
-              ),
-              Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: Container(
-                  height: 150,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0xFF54C95A), Color(0xFF087C55)],
-                    ),
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.elliptical(420, 75),
-                    ),
-                  ),
-                ),
+                child: _Ground(),
+              ),
+              const Positioned(
+                right: 26,
+                bottom: 125,
+                child: _School(),
+              ),
+              const Positioned(
+                left: 24,
+                bottom: 56,
+                child: _Flowers(),
+              ),
+              const Positioned(
+                right: 12,
+                bottom: 35,
+                child: _Flowers(),
               ),
               Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 28,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const _Rainbow(),
-                      const SizedBox(height: 10),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: const TextSpan(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(18, 24, 18, 24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const _Rainbow(),
+                        const SizedBox(height: 2),
+                        _LogoText(),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Ayo Bermain & Belajar Bersama!',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 42,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -1,
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
                             shadows: [
                               Shadow(
-                                color: Color(0x77001D58),
-                                blurRadius: 7,
-                                offset: Offset(0, 4),
+                                color: Color(0x55001D58),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
-                          children: [
-                            TextSpan(
-                              text: 'BELAJAR ',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            TextSpan(
-                              text: 'TK',
-                              style: TextStyle(color: Color(0xFFFFDD2E)),
-                            ),
-                          ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Ayo Bermain & Belajar Bersama!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          shadows: [
-                            Shadow(
-                              color: Color(0x55001D58),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      const _PandaMascot(),
-                      const SizedBox(height: 26),
-                      AnimatedBuilder(
-                        animation: _progressController,
-                        builder: (context, child) => SizedBox(
-                          width: 58,
-                          height: 58,
-                          child: CircularProgressIndicator(
-                            value: _progressController.value,
-                            strokeWidth: 5,
-                            strokeCap: StrokeCap.round,
-                            backgroundColor: Colors.white24,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                    ],
+                        const SizedBox(height: 20),
+                        const _PandaMascot(),
+                        const SizedBox(height: 20),
+                        const _PlayButton(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -189,23 +131,56 @@ class _SplashPageState extends State<SplashPage>
   }
 }
 
+class _LogoText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'BELAJAR TK',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: MediaQuery.sizeOf(context).width < 380 ? 44 : 54,
+        height: .95,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -2,
+        foreground: Paint()
+          ..shader = const LinearGradient(
+            colors: [Color(0xFFFFFFFF), Color(0xFFF4F4F4)],
+          ).createShader(const Rect.fromLTWH(0, 0, 500, 90)),
+        shadows: const [
+          Shadow(
+            color: Color(0xFF004DA0),
+            blurRadius: 0,
+            offset: Offset(4, 4),
+          ),
+          Shadow(
+            color: Color(0xFF004DA0),
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _Rainbow extends StatelessWidget {
   const _Rainbow();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 130,
-      height: 76,
+      width: 240,
+      height: 115,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: const [
-          _RainbowArc(size: 130, color: Color(0xFFFF5A36)),
-          _RainbowArc(size: 112, color: Color(0xFFFFB62E)),
-          _RainbowArc(size: 94, color: Color(0xFFFFE34D)),
-          _RainbowArc(size: 76, color: Color(0xFF62C95C)),
-          _RainbowArc(size: 58, color: Color(0xFF5C7CE0)),
-          _RainbowArc(size: 40, color: Color(0xFF9A63D8)),
+          _RainbowArc(size: 240, color: Color(0xFFFF5A3A)),
+          _RainbowArc(size: 208, color: Color(0xFFFF9B2D)),
+          _RainbowArc(size: 176, color: Color(0xFFFFDF39)),
+          _RainbowArc(size: 144, color: Color(0xFF62C95C)),
+          _RainbowArc(size: 112, color: Color(0xFF5E8FE6)),
+          _RainbowArc(size: 80, color: Color(0xFF8B67D8)),
+          _RainbowArc(size: 48, color: Color(0xFF77C9EA)),
         ],
       ),
     );
@@ -220,17 +195,14 @@ class _RainbowArc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(size),
-            topRight: Radius.circular(size),
-          ),
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(size),
+          topRight: Radius.circular(size),
         ),
       ),
     );
@@ -243,76 +215,58 @@ class _PandaMascot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 250,
-      height: 250,
+      width: 270,
+      height: 300,
       child: Stack(
+        clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
           Positioned(
-            top: 8,
-            left: 28,
-            child: _circle(72, const Color(0xFF20242D)),
-          ),
-          Positioned(
-            top: 8,
-            right: 28,
-            child: _circle(72, const Color(0xFF20242D)),
-          ),
-          Positioned(
-            top: 42,
+            top: 18,
             child: Container(
-              width: 205,
-              height: 170,
+              width: 185,
+              height: 188,
               decoration: BoxDecoration(
-                color: const Color(0xFFF8F8F6),
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(
-                  color: const Color(0xFF252A31),
-                  width: 5,
-                ),
+                color: const Color(0xFFF8F7F4),
+                borderRadius: BorderRadius.circular(105),
+                border: Border.all(color: const Color(0xFF24262C), width: 5),
+              ),
+            ),
+          ),
+          const Positioned(top: 0, left: 48, child: _Ear()),
+          const Positioned(top: 0, right: 48, child: _Ear()),
+          const Positioned(top: 78, left: 55, child: _EyePatch()),
+          const Positioned(top: 78, right: 55, child: _EyePatch()),
+          Positioned(
+            top: 125,
+            child: Container(
+              width: 20,
+              height: 14,
+              decoration: BoxDecoration(
+                color: const Color(0xFF14161B),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
           Positioned(
-            top: 92,
-            left: 52,
-            child: _eyePatch(rotation: -0.35),
-          ),
-          Positioned(
-            top: 92,
-            right: 52,
-            child: _eyePatch(rotation: 0.35),
-          ),
-          Positioned(
-            top: 126,
+            top: 145,
             child: Container(
-              width: 18,
-              height: 12,
-              decoration: BoxDecoration(
-                color: const Color(0xFF15191F),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 144,
-            child: Container(
-              width: 58,
+              width: 70,
               height: 34,
               decoration: const BoxDecoration(
-                color: Color(0xFF171B21),
+                color: Color(0xFF16181E),
                 borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(32),
+                  bottom: Radius.circular(40),
                 ),
               ),
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  width: 25,
-                  height: 11,
+                  width: 30,
+                  height: 13,
                   margin: const EdgeInsets.only(bottom: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF7790),
+                    color: const Color(0xFFFF7186),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -320,71 +274,260 @@ class _PandaMascot extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 6,
+            top: 35,
             child: Container(
-              width: 150,
-              height: 76,
+              width: 175,
+              height: 62,
               decoration: BoxDecoration(
-                color: const Color(0xFFF8F8F6),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(70),
-                ),
-                border: Border.all(
-                  color: const Color(0xFF252A31),
-                  width: 5,
-                ),
+                color: const Color(0xFFFFB512),
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: const Color(0xFFD77A00), width: 4),
+              ),
+              child: const Center(
+                child: Text('●', style: TextStyle(color: Color(0xFF46A936), fontSize: 24)),
               ),
             ),
           ),
           Positioned(
-            bottom: 18,
-            left: 34,
-            child: _circle(66, const Color(0xFF20242D)),
+            top: 13,
+            child: Container(
+              width: 195,
+              height: 52,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFA900),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(90),
+                ),
+                border: Border.all(color: const Color(0xFFD77A00), width: 4),
+              ),
+            ),
           ),
           Positioned(
-            bottom: 18,
-            right: 34,
-            child: _circle(66, const Color(0xFF20242D)),
+            bottom: 10,
+            child: Container(
+              width: 155,
+              height: 110,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F7F4),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(80),
+                ),
+                border: Border.all(color: const Color(0xFF24262C), width: 5),
+              ),
+            ),
+          ),
+          const Positioned(bottom: 15, left: 26, child: _PandaArm()),
+          Positioned(
+            right: 4,
+            bottom: 58,
+            child: Transform.rotate(
+              angle: -.55,
+              child: const _PandaArm(),
+            ),
+          ),
+          const Positioned(bottom: 0, left: 68, child: _Foot()),
+          const Positioned(bottom: 0, right: 68, child: _Foot()),
+        ],
+      ),
+    );
+  }
+}
+
+class _Ear extends StatelessWidget {
+  const _Ear();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 70,
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Color(0xFF24262C),
+          shape: BoxShape.circle,
+        ),
+      );
+}
+
+class _EyePatch extends StatelessWidget {
+  const _EyePatch();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 58,
+        height: 72,
+        decoration: const BoxDecoration(
+          color: Color(0xFF25272D),
+          borderRadius: BorderRadius.all(Radius.elliptical(40, 50)),
+        ),
+        child: const Center(
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            child: SizedBox(width: 18, height: 24),
+          ),
+        ),
+      );
+}
+
+class _PandaArm extends StatelessWidget {
+  const _PandaArm();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 76,
+        height: 120,
+        decoration: BoxDecoration(
+          color: const Color(0xFF22242A),
+          borderRadius: BorderRadius.circular(60),
+          border: Border.all(color: const Color(0xFF16181E), width: 4),
+        ),
+      );
+}
+
+class _Foot extends StatelessWidget {
+  const _Foot();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 58,
+        height: 38,
+        decoration: const BoxDecoration(
+          color: Color(0xFF22242A),
+          borderRadius: BorderRadius.all(Radius.elliptical(40, 26)),
+        ),
+      );
+}
+
+class _PlayButton extends StatelessWidget {
+  const _PlayButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 260,
+      height: 74,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFD84A), Color(0xFFFFA800)],
+        ),
+        borderRadius: BorderRadius.circular(38),
+        border: Border.all(color: Colors.white.withValues(alpha: .75), width: 3),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x660D405C),
+            blurRadius: 10,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.play_arrow_rounded, color: Colors.white, size: 38),
+          SizedBox(width: 8),
+          Text(
+            'Mulai Bermain',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 23,
+              fontWeight: FontWeight.w900,
+              shadows: [
+                Shadow(color: Color(0x66001D58), blurRadius: 2, offset: Offset(0, 2)),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  static Widget _circle(double size, Color color) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
-  }
+class _Sun extends StatelessWidget {
+  const _Sun();
 
-  static Widget _eyePatch({required double rotation}) {
-    return Transform.rotate(
-      angle: rotation,
-      child: Container(
-        width: 58,
-        height: 72,
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 88,
+        height: 88,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFD62B),
+          shape: BoxShape.circle,
+          boxShadow: const [BoxShadow(color: Color(0x33FFB300), blurRadius: 18)],
+        ),
+        child: const Center(
+          child: Text('☀', style: TextStyle(fontSize: 56, color: Color(0xFFFFB300))),
+        ),
+      );
+}
+
+class _Ground extends StatelessWidget {
+  const _Ground();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 175,
         decoration: const BoxDecoration(
-          color: Color(0xFF20242D),
-          borderRadius: BorderRadius.all(Radius.elliptical(40, 50)),
-        ),
-        child: Center(
-          child: Container(
-            width: 17,
-            height: 23,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF9DE34F), Color(0xFF118A58)],
           ),
+          borderRadius: BorderRadius.vertical(top: Radius.elliptical(520, 75)),
         ),
-      ),
-    );
-  }
+      );
+}
+
+class _School extends StatelessWidget {
+  const _School();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 110,
+        height: 130,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              width: 88,
+              height: 82,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFE06A),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFFF8A3D), width: 3),
+              ),
+            ),
+            Positioned(
+              top: 12,
+              child: Container(
+                width: 105,
+                height: 52,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF7153),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
+                ),
+              ),
+            ),
+            const Positioned(
+              bottom: 0,
+              child: Icon(Icons.door_front_door_rounded, color: Color(0xFF4A92D6), size: 42),
+            ),
+          ],
+        ),
+      );
+}
+
+class _Flowers extends StatelessWidget {
+  const _Flowers();
+
+  @override
+  Widget build(BuildContext context) => const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('🌼', style: TextStyle(fontSize: 30)),
+          SizedBox(width: 8),
+          Text('🌸', style: TextStyle(fontSize: 28)),
+          SizedBox(width: 8),
+          Text('🌺', style: TextStyle(fontSize: 30)),
+        ],
+      );
 }
 
 class _Cloud extends StatelessWidget {
@@ -393,14 +536,12 @@ class _Cloud extends StatelessWidget {
   final double width;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: width * .42,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .62),
-        borderRadius: BorderRadius.circular(width),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        width: width,
+        height: width * .36,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .74),
+          borderRadius: BorderRadius.circular(width),
+        ),
+      );
 }
