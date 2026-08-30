@@ -175,6 +175,8 @@ class _AngkaPageState extends State<AngkaPage>
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: TabBar(
         controller: _tabs,
+        isScrollable: true,
+        tabAlignment: TabAlignment.center,
         indicator: UnderlineTabIndicator(
           borderSide: BorderSide(
             width: compact ? 5 : 6,
@@ -185,7 +187,7 @@ class _AngkaPageState extends State<AngkaPage>
         labelColor: const Color(0xFF31536D),
         unselectedLabelColor: const Color(0xFF61798C),
         labelStyle: TextStyle(
-          fontSize: compact ? 20 : 23,
+          fontSize: compact ? 14 : 16,
           fontWeight: FontWeight.w900,
         ),
         tabs: const [
