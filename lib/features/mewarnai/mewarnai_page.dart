@@ -22,10 +22,12 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
   Color selected = colors.first;
   bool eraser = false;
   int clearSignal = 0;
+  int fillSignal = 0;
   int drawingIndex = 0;
   // Daftar terus berputar, jadi setelah gambar terakhir kembali ke awal.
   // Anak dapat berpindah gambar kapan saja lewat pilihan di atas.
   static const drawings = [
+    ('✏️', 'Bebas Menggambar'),
     ('🦖', 'Dinosaurus'),
     ('🐟', 'Ikan'),
     ('🐱', 'Kucing'),
@@ -59,6 +61,7 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
   void _useBrush() => setState(() => eraser = false);
   void _useEraser() => setState(() => eraser = true);
   void _clear() => setState(() => clearSignal++);
+  void _fill() => setState(() => fillSignal++);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -156,16 +159,21 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: _DinoOutlinePainter(kind: drawingIndex),
-                  ),
-                ),
-                Positioned.fill(
                   child: PaintingCanvas(
                     color: eraser ? Colors.white : selected,
                     clearSignal: clearSignal,
+                    fillSignal: fillSignal,
+                    fillColor: selected,
                   ),
                 ),
+                if (drawingIndex != 0)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(
+                        painter: _DinoOutlinePainter(kind: drawingIndex - 1),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -206,11 +214,13 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
         SizedBox(height: 14 * s),
         Row(
           children: [
-            Expanded(flex: 4, child: _toolButton(icon: Icons.brush_rounded, color: const Color(0xFF2489D8), active: !eraser, onTap: _useBrush, s: s)),
-            SizedBox(width: 10 * s),
-            Expanded(flex: 2, child: _toolButton(icon: Icons.auto_fix_high_rounded, color: const Color(0xFFF4F0E7), foreground: const Color(0xFF42679E), active: eraser, onTap: _useEraser, s: s)),
-            SizedBox(width: 10 * s),
-            Expanded(flex: 4, child: _clearButton(s)),
+            Expanded(child: _toolButton(icon: Icons.brush_rounded, color: const Color(0xFF2489D8), active: !eraser, onTap: _useBrush, s: s)),
+            SizedBox(width: 8 * s),
+            Expanded(child: _toolButton(icon: Icons.format_color_fill_rounded, color: const Color(0xFF6A54D9), active: false, onTap: _fill, s: s)),
+            SizedBox(width: 8 * s),
+            Expanded(child: _toolButton(icon: Icons.auto_fix_high_rounded, color: const Color(0xFFF4F0E7), foreground: const Color(0xFF42679E), active: eraser, onTap: _useEraser, s: s)),
+            SizedBox(width: 8 * s),
+            Expanded(child: _clearButton(s)),
           ],
         ),
       ],
@@ -327,7 +337,7 @@ class _DinoOutlinePainter extends CustomPainter {
       final r1 = size.shortestSide * .105;
       final r2 = size.shortestSide * .145;
       canvas.drawLine(
-        Offset(center.dx + r1 * Math.cos(a), center.dy + r1 * Math.sin(a)),
+        Offset(center.dx + r1 * math.cos(a), center.dy + r1 * math.sin(a)),
         Offset(center.dx + r2 * Math.cos(a), center.dy + r2 * Math.sin(a)),
         line,
       );
