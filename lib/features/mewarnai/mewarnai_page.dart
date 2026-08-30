@@ -355,7 +355,7 @@ class _DinoOutlinePainter extends CustomPainter {
       final r2 = size.shortestSide * .145;
       canvas.drawLine(
         Offset(center.dx + r1 * math.cos(a), center.dy + r1 * math.sin(a)),
-        Offset(center.dx + r2 * math.cos(a), center.dy + r2 * Math.sin(a)),
+        Offset(center.dx + r2 * math.cos(a), center.dy + r2 * math.sin(a)),
         line,
       );
     }
