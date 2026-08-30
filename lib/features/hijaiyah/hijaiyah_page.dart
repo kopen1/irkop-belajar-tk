@@ -136,7 +136,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
     return Center(child: Container(margin: EdgeInsets.all(w * .06), padding: EdgeInsets.all(24 * s), decoration: _panel(Colors.white, s), child: Column(mainAxisSize: MainAxisSize.min, children: [
       Text('MINI KUIS', style: TextStyle(fontSize: 28 * s, fontWeight: FontWeight.w900)),
       const SizedBox(height: 12),
-      Text('Pilih huruf \${names[index]}', style: TextStyle(fontSize: 21 * s, fontWeight: FontWeight.w800)),
+      Text('Pilih huruf ${names[index]}', style: TextStyle(fontSize: 21 * s, fontWeight: FontWeight.w800)),
       const SizedBox(height: 16),
       Wrap(spacing: 12, runSpacing: 12, alignment: WrapAlignment.center, children: options.map((x) => FilledButton(onPressed: () { if (x == answer) { audio.speak('Hebat, benar'); setState(() => index = (index + 1) % letters.length); } else { audio.speak('Coba lagi'); } }, child: Text(x, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 30 * s, fontWeight: FontWeight.w900)))).toList()),
     ])));
