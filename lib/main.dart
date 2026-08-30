@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'features/intro/play_intro_page.dart';
+import 'features/home/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +9,7 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Belajar TK',
-      home: const PlayIntroPage(),
+      home: const HomePage(),
     ),
   );
 }
