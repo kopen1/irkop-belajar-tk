@@ -119,3 +119,15 @@ Asisten harus:
 2. Tambahkan request ke BATCH AKTIF.
 3. Jangan mengubah kode sebelum user berkata "Go push", kecuali user secara eksplisit meminta eksekusi langsung.
 4. Saat "Go push", kerjakan seluruh batch aktif, bukan hanya request terakhir.
+
+
+## Update Mini Kuis 2026-08-31
+
+- Semua Mini Kuis memakai alur bersama yang sama melalui `MiniQuizPanel`.
+- Total kuis: 10 soal, pilihan selalu unik dan jawaban benar hanya satu.
+- Jawaban salah menampilkan karakter salah, lalu soal yang sama aktif kembali.
+- Jawaban benar menampilkan karakter benar, lalu otomatis lanjut.
+- Tombol manual "Soal Berikutnya" tidak dipakai di Mini Kuis.
+- Setelah soal ke-10 tampil halaman Hasil Kuis dengan skor, benar, salah, bintang, dan Main Lagi.
+- Karakter feedback memakai `assets/images/quiz_wrong_tiger.jpg` dan `assets/images/quiz_correct_dino.jpg`.
+- Kuis Seru juga memakai karakter baru untuk hasil salah dan benar; gambar lama `quiz_dino_happy.jpg` tidak lagi dipakai untuk feedback.
