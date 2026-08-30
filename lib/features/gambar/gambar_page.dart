@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/mini_quiz_panel.dart';
 
 class GambarPage extends StatefulWidget {
   const GambarPage({super.key});
@@ -14,6 +15,7 @@ class _GambarPageState extends State<GambarPage> {
   final audio = AudioService.instance;
   int category = 0;
   int page = 0;
+  int _tab = 0;
 
   static const _categories = [
     ('🐾', 'Hewan'),
@@ -66,41 +68,74 @@ class _GambarPageState extends State<GambarPage> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final compact = constraints.maxWidth < 390;
-              final cardGap = compact ? 8.0 : 12.0;
-
               return Column(
                 children: [
                   _topBar(compact),
-                  _categoryBar(compact),
+                  _tabs(compact),
                   Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(compact ? 10 : 16, 10, compact ? 10 : 16, 8),
-                      child: GridView.builder(
-                        itemCount: visibleItems.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: cardGap,
-                          mainAxisSpacing: cardGap,
-                          childAspectRatio: compact ? 0.78 : 0.86,
-                        ),
-                        itemBuilder: (context, index) {
-                          final picture = visibleItems[index];
-                          return _pictureCard(
-                            emoji: picture.$1,
-                            label: picture.$2,
-                            compact: compact,
-                          );
-                        },
-                      ),
-                    ),
+                    child: _tab == 0
+                        ? _lesson(compact)
+                        : MiniQuizPanel(
+                            items: _items.expand((group) => group).toList(),
+                            questionPrefix: 'Gambar apakah ini?',
+                          ),
                   ),
-                  _bottomPager(),
                 ],
               );
             },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _tabs(bool compact) => Padding(
+    padding: EdgeInsets.fromLTRB(compact ? 10 : 16, 0, compact ? 10 : 16, 6),
+    child: Row(children: [
+      Expanded(child: _tabButton('GAMBAR', 0, compact)),
+      const SizedBox(width: 8),
+      Expanded(child: _tabButton('MINI KUIS', 1, compact)),
+    ]),
+  );
+
+  Widget _tabButton(String label, int value, bool compact) {
+    final active = _tab == value;
+    return Material(
+      color: active ? Colors.white.withValues(alpha: .94) : Colors.white.withValues(alpha: .45),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () { setState(() => _tab = value); audio.click(); },
+        child: SizedBox(height: compact ? 48 : 56, child: Center(child: Text(label, style: TextStyle(color: active ? const Color(0xFF244B78) : Colors.white, fontSize: compact ? 14 : 17, fontWeight: FontWeight.w900)))),
+      ),
+    );
+  }
+
+  Widget _lesson(bool compact) {
+    final cardGap = compact ? 8.0 : 12.0;
+    return Column(
+      children: [
+        _categoryBar(compact),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(compact ? 10 : 16, 10, compact ? 10 : 16, 8),
+            child: GridView.builder(
+              itemCount: visibleItems.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: cardGap,
+                mainAxisSpacing: cardGap,
+                childAspectRatio: compact ? 0.78 : 0.86,
+              ),
+              itemBuilder: (context, index) {
+                final picture = visibleItems[index];
+                return _pictureCard(emoji: picture.$1, label: picture.$2, compact: compact);
+              },
+            ),
+          ),
+        ),
+        _bottomPager(),
+      ],
     );
   }
 
