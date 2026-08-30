@@ -159,11 +159,18 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
   );
 
   Widget _quiz() => MiniQuizPanel(
-    items: const [
-      ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
-      ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'),
+    questions: const [
+      MiniQuizQuestion(prompt: 'Pilih angka Arab yang sama!', visual: '3', choices: ['١','٣','٥','٧'], answer: '٣'),
+      MiniQuizQuestion(prompt: 'Pilih angka Latin yang sama!', visual: '٧', choices: ['5','6','7','8'], answer: '7'),
+      MiniQuizQuestion(prompt: 'Ada berapa benda?', visual: '🍎🍎🍎🍎', choices: ['3','4','5','6'], answer: '4'),
+      MiniQuizQuestion(prompt: 'Ada berapa bintang?', visual: '⭐⭐⭐', choices: ['٢','٣','٤','٥'], answer: '٣'),
+      MiniQuizQuestion(prompt: 'Pilih jumlah benda yang sesuai!', visual: '5', choices: ['🍎🍎🍎','🍎🍎🍎🍎','🍎🍎🍎🍎🍎','🍎🍎'], answer: '🍎🍎🍎🍎🍎'),
+      MiniQuizQuestion(prompt: 'Pilih angka berikutnya!', visual: '1  •  2  •  ?  •  4', choices: ['2','3','4','5'], answer: '3'),
+      MiniQuizQuestion(prompt: 'Pilih angka Arab berikutnya!', visual: '٤  •  ٥  •  ?  •  ٧', choices: ['٤','٥','٦','٧'], answer: '٦'),
+      MiniQuizQuestion(prompt: 'Pasangkan angka Latin dan Arab!', visual: '9', choices: ['٧','٨','٩','١٠'], answer: '٩'),
+      MiniQuizQuestion(prompt: 'Pasangkan angka Arab dan Latin!', visual: '٢', choices: ['1','2','3','4'], answer: '2'),
+      MiniQuizQuestion(prompt: 'Pilih jumlah benda yang sesuai!', visual: '٦', choices: ['🍊🍊🍊🍊🍊','🍊🍊🍊🍊🍊🍊','🍊🍊🍊🍊','🍊🍊🍊'], answer: '🍊🍊🍊🍊🍊🍊'),
     ],
-    questionPrefix: 'Angka manakah ini?',
     totalQuestions: 10,
   );
 
