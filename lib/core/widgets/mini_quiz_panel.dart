@@ -15,7 +15,7 @@ class MiniQuizPanel extends StatefulWidget {
   const MiniQuizPanel({super.key, required this.questions, this.totalQuestions = 10});
   final List<MiniQuizQuestion> questions;
   final int totalQuestions;
-  $override
+  @override
   State<MiniQuizPanel> createState() => _MiniQuizPanelState();
 }
 
@@ -28,7 +28,7 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
   bool _finished = false;
   MiniQuizQuestion get _q => widget.questions[_current];
 
-  $override
+  @override
   void initState() { super.initState(); _start(); }
 
   void _start() {
@@ -58,7 +58,7 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
     });
   }
 
-  $override
+  @override
   Widget build(BuildContext context) {
     if (widget.questions.isEmpty) return const Center(child: Text('Belum ada soal kuis.'));
     return LayoutBuilder(builder: (context, box) {
