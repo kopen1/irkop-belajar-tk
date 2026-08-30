@@ -1,5 +1,7 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'app_settings.dart';
+
 class AudioService {
   AudioService._();
 
@@ -39,6 +41,7 @@ class AudioService {
   }
 
   Future<void> speak(String text) async {
+    if (!AppSettings.instance.narrationEnabled.value) return;
     final value = text.trim();
     if (value.isEmpty) return;
 
