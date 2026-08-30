@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/mini_quiz_panel.dart';
 
 class AngkaPage extends StatefulWidget {
   const AngkaPage({super.key});
@@ -157,80 +158,14 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
     ]),
   );
 
-  Widget _quiz() => LayoutBuilder(builder: (context, box) {
-    final s = min(1.0, max(.62, box.maxHeight / 760));
-    final target = (_score % 10) + 1;
-    final values = [target == 1 ? 2 : target - 1, target, target == 10 ? 9 : target + 1, target <= 6 ? target + 3 : target - 3]..shuffle(Random(target + _score));
-    final answered = _selected != null;
-    final correct = _selected == target;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 6, 14, 10),
-      child: Column(children: [
-        Expanded(child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(18 * s),
-          decoration: _panel(),
-          child: Column(children: [
-            Container(padding: EdgeInsets.symmetric(horizontal: 34 * s, vertical: 8 * s), decoration: BoxDecoration(color: const Color(0xFF7651BE), borderRadius: BorderRadius.circular(18 * s), boxShadow: const [BoxShadow(color: Color(0x332F145F), blurRadius: 6, offset: Offset(0,3))]), child: Text('MINI KUIS', style: TextStyle(color: Colors.white, fontSize: 24 * s, fontWeight: FontWeight.w900))),
-            SizedBox(height: 8 * s),
-            Text('Pilih Jawaban yang Benar!', style: TextStyle(color: const Color(0xFF563A91), fontSize: 25 * s, fontWeight: FontWeight.w900)),
-            Text('Angka manakah ini?', style: TextStyle(color: const Color(0xFF42627D), fontSize: 18 * s, fontWeight: FontWeight.w800)),
-            Expanded(child: Stack(alignment: Alignment.center, children: [
-              Container(width: 180 * s, height: 180 * s, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFFF9F5D5), Color(0xFFD5E8F5), Color(0xFFB9D8EC)]))),
-              Text(_emoji[target - 1], style: TextStyle(fontSize: 105 * s)),
-            ])),
-            _button('DENGARKAN PERTANYAAN', Icons.play_arrow_rounded, const Color(0xFF2767C6), () => audio.speak('Angka berapa ini?'), s),
-            SizedBox(height: 10 * s),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 4,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 2.25, crossAxisSpacing: 12 * s, mainAxisSpacing: 10 * s),
-              itemBuilder: (context, i) {
-                final value = values[i];
-                final selected = _selected == value;
-                final isCorrect = value == target;
-                var fill = const Color(0xFFF6F7FC);
-                var border = const Color(0xFFCDD9E8);
-                if (answered && isCorrect) { fill = const Color(0xFFE5F7E9); border = const Color(0xFF42A95A); }
-                if (selected && !isCorrect) { fill = const Color(0xFFFFECEA); border = const Color(0xFFE45A52); }
-                return Material(
-                  color: fill,
-                  borderRadius: BorderRadius.circular(20 * s),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20 * s),
-                    onTap: answered ? null : () => _answerQuiz(value, target),
-                    child: Container(decoration: BoxDecoration(border: Border.all(color: border, width: 2), borderRadius: BorderRadius.circular(20 * s)), alignment: Alignment.center, child: Text(value.toString(), style: TextStyle(color: const Color(0xFF23486F), fontSize: 33 * s, fontWeight: FontWeight.w900))),
-                  ),
-                );
-              },
-            ),
-            if (answered) ...[
-              SizedBox(height: 8 * s),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 6 * s),
-                decoration: BoxDecoration(color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE), borderRadius: BorderRadius.circular(18 * s), border: Border.all(color: correct ? const Color(0xFF8ED39B) : const Color(0xFFE89A93))),
-                child: Row(children: [
-                  ClipRRect(borderRadius: BorderRadius.circular(14 * s), child: Image.asset(correct ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg', width: 62 * s, height: 62 * s, fit: BoxFit.cover)),
-                  SizedBox(width: 10 * s),
-                  Expanded(child: Text(correct ? 'Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900))),
-                ]),
-              ),
-            ],
-          ]),
-        )),
-        SizedBox(height: 8 * s),
-        Row(children: [
-          Expanded(child: _stat('▣','SOAL', (_score + 1).toString() + ' / 10', s)),
-          SizedBox(width: 8 * s),
-          Expanded(child: _stat('✓','BENAR', _correct.toString(), s)),
-          SizedBox(width: 8 * s),
-          Expanded(child: _stat('⭐','SKOR', (_correct * 50).toString(), s)),
-        ]),
-      ]),
-    );
-  });
+  Widget _quiz() => MiniQuizPanel(
+    items: const [
+      ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
+      ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'),
+    ],
+    questionPrefix: 'Angka manakah ini?',
+    totalQuestions: 10,
+  ););
 
   BoxDecoration _panel() => BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(32), border: Border.all(color: Colors.white, width: 2), boxShadow: const [BoxShadow(color: Color(0x33143F66), blurRadius: 16, offset: Offset(0,8))]);
 
