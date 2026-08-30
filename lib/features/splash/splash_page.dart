@@ -177,7 +177,6 @@ class _SplashPageState extends State<SplashPage>
                         ),
                       ),
                       const SizedBox(height: 14),
-                      ),
                     ],
                   ),
                 ),
