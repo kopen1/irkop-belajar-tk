@@ -49,6 +49,24 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
     });
   }
 
+  void _answer(int value) {
+    if (_selected != null) return;
+    final isCorrect = value == _target;
+    setState(() {
+      _selected = value;
+      if (isCorrect) _correct++;
+    });
+    isCorrect ? _audio.correct() : _audio.wrong();
+    Future.delayed(Duration(milliseconds: isCorrect ? 1100 : 900), () {
+      if (!mounted) return;
+      if (isCorrect) {
+        _next();
+      } else {
+        setState(() => _selected = null);
+      }
+    });
+  }
+
   void _buildChoices() {
     final pool = List<int>.generate(widget.items.length, (i) => i)..shuffle(_random);
     final values = <int>[_target];
@@ -121,13 +139,7 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
                             borderRadius: BorderRadius.circular(20 * s),
                             child: InkWell(
                               borderRadius: BorderRadius.circular(20 * s),
-                              onTap: answered ? null : () {
-                                setState(() {
-                                  _selected = value;
-                                  if (value == _target) _correct++;
-                                });
-                                value == _target ? _audio.correct() : _audio.wrong();
-                              },
+                              onTap: answered ? null : () => _answer(value),
                               child: Container(
                                 decoration: BoxDecoration(border: Border.all(color: border, width: 2), borderRadius: BorderRadius.circular(20 * s)),
                                 alignment: Alignment.center,
@@ -141,13 +153,35 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
                         SizedBox(height: 8 * s),
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 8 * s),
-                          decoration: BoxDecoration(color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE), borderRadius: BorderRadius.circular(16 * s)),
-                          child: Text(correct ? '✓ Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', textAlign: TextAlign.center, style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900)),
+                          padding: EdgeInsets.symmetric(horizontal: 10 * s, vertical: 6 * s),
+                          decoration: BoxDecoration(
+                            color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE),
+                            borderRadius: BorderRadius.circular(18 * s),
+                            border: Border.all(color: correct ? const Color(0xFF8ED39B) : const Color(0xFFE89A93)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14 * s),
+                                child: Image.asset(
+                                  correct ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg',
+                                  width: 62 * s,
+                                  height: 62 * s,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(width: 10 * s),
+                              Expanded(
+                                child: Text(
+                                  correct ? 'Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪',
+                                  style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                      SizedBox(height: 8 * s),
-                      _button('SOAL BERIKUTNYA', Icons.arrow_forward_rounded, const Color(0xFF2767C6), _next, s),
                     ],
                   ),
                 ),
