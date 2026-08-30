@@ -32,7 +32,11 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
   late final TabController _tabs;
 
   @override
-  void initState() { super.initState(); _tabs = TabController(length: 2, vsync: this); }
+  void initState() {
+    super.initState();
+    _tabs = TabController(length: 2, vsync: this);
+    index = _quizRandom.nextInt(letters.length);
+  }
   @override
   void dispose() { _tabs.dispose(); super.dispose(); }
 
@@ -206,11 +210,6 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    index = _quizRandom.nextInt(letters.length);
-  }
 
   void _answerQuiz(String option, String answer) {
     if (quizAnswered) return;
