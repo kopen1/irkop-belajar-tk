@@ -14,6 +14,9 @@ class _HurufPageState extends State<HurufPage> {
   final AudioService audio = AudioService.instance;
   int _index = 0;
 
+  static const _analogyEmoji = ['🏠','8️⃣','🌙','🪜','📘','🪮','🪝','🎢','🕯️','🪝','🔑','🦵','⛰️','🧲','⚽','🚩','🎈','🌈','🐍','☂️','🥣','✌️','🌊','❎','🪀','⚡'];
+  static const _analogyText = ['Seperti atap rumah','Seperti dua perut gemuk','Seperti bulan sabit','Seperti pintu melengkung','Seperti sisir','Seperti sisir','Seperti kail','Seperti tangga','Seperti tiang atau lilin','Seperti kail','Seperti kunci','Seperti kaki meja','Seperti dua gunung','Seperti magnet','Seperti bola atau donat','Seperti tiang berbendera','Seperti balon berekor','Seperti pita melengkung','Seperti ular meliuk','Seperti payung','Seperti mangkok','Seperti ayunan','Seperti gelombang','Seperti dua garis menyilang','Seperti ketapel','Seperti kilat'];
+
   static const _letters = [
     'A','B','C','D','E','F','G','H','I','J','K','L','M',
     'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -175,7 +178,7 @@ class _HurufPageState extends State<HurufPage> {
   }
 
   Widget _lessonPanel(double w, double scale) {
-    final panelHeight = w * .60;
+    final panelHeight = w * .78;
     final padding = w * .035;
 
     return Container(
@@ -194,11 +197,24 @@ class _HurufPageState extends State<HurufPage> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(child: _wordCard(scale)),
-          SizedBox(width: w * .025),
-          Expanded(child: _letterCard(scale)),
+          Expanded(child: Row(children: [
+            Expanded(child: _wordCard(scale)),
+            SizedBox(width: w * .025),
+            Expanded(child: _letterCard(scale)),
+          ])),
+          SizedBox(height: 12 * scale),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 14 * scale, vertical: 10 * scale),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(22 * scale)),
+            child: Row(children: [
+              Text(_analogyEmoji[_index], style: TextStyle(fontSize: 40 * scale)),
+              SizedBox(width: 10 * scale),
+              Expanded(child: Text('Bentuk ${_letters[_index]} ${_analogyText[_index]}', style: TextStyle(fontSize: 18 * scale, fontWeight: FontWeight.w900, color: const Color(0xFF31536D)))),
+            ]),
+          ),
         ],
       ),
     );
