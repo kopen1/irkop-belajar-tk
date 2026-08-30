@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/mini_quiz_panel.dart';
 
 class HurufPage extends StatefulWidget {
   const HurufPage({super.key});
@@ -191,106 +192,11 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
 
   Widget _tabBar(double w, double scale) => TabBar(controller: _tabs, isScrollable: true, tabAlignment: TabAlignment.center, tabs: const [Tab(text: 'BESAR'), Tab(text: 'KECIL'), Tab(text: 'MINI KUIS')]);
   Widget _lessonTab(double w, double scale, {required bool lowercase}) => SingleChildScrollView(padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24), child: Column(children: [_lessonPanel(w, scale, lowercase: lowercase), SizedBox(height: 18 * scale), _pager(w, scale), SizedBox(height: 24 * scale), _alphabetPanel(w, scale, lowercase: lowercase)]));
-  Widget _quizTab(double w, double scale) {
-    final answer = _letters[_index];
-    final options = [
-      _letters[(_index + 5) % 26],
-      answer,
-      _letters[(_index + 12) % 26],
-      _letters[(_index + 20) % 26],
-    ];
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(w * .055, 18, w * .055, 34),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(22 * scale),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: .95),
-          borderRadius: BorderRadius.circular(34 * scale),
-          border: Border.all(color: Colors.white, width: 3),
-          boxShadow: const [BoxShadow(color: Color(0x330A3B67), blurRadius: 18, offset: Offset(0, 8))],
-        ),
-        child: Column(children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 22 * scale, vertical: 9 * scale),
-            decoration: BoxDecoration(color: const Color(0xFF7B57C8), borderRadius: BorderRadius.circular(22 * scale)),
-            child: Text('MINI KUIS', style: TextStyle(color: Colors.white, fontSize: 20 * scale, fontWeight: FontWeight.w900)),
-          ),
-          SizedBox(height: 18 * scale),
-          Text(
-            _quizCorrect == true ? 'Hebat Sekali! 🎉' : _quizCorrect == false ? 'Coba Lagi Ya! 💪' : 'Ayo Tebak Hurufnya!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 30 * scale,
-              fontWeight: FontWeight.w900,
-              color: _quizCorrect == true ? const Color(0xFF188D39) : _quizCorrect == false ? const Color(0xFFE04B3F) : const Color(0xFF213B59),
-            ),
-          ),
-          if (_quizCorrect != null) ...[
-            SizedBox(height: 10 * scale),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(18 * scale),
-              child: Image.asset(
-                _quizCorrect == true ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg',
-                width: w * .24,
-                height: w * .18,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-          SizedBox(height: 16 * scale),
-          Container(
-            width: w * .38,
-            height: w * .38,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF1D8),
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFFFD24A), width: 5),
-              boxShadow: const [BoxShadow(color: Color(0x220A3B67), blurRadius: 10, offset: Offset(0, 5))],
-            ),
-            child: Text(_emoji[_index], style: TextStyle(fontSize: 108 * scale)),
-          ),
-          SizedBox(height: 14 * scale),
-          Text(
-            'Huruf pertama dari ' + _words[_index] + ' apa ya?',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 21 * scale, fontWeight: FontWeight.w800, color: const Color(0xFF40516A)),
-          ),
-          SizedBox(height: 22 * scale),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: options.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 14 * scale,
-              mainAxisSpacing: 14 * scale,
-              childAspectRatio: 1.9,
-            ),
-            itemBuilder: (context, i) {
-              final x = options[i];
-              final isCorrect = x == answer;
-              final revealCorrect = _quizCorrect != null && isCorrect;
-              final color = revealCorrect ? const Color(0xFF2DBE4C) : const Color(0xFF5C4A96);
-              return Material(
-                color: color,
-                borderRadius: BorderRadius.circular(24 * scale),
-                elevation: 5,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(24 * scale),
-                  onTap: _quizCorrect != null ? null : () => _answerQuizLetter(x == answer),
-                  child: Center(child: Text(x, style: TextStyle(color: Colors.white, fontSize: 34 * scale, fontWeight: FontWeight.w900))),
-                ),
-              );
-            },
-          ),
-
-        ]),
-      ),
-    );
-  }
+  Widget _quizTab(double w, double scale) => MiniQuizPanel(
+    items: List.generate(_letters.length, (i) => (_letters[i], _letters[i])),
+    questionPrefix: 'Huruf apakah ini?',
+    totalQuestions: 10,
+  );
 
   Widget _lessonPanel(double w, double scale, {bool lowercase = false}) {
     final panelHeight = w * .78;
