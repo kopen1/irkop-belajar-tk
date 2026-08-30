@@ -232,16 +232,38 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
     child: InkWell(borderRadius: BorderRadius.circular(20 * s), onTap: onTap, child: SizedBox(height: 56 * s, child: Center(child: FittedBox(child: Text(label, style: TextStyle(color: Colors.white, fontSize: 14 * s, fontWeight: FontWeight.w900)))))),
   );
 
-  Widget _numberStrip(bool arabic, double s) => Row(children: List.generate(5, (i) => Expanded(
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4 * s),
-      child: Material(
-        color: i == _index ? const Color(0xFFFFD149) : Colors.white.withValues(alpha: .92),
-        borderRadius: BorderRadius.circular(16 * s), elevation: i == _index ? 5 : 2,
-        child: InkWell(borderRadius: BorderRadius.circular(16 * s), onTap: () => _pick(i), child: Center(child: Text(arabic ? _arab[i] : (i + 1).toString(), style: TextStyle(color: const Color(0xFF25486B), fontSize: 26 * s, fontWeight: FontWeight.w900)))),
+  // Strip angka 1–10 dapat digeser ke samping agar angka 6–10 tetap mudah dipilih.
+  Widget _numberStrip(bool arabic, double s) => LayoutBuilder(
+    builder: (context, box) => ListView.separated(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 2 * s),
+      itemCount: 10,
+      separatorBuilder: (_, __) => SizedBox(width: 8 * s),
+      itemBuilder: (context, i) => SizedBox(
+        width: min(box.maxWidth * .22, 72 * s),
+        child: Material(
+          color: i == _index ? const Color(0xFFFFD149) : Colors.white.withValues(alpha: .92),
+          borderRadius: BorderRadius.circular(16 * s),
+          elevation: i == _index ? 5 : 2,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16 * s),
+            onTap: () => _pick(i),
+            child: Center(
+              child: Text(
+                arabic ? _arab[i] : (i + 1).toString(),
+                style: TextStyle(
+                  color: const Color(0xFF25486B),
+                  fontSize: 26 * s,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     ),
-  )));
+  );
 
   Widget _stat(String icon, String label, String value, double s) => Container(
     height: 64 * s,
