@@ -193,8 +193,18 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
   Widget _tabBar(double w, double scale) => TabBar(controller: _tabs, isScrollable: true, tabAlignment: TabAlignment.center, tabs: const [Tab(text: 'BESAR'), Tab(text: 'KECIL'), Tab(text: 'MINI KUIS')]);
   Widget _lessonTab(double w, double scale, {required bool lowercase}) => SingleChildScrollView(padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24), child: Column(children: [_lessonPanel(w, scale, lowercase: lowercase), SizedBox(height: 18 * scale), _pager(w, scale), SizedBox(height: 24 * scale), _alphabetPanel(w, scale, lowercase: lowercase)]));
   Widget _quizTab(double w, double scale) => MiniQuizPanel(
-    items: List.generate(_letters.length, (i) => (_letters[i], _letters[i])),
-    questionPrefix: 'Huruf apakah ini?',
+    questions: const [
+      MiniQuizQuestion(prompt: 'Huruf apakah ini? Pilih huruf BESAR!', visual: 'a', choices: ['A','B','T','C'], answer: 'A'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini? Pilih huruf kecil!', visual: 'B', choices: ['b','d','p','q'], answer: 'b'),
+      MiniQuizQuestion(prompt: 'Huruf awal gambar ini apa?', visual: '🍎\nApel', choices: ['A','B','C','D'], answer: 'A'),
+      MiniQuizQuestion(prompt: 'Huruf awal gambar ini apa?', visual: '🏠\nRumah', choices: ['R','M','B','H'], answer: 'R'),
+      MiniQuizQuestion(prompt: 'Pasangan huruf kecilnya apa?', visual: 'M', choices: ['m','n','w','h'], answer: 'm'),
+      MiniQuizQuestion(prompt: 'Pasangan huruf BESARnya apa?', visual: 'k', choices: ['K','X','H','R'], answer: 'K'),
+      MiniQuizQuestion(prompt: 'Huruf awal gambar ini apa?', visual: '🐱\nKucing', choices: ['K','C','G','B'], answer: 'K'),
+      MiniQuizQuestion(prompt: 'Huruf awal gambar ini apa?', visual: '🐟\nIkan', choices: ['I','L','J','T'], answer: 'I'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini? Pilih pasangan kecilnya!', visual: 'S', choices: ['s','z','c','f'], answer: 's'),
+      MiniQuizQuestion(prompt: 'Huruf awal gambar ini apa?', visual: '🌸\nBunga', choices: ['B','D','P','M'], answer: 'B'),
+    ],
     totalQuestions: 10,
   );
 
