@@ -87,23 +87,7 @@ class PlayIntroPage extends StatelessWidget {
                           children: [
                             _RainbowLogo(compact: compact),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Ayo Bermain & Belajar Bersama!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF7A2500),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                shadows: [
-                                  Shadow(
-                                    color: Color(0x55FFFFFF),
-                                    blurRadius: 2,
-                                    offset: Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: compact ? 8 : 14),
+                            SizedBox(height: compact ? 10 : 16),
                             const _PandaHero(),
                             SizedBox(height: compact ? 8 : 16),
                             _PlayButton(onTap: () => _openMenu(context)),
