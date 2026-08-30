@@ -44,7 +44,7 @@ class _WarnaPageState extends State<WarnaPage> {
               child: _tab == 0
                   ? _lesson(w, s)
                   : MiniQuizPanel(
-                      items: items.map((item) => ('🎨', item.$1)).toList(),
+                      items: List.generate(items.length, (i) => (const ['🔴','🟠','🟡','🟢','🔵','🟣','🩷','🟤','⚫','⚪','⚪','🔵'][i], items[i].$1)),
                       questionPrefix: 'Warna apakah ini?',
                     ),
             ),
