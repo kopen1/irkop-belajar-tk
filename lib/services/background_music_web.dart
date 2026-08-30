@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 
 class BackgroundMusic {
   BackgroundMusic._();
 
   static final BackgroundMusic instance = BackgroundMusic._();
+
+  final ValueNotifier<bool> enabled = ValueNotifier<bool>(true);
 
   web.AudioContext? _context;
   Timer? _timer;
@@ -23,14 +26,24 @@ class BackgroundMusic {
   ];
 
   void start() {
-    if (_timer != null) return;
+    if (!enabled.value || _timer != null) return;
 
     _context ??= web.AudioContext();
+    _context!.resume();
     _playNext();
     _timer = Timer.periodic(
       const Duration(milliseconds: 420),
       (_) => _playNext(),
     );
+  }
+
+  void toggle() {
+    enabled.value = !enabled.value;
+    if (enabled.value) {
+      start();
+    } else {
+      stop();
+    }
   }
 
   void stop() {
@@ -39,6 +52,8 @@ class BackgroundMusic {
   }
 
   void _playNext() {
+    if (!enabled.value) return;
+
     final context = _context;
     if (context == null) return;
 
@@ -46,13 +61,14 @@ class BackgroundMusic {
     final gain = context.createGain();
 
     oscillator.frequency.value = _notes[_index];
-    gain.gain.value = .045;
+    // Dinaikkan agar musik terdengar lebih jelas di perangkat mobile.
+    gain.gain.value = .14;
 
     oscillator.connect(gain);
     gain.connect(context.destination);
     oscillator.start();
 
-    Future<void>.delayed(const Duration(milliseconds: 330), () {
+    Future<void>.delayed(const Duration(milliseconds: 340), () {
       oscillator.stop();
       oscillator.disconnect();
       gain.disconnect();
