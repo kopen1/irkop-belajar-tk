@@ -75,14 +75,7 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
                   _header(w, scale),
                   _tabBar(w, scale),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24),
-                      child: Column(
-                        children: [
-                          SizedBox(height: constraints.maxHeight * .74, child: TabBarView(controller: _tabs, children: [_lessonTab(w, scale, lowercase: false), _lessonTab(w, scale, lowercase: true), _quizTab(w, scale)])),
-                        ],
-                      ),
-                    ),
+                    child: TabBarView(controller: _tabs, children: [_lessonTab(w, scale, lowercase: false), _lessonTab(w, scale, lowercase: true), _quizTab(w, scale)]),
                   ),
                 ],
               );
