@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
@@ -5,573 +6,257 @@ import '../../core/widgets/kid_background.dart';
 
 class AngkaPage extends StatefulWidget {
   const AngkaPage({super.key});
-
   @override
   State<AngkaPage> createState() => _AngkaPageState();
 }
 
-class _AngkaPageState extends State<AngkaPage>
-    with SingleTickerProviderStateMixin {
-  final AudioService audio = AudioService.instance;
-
+class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMixin {
+  final audio = AudioService.instance;
   late final TabController _tabs;
-  int _index = 0;
-  int _score = 0;
+  int _index = 0, _score = 0, _correct = 0;
+  int? _selected;
 
-  static const _arabicNumbers = ['١','٢','٣','٤','٥','٦','٧','٨','٩','١٠'];
-  static const _analogyEmoji = ['✏️','🐍','🐦','🪑','🤡','🐍','🦯','🥜','🎈','🏑⚽'];
-  static const _analogyText = ['Seperti pensil atau lilin','Seperti ular yang meliuk','Seperti burung terbang','Seperti kursi terbalik','Seperti badut','Seperti ular yang melingkar','Seperti tongkat nenek','Seperti kacang','Seperti balon terbang','Seperti lidi dan bola'];
-
-  static const _numberWords = [
-    'Satu',
-    'Dua',
-    'Tiga',
-    'Empat',
-    'Lima',
-    'Enam',
-    'Tujuh',
-    'Delapan',
-    'Sembilan',
-    'Sepuluh',
-  ];
-
+  static const _arab = ['١','٢','٣','٤','٥','٦','٧','٨','٩','١٠'];
+  static const _words = ['Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh'];
+  static const _emoji = ['✏️','🐍','🐦','🪑','🤡','🐍','🦯','🥜','🎈','🪄⚽'];
+  static const _analogy = ['Seperti pensil atau lilin','Seperti ular yang meliuk','Seperti burung terbang','Seperti kursi terbalik','Seperti badut','Seperti ular','Seperti tongkat nenek','Seperti kacang','Seperti balon terbang','Seperti lidi dan bola'];
   int get number => _index + 1;
 
   @override
-  void initState() {
-    super.initState();
-    _tabs = TabController(length: 3, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => audio.speak('Angka $number'),
-    );
-  }
+  void initState() { super.initState(); _tabs = TabController(length: 3, vsync: this); }
+  @override
+  void dispose() { _tabs.dispose(); super.dispose(); }
+
+  void _pick(int i) { setState(() => _index = i); audio.speak('Angka ' + (i + 1).toString() + '. ' + _words[i]); }
+  void _prev() { setState(() => _index = (_index + 9) % 10); }
+  void _next() { setState(() { _index = (_index + 1) % 10; _selected = null; }); }
 
   @override
-  void dispose() {
-    _tabs.dispose();
-    super.dispose();
-  }
-
-  void _select(int value) {
-    setState(() => _index = value);
-    audio.speak('Angka ${value + 1}');
-  }
-
-  void _previous() {
-    setState(() => _index = (_index - 1 + 10) % 10);
-    audio.speak('Angka $number');
-  }
-
-  void _next() {
-    setState(() => _index = (_index + 1) % 10);
-    audio.speak('Angka $number');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: KidBackground(
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxWidth < 390;
-              return Column(
-                children: [
-                  _header(compact),
-                  _tabBar(compact),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabs,
-                      children: [
-                        _learn(compact),
-                        _learn(compact, arabic: true),
-                        _game(compact),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    body: KidBackground(
+      child: SafeArea(
+        child: LayoutBuilder(builder: (context, box) {
+          final compact = box.maxWidth < 430 || box.maxHeight < 780;
+          return Column(children: [
+            _header(compact),
+            _tabBar(compact),
+            Expanded(child: TabBarView(controller: _tabs, children: [
+              _learn(false),
+              _learn(true),
+              _quiz(),
+            ])),
+          ]);
+        }),
       ),
-    );
-  }
+    ),
+  );
 
   Widget _header(bool compact) {
-    final side = compact ? 58.0 : 68.0;
-
+    final side = compact ? 58.0 : 70.0;
     return Padding(
-      padding: EdgeInsets.fromLTRB(compact ? 10 : 16, 12, compact ? 10 : 16, 8),
-      child: Row(
-        children: [
-          _roundControl(
-            size: side,
-            icon: Icons.arrow_back_rounded,
-            background: Colors.white.withValues(alpha: 0.94),
-            foreground: const Color(0xFF31536D),
-            onTap: () => Navigator.of(context).maybePop(),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Container(
-              height: compact ? 100 : 112,
-              padding: EdgeInsets.symmetric(horizontal: compact ? 14 : 20),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.94),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x330D405C),
-                    blurRadius: 14,
-                    offset: Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Dunia Angka 🔢',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: const Color(0xFF31536D),
-                      fontSize: compact ? 25 : 31,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Belajar angka sambil bermain',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: const Color(0xFF61798C),
-                      fontSize: compact ? 13 : 16,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          _roundControl(
-            size: side,
-            icon: Icons.volume_up_rounded,
-            background: const Color(0xFF35C84A),
-            foreground: Colors.white,
-            onTap: () => audio.speak('Dunia Angka. Belajar angka sambil bermain.'),
-          ),
-        ],
-      ),
+      padding: EdgeInsets.fromLTRB(18, compact ? 8 : 14, 18, 8),
+      child: SizedBox(height: compact ? 94 : 110, child: Stack(alignment: Alignment.center, children: [
+        Positioned(left: 0, child: _circle(side, const Color(0xFFFFC12B), Icons.arrow_back_rounded, () => Navigator.of(context).maybePop())),
+        Positioned(right: 0, child: _circle(side, const Color(0xFF2BC33A), Icons.volume_up_rounded, () => audio.speak('Dunia Angka. Belajar angka sambil bermain.'))),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: side + 18),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            FittedBox(child: Text('Dunia Angka', style: TextStyle(fontSize: compact ? 38 : 46, fontWeight: FontWeight.w900, color: const Color(0xFFFFD332), shadows: const [Shadow(color: Color(0xFF174B83), offset: Offset(2,3), blurRadius: 2)]))),
+            const SizedBox(height: 3),
+            FittedBox(child: Text('Belajar angka sambil bermain', style: TextStyle(fontSize: compact ? 18 : 22, fontWeight: FontWeight.w900, color: Colors.white, shadows: const [Shadow(color: Color(0xFF285276), offset: Offset(1,2), blurRadius: 2)]))),
+          ]),
+        ),
+      ])),
     );
   }
 
-  Widget _tabBar(bool compact) {
-    return Container(
-      height: compact ? 76 : 84,
+  Widget _tabBar(bool compact) => SizedBox(
+    height: compact ? 62 : 70,
+    child: TabBar(
+      controller: _tabs,
       padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: TabBar(
-        controller: _tabs,
-        isScrollable: true,
-        tabAlignment: TabAlignment.center,
-        indicator: UnderlineTabIndicator(
-          borderSide: BorderSide(
-            width: compact ? 5 : 6,
-            color: const Color(0xFF31536D),
-          ),
-          insets: const EdgeInsets.symmetric(horizontal: 24),
-        ),
-        labelColor: const Color(0xFF31536D),
-        unselectedLabelColor: const Color(0xFF61798C),
-        labelStyle: TextStyle(
-          fontSize: compact ? 14 : 16,
-          fontWeight: FontWeight.w900,
-        ),
-        tabs: const [
-          Tab(text: 'ANGKA ID'),
-          Tab(text: 'ANGKA ARAB'),
-          Tab(text: 'KUIS MINI'),
-        ],
-      ),
-    );
-  }
+      indicatorSize: TabBarIndicatorSize.tab,
+      dividerColor: Colors.transparent,
+      indicator: BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(20), boxShadow: const [BoxShadow(color: Color(0x220D3E67), blurRadius: 8, offset: Offset(0,4))]),
+      labelColor: const Color(0xFF244B78),
+      unselectedLabelColor: Colors.white.withValues(alpha: .82),
+      labelStyle: TextStyle(fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900),
+      unselectedLabelStyle: TextStyle(fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900),
+      tabs: const [Tab(text: 'ANGKA ID'), Tab(text: 'ANGKA ARAB'), Tab(text: 'KUIS MINI')],
+    ),
+  );
 
-  Widget _learn(bool compact, {bool arabic = false}) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(compact ? 12 : 18, 8, compact ? 12 : 18, 22),
-      child: Column(
-        children: [
-          _numberShowcase(compact, arabic: arabic),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _navButton(
-                  icon: Icons.arrow_back_rounded,
-                  label: 'Sebelumnya',
-                  onTap: _previous,
-                  compact: compact,
-                ),
+  Widget _learn(bool arabic) => LayoutBuilder(builder: (context, box) {
+    final s = min(1.0, max(.68, box.maxHeight / 760));
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 4, 14, 10),
+      child: Column(children: [
+        Expanded(flex: 8, child: _lessonCard(arabic, s)),
+        SizedBox(height: 10 * s),
+        Row(children: [
+          Expanded(child: _nav('←  SEBELUMNYA', _prev, s)),
+          SizedBox(width: 10 * s),
+          Container(width: 110 * s, height: 56 * s, alignment: Alignment.center, decoration: BoxDecoration(color: const Color(0xFF1E4C82), borderRadius: BorderRadius.circular(20 * s)), child: Text((_index + 1).toString() + ' / 10', style: TextStyle(color: Colors.white, fontSize: 19 * s, fontWeight: FontWeight.w900))),
+          SizedBox(width: 10 * s),
+          Expanded(child: _nav('SELANJUTNYA  →', _next, s)),
+        ]),
+        SizedBox(height: 10 * s),
+        Expanded(flex: 1, child: _numberStrip(arabic, s)),
+      ]),
+    );
+  });
+
+  Widget _lessonCard(bool arabic, double s) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(16 * s),
+    decoration: _panel(),
+    child: Column(children: [
+      Expanded(
+        child: Stack(alignment: Alignment.center, children: [
+          Container(width: 245 * s, height: 245 * s, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFFFDF3C6), Color(0xFFD5E8F5), Color(0xFFB4D5EA)]))),
+          Positioned(top: 14 * s, child: Text('✦', style: TextStyle(fontSize: 30 * s, color: const Color(0xFFFFC72E)))),
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(arabic ? _arab[_index] : number.toString(), style: TextStyle(height: .85, fontSize: 185 * s, fontWeight: FontWeight.w900, color: const Color(0xFFFFB20F), shadows: const [Shadow(color: Color(0x55364A5D), blurRadius: 2, offset: Offset(2,4))])),
+            Transform.translate(
+              offset: Offset(0, -4 * s),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 42 * s, vertical: 8 * s),
+                decoration: BoxDecoration(color: const Color(0xFF7DA8DF), borderRadius: BorderRadius.circular(12 * s), boxShadow: const [BoxShadow(color: Color(0x33204E87), blurRadius: 6, offset: Offset(0,3))]),
+                child: Text(_words[_index], style: TextStyle(fontSize: 31 * s, color: Colors.white, fontWeight: FontWeight.w900, shadows: const [Shadow(color: Color(0xFF244B78), offset: Offset(1,2), blurRadius: 1)])),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _navButton(
-                  icon: Icons.arrow_forward_rounded,
-                  label: 'Selanjutnya',
-                  trailing: true,
-                  onTap: _next,
-                  compact: compact,
-                ),
-              ),
+            ),
+          ]),
+        ]),
+      ),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+        decoration: BoxDecoration(color: const Color(0xFFF8FBFF), border: Border.all(color: const Color(0xFFC4DCEF), width: 2), borderRadius: BorderRadius.circular(20 * s)),
+        child: Row(children: [
+          Text(_emoji[_index], style: TextStyle(fontSize: 48 * s)),
+          SizedBox(width: 10 * s),
+          Expanded(child: Text(_analogy[_index], textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFF2F4F72), fontSize: 19 * s, fontWeight: FontWeight.w900))),
+        ]),
+      ),
+      SizedBox(height: 10 * s),
+      _button('DENGARKAN', Icons.volume_up_rounded, const Color(0xFF24B92D), () => audio.speak('Angka ' + number.toString() + '. ' + _words[_index] + '. ' + _analogy[_index]), s),
+    ]),
+  );
+
+  Widget _quiz() => LayoutBuilder(builder: (context, box) {
+    final s = min(1.0, max(.62, box.maxHeight / 760));
+    final target = (_score % 10) + 1;
+    final values = [target == 1 ? 2 : target - 1, target, target == 10 ? 9 : target + 1, target <= 6 ? target + 3 : target - 3]..shuffle(Random(target + _score));
+    final answered = _selected != null;
+    final correct = _selected == target;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 6, 14, 10),
+      child: Column(children: [
+        Expanded(child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(18 * s),
+          decoration: _panel(),
+          child: Column(children: [
+            Container(padding: EdgeInsets.symmetric(horizontal: 34 * s, vertical: 8 * s), decoration: BoxDecoration(color: const Color(0xFF7651BE), borderRadius: BorderRadius.circular(18 * s), boxShadow: const [BoxShadow(color: Color(0x332F145F), blurRadius: 6, offset: Offset(0,3))]), child: Text('MINI KUIS', style: TextStyle(color: Colors.white, fontSize: 24 * s, fontWeight: FontWeight.w900))),
+            SizedBox(height: 8 * s),
+            Text('Pilih Jawaban yang Benar!', style: TextStyle(color: const Color(0xFF563A91), fontSize: 25 * s, fontWeight: FontWeight.w900)),
+            Text('Angka manakah ini?', style: TextStyle(color: const Color(0xFF42627D), fontSize: 18 * s, fontWeight: FontWeight.w800)),
+            Expanded(child: Stack(alignment: Alignment.center, children: [
+              Container(width: 180 * s, height: 180 * s, decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFFF9F5D5), Color(0xFFD5E8F5), Color(0xFFB9D8EC)]))),
+              Text(_emoji[target - 1], style: TextStyle(fontSize: 105 * s)),
+            ])),
+            _button('DENGARKAN PERTANYAAN', Icons.play_arrow_rounded, const Color(0xFF2767C6), () => audio.speak('Angka berapa ini?'), s),
+            SizedBox(height: 10 * s),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 4,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 2.25, crossAxisSpacing: 12 * s, mainAxisSpacing: 10 * s),
+              itemBuilder: (context, i) {
+                final value = values[i];
+                final selected = _selected == value;
+                final isCorrect = value == target;
+                var fill = const Color(0xFFF6F7FC);
+                var border = const Color(0xFFCDD9E8);
+                if (answered && isCorrect) { fill = const Color(0xFFE5F7E9); border = const Color(0xFF42A95A); }
+                if (selected && !isCorrect) { fill = const Color(0xFFFFECEA); border = const Color(0xFFE45A52); }
+                return Material(
+                  color: fill,
+                  borderRadius: BorderRadius.circular(20 * s),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20 * s),
+                    onTap: answered ? null : () {
+                      setState(() {
+                        _selected = value;
+                        if (value == target) { _correct++; _score++; }
+                      });
+                      value == target ? audio.correct() : audio.wrong();
+                    },
+                    child: Container(decoration: BoxDecoration(border: Border.all(color: border, width: 2), borderRadius: BorderRadius.circular(20 * s)), alignment: Alignment.center, child: Text(value.toString(), style: TextStyle(color: const Color(0xFF23486F), fontSize: 33 * s, fontWeight: FontWeight.w900))),
+                  ),
+                );
+              },
+            ),
+            if (answered) ...[
+              SizedBox(height: 8 * s),
+              Container(width: double.infinity, padding: EdgeInsets.symmetric(vertical: 8 * s), decoration: BoxDecoration(color: correct ? const Color(0xFFEAF8ED) : const Color(0xFFFFF0EE), borderRadius: BorderRadius.circular(16 * s), border: Border.all(color: correct ? const Color(0xFF8ED39B) : const Color(0xFFE89A93))), child: Text(correct ? '✓ Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', textAlign: TextAlign.center, style: TextStyle(color: correct ? const Color(0xFF2D8B43) : const Color(0xFFC8463D), fontSize: 16 * s, fontWeight: FontWeight.w900))),
             ],
-          ),
-          const SizedBox(height: 18),
-          _numberGrid(compact, arabic: arabic),
-        ],
-      ),
+            SizedBox(height: 8 * s),
+            _button('SOAL BERIKUTNYA', Icons.arrow_forward_rounded, const Color(0xFF2767C6), _next, s),
+          ]),
+        )),
+        SizedBox(height: 8 * s),
+        Row(children: [
+          Expanded(child: _stat('▣','SOAL', (_score + 1).toString() + ' / 10', s)),
+          SizedBox(width: 8 * s),
+          Expanded(child: _stat('✓','BENAR', _correct.toString(), s)),
+          SizedBox(width: 8 * s),
+          Expanded(child: _stat('⭐','SKOR', (_correct * 50).toString(), s)),
+        ]),
+      ]),
     );
-  }
+  });
 
-  Widget _numberShowcase(bool compact, {bool arabic = false}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        compact ? 16 : 24,
-        compact ? 18 : 26,
-        compact ? 16 : 24,
-        compact ? 18 : 24,
+  BoxDecoration _panel() => BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(32), border: Border.all(color: Colors.white, width: 2), boxShadow: const [BoxShadow(color: Color(0x33143F66), blurRadius: 16, offset: Offset(0,8))]);
+
+  Widget _button(String label, IconData icon, Color color, VoidCallback onTap, double s) => Material(
+    color: color, borderRadius: BorderRadius.circular(22 * s), elevation: 4,
+    child: InkWell(borderRadius: BorderRadius.circular(22 * s), onTap: onTap, child: SizedBox(width: double.infinity, height: 56 * s, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Icon(icon, color: Colors.white, size: 28 * s), SizedBox(width: 9 * s),
+      Text(label, style: TextStyle(color: Colors.white, fontSize: 18 * s, fontWeight: FontWeight.w900)),
+    ]))),
+  );
+
+  Widget _nav(String label, VoidCallback onTap, double s) => Material(
+    color: const Color(0xFF2C63A0), borderRadius: BorderRadius.circular(20 * s), elevation: 4,
+    child: InkWell(borderRadius: BorderRadius.circular(20 * s), onTap: onTap, child: SizedBox(height: 56 * s, child: Center(child: FittedBox(child: Text(label, style: TextStyle(color: Colors.white, fontSize: 14 * s, fontWeight: FontWeight.w900)))))),
+  );
+
+  Widget _numberStrip(bool arabic, double s) => Row(children: List.generate(5, (i) => Expanded(
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4 * s),
+      child: Material(
+        color: i == _index ? const Color(0xFFFFD149) : Colors.white.withValues(alpha: .92),
+        borderRadius: BorderRadius.circular(16 * s), elevation: i == _index ? 5 : 2,
+        child: InkWell(borderRadius: BorderRadius.circular(16 * s), onTap: () => _pick(i), child: Center(child: Text(arabic ? _arab[i] : (i + 1).toString(), style: TextStyle(color: const Color(0xFF25486B), fontSize: 26 * s, fontWeight: FontWeight.w900)))),
       ),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(34),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x330D405C),
-            blurRadius: 14,
-            offset: Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            child: Text(
-              arabic ? _arabicNumbers[_index] : '$number',
-              key: ValueKey('${number}-$arabic'),
-              style: TextStyle(
-                height: 1,
-                fontSize: compact ? 122 : 150,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF24354A),
-                shadows: const [
-                  Shadow(
-                    color: Color(0x220D405C),
-                    blurRadius: 3,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            _numberWords[_index],
-            style: TextStyle(
-              fontSize: compact ? 27 : 34,
-              fontWeight: FontWeight.w900,
-              color: const Color(0xFF4E687D),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _countVisual(compact),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: const Color(0xFFF4F8FB), borderRadius: BorderRadius.circular(20)),
-            child: Row(children: [
-              Text(_analogyEmoji[_index], style: TextStyle(fontSize: compact ? 36 : 44)),
-              const SizedBox(width: 10),
-              Expanded(child: Text(_analogyText[_index], style: TextStyle(fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900, color: const Color(0xFF42678F)))),
-            ]),
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: compact ? 230 : 270,
-            height: compact ? 58 : 64,
-            child: Material(
-              color: const Color(0xFF42678F),
-              borderRadius: BorderRadius.circular(999),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(999),
-                onTap: () => audio.speak('Angka $number. ${_numberWords[_index]}'),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.volume_up_rounded, color: Colors.white, size: 28),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Dengarkan',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: compact ? 20 : 23,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    ),
+  )));
 
-  Widget _countVisual(bool compact) {
-    final itemSize = compact ? 30.0 : 36.0;
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: compact ? 5 : 7,
-      runSpacing: compact ? 5 : 7,
-      children: List.generate(
-        number,
-        (i) => SizedBox(
-          width: itemSize,
-          height: itemSize,
-          child: const FittedBox(child: Text('⭐')),
-        ),
-      ),
-    );
-  }
+  Widget _stat(String icon, String label, String value, double s) => Container(
+    height: 64 * s,
+    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .9), borderRadius: BorderRadius.circular(16 * s), border: Border.all(color: const Color(0xFFD7E4EF))),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(icon, style: TextStyle(fontSize: 22 * s)), SizedBox(width: 5 * s),
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(label, style: TextStyle(color: const Color(0xFF4D6A83), fontSize: 10 * s, fontWeight: FontWeight.w900)),
+        Text(value, style: TextStyle(color: const Color(0xFF25486B), fontSize: 17 * s, fontWeight: FontWeight.w900)),
+      ]),
+    ]),
+  );
 
-  Widget _navButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required bool compact,
-    bool trailing = false,
-  }) {
-    final iconWidget = Icon(icon, color: Colors.white, size: compact ? 25 : 29);
-    final labelWidget = Flexible(
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: compact ? 15 : 18,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-
-    final children = trailing
-        ? [labelWidget, const SizedBox(width: 7), iconWidget]
-        : [iconWidget, const SizedBox(width: 7), labelWidget];
-
-    return Material(
-      color: const Color(0xFF42678F),
-      borderRadius: BorderRadius.circular(24),
-      elevation: 5,
-      shadowColor: const Color(0x330D405C),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(24),
-        onTap: onTap,
-        child: SizedBox(
-          height: compact ? 58 : 66,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _numberGrid(bool compact, {bool arabic = false}) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 10,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        crossAxisSpacing: compact ? 8 : 12,
-        mainAxisSpacing: compact ? 8 : 12,
-        childAspectRatio: 1,
-      ),
-      itemBuilder: (context, i) {
-        final selected = i == _index;
-        return Material(
-          color: selected ? const Color(0xFFFFD25C) : Colors.white.withValues(alpha: 0.93),
-          borderRadius: BorderRadius.circular(20),
-          elevation: selected ? 5 : 2,
-          shadowColor: const Color(0x330D405C),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => _select(i),
-            child: Center(
-              child: Text(
-                arabic ? _arabicNumbers[i] : '${i + 1}',
-                style: TextStyle(
-                  fontSize: compact ? 26 : 31,
-                  fontWeight: FontWeight.w900,
-                  color: const Color(0xFF24354A),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _game(bool compact) {
-    return StatefulBuilder(
-      builder: (context, setGameState) {
-        final target = (_score % 10) + 1;
-        final options = <int>[
-          target,
-          target == 10 ? 9 : target + 1,
-          target == 1 ? 2 : target - 1,
-          target <= 7 ? target + 3 : target - 3,
-        ]..shuffle();
-
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(compact ? 12 : 18, 10, compact ? 12 : 18, 24),
-          child: Column(
-            children: [
-              Text(
-                '🧠 Pilih Jawaban yang Benar!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: compact ? 21 : 25,
-                  fontWeight: FontWeight.w900,
-                  color: const Color(0xFF31536D),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.94),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Column(
-                  children: [
-                    _countVisualFor(target, compact),
-                    const SizedBox(height: 14),
-                    SizedBox(
-                      height: 56,
-                      child: Material(
-                        color: const Color(0xFF42678F),
-                        borderRadius: BorderRadius.circular(999),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(999),
-                          onTap: () => audio.speak('Ada berapa bintang?'),
-                          child: const Center(
-                            child: Text(
-                              '🔊 Dengarkan Pertanyaan',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-              ...options.map(
-                (value) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: compact ? 58 : 66,
-                    child: Material(
-                      color: const Color(0xFF42678F),
-                      borderRadius: BorderRadius.circular(22),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(22),
-                        onTap: () {
-                          if (value == target) {
-                            setGameState(() => _score++);
-                            audio.correct();
-                          } else {
-                            audio.wrong();
-                          }
-                        },
-                        child: Center(
-                          child: Text(
-                            '$value',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: compact ? 23 : 28,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '⭐ Skor: $_score',
-                style: TextStyle(
-                  fontSize: compact ? 24 : 29,
-                  fontWeight: FontWeight.w900,
-                  color: const Color(0xFF24354A),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _countVisualFor(int value, bool compact) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: compact ? 7 : 10,
-      runSpacing: compact ? 7 : 10,
-      children: List.generate(
-        value,
-        (_) => Text('⭐', style: TextStyle(fontSize: compact ? 34 : 42)),
-      ),
-    );
-  }
-
-  Widget _roundControl({
-    required double size,
-    required IconData icon,
-    required Color background,
-    required Color foreground,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: background,
-      shape: const CircleBorder(),
-      elevation: 5,
-      shadowColor: const Color(0x330D405C),
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: Icon(icon, color: foreground, size: size * 0.52),
-        ),
-      ),
-    );
-  }
+  Widget _circle(double size, Color color, IconData icon, VoidCallback onTap) => Material(
+    color: color, shape: const CircleBorder(), elevation: 7, shadowColor: const Color(0x550D3E67),
+    child: InkWell(customBorder: const CircleBorder(), onTap: onTap, child: SizedBox(width: size, height: size, child: Icon(icon, color: Colors.white, size: size * .52))),
+  );
 }
