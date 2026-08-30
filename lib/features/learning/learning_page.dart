@@ -1,652 +1,168 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-
-import '../../core/models/learning_item.dart';
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
-import '../../core/widgets/kid_header.dart';
 
-enum LearningType {
-  huruf,
-  angka,
-  hijaiyah,
-  gambar,
-  warna,
-}
+enum LearningType { huruf, angka, hijaiyah, gambar, warna }
 
 class LearningPage extends StatefulWidget {
   final LearningType type;
-
-  const LearningPage({
-    super.key,
-    required this.type,
-  });
-
-  @override
-  State<LearningPage> createState() => _LearningPageState();
+  const LearningPage({super.key, required this.type});
+  @override State<LearningPage> createState() => _LearningPageState();
 }
 
-class _LearningPageState extends State<LearningPage>
-    with SingleTickerProviderStateMixin {
+class _LearningPageState extends State<LearningPage> with SingleTickerProviderStateMixin {
   final audio = AudioService.instance;
   final random = Random();
+  late final TabController tabs;
+  int index = 0, score = 0, qPos = 0;
+  late List<int> deck;
+  late Item question;
+  late List<Item> options;
 
-  late TabController tabs;
+  static const letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+  static const words = ['Apel','Bola','Ceri','Domba','Elang','Foto','Gajah','Harimau','Ikan','Jeruk','Kucing','Lampu','Mangga','Nanas','Orangutan','Panda','Quran','Rusa','Singa','Topi','Ular','Vas','Wortel','Xilofon','Yoyo','Zebra'];
+  static const pics = ['🍎','⚽','🍒','🐑','🦅','📷','🐘','🐯','🐟','🍊','🐱','💡','🥭','🍍','🦧','🐼','📖','🦌','🦁','🎩','🐍','🏺','🥕','🎼','🪀','🦓'];
+  static const numberWords = ['Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh'];
+  static const numberHints = ['Seperti pensil atau lilin.','Seperti ular yang meliuk.','Seperti burung yang terbang.','Seperti kursi terbalik.','Seperti badut.','Seperti ular yang melingkar.','Seperti tongkat nenek.','Seperti kacang atau kacamata.','Seperti balon terbang.','Seperti lidi dan bola.'];
+  static const hij = [('ا','Alif'),('ب','Ba'),('ت','Ta'),('ث','Tsa'),('ج','Jim'),('ح','Ha'),('خ','Kha'),('د','Dal'),('ذ','Dzal'),('ر','Ra'),('ز','Zai'),('س','Sin'),('ش','Syin'),('ص','Shad'),('ض','Dhad'),('ط','Tha'),('ظ','Zha'),('ع','Ain'),('غ','Ghain'),('ف','Fa'),('ق','Qaf'),('ك','Kaf'),('ل','Lam'),('م','Mim'),('ن','Nun'),('هـ','Ha'),('و','Wau'),('ي','Ya')];
+  static const imageItems = [('🐱','Kucing'),('🐶','Anjing'),('🐘','Gajah'),('🦁','Singa'),('🐟','Ikan'),('🍎','Apel'),('🍌','Pisang'),('🚗','Mobil'),('🏠','Rumah'),('⚽','Bola'),('🌞','Matahari'),('🌈','Pelangi')];
+  static const colorItems = [('🔴','Merah'),('🔵','Biru'),('🟡','Kuning'),('🟢','Hijau'),('🟣','Ungu'),('🟠','Oranye'),('🩷','Merah Muda'),('🟤','Cokelat')];
 
-  int index = 0;
-  int score = 0;
-
-  late LearningItem correct;
-  late List<LearningItem> options;
-
-  List<LearningItem> get items {
+  List<Item> get items {
     switch (widget.type) {
       case LearningType.huruf:
-        const examples = [
-          '🍎 Apel',
-          '⚽ Bola',
-          '🐊 Cicak',
-          '🦆 Bebek',
-          '🐘 Gajah',
-          '🌸 Bunga',
-          '🐱 Kucing',
-          '🐟 Ikan',
-          '🌞 Matahari',
-          '🚗 Mobil',
-          '🍌 Pisang',
-          '🏠 Rumah',
-          '⭐ Bintang',
-          '🌈 Pelangi',
-          '🦁 Singa',
-          '🐼 Panda',
-          '🐰 Kelinci',
-          '🐮 Sapi',
-          '🐢 Kura-kura',
-          '🌷 Bunga',
-          '🍇 Anggur',
-          '🐯 Harimau',
-          '🍉 Semangka',
-          '🎁 Hadiah',
-          '🚀 Roket',
-          '🦓 Zebra',
-        ];
-
-        return List.generate(
-          26,
-          (i) {
-            final letter = String.fromCharCode(65 + i);
-
-            return LearningItem(
-              title: letter,
-              visual: examples[i],
-              sound: 'Huruf $letter',
-            );
-          },
-        );
-
+        return List.generate(26, (i) {
+          final hint = {'A':'Seperti atap rumah atau gunung.','B':'Seperti dua perut gemuk bertumpuk.','C':'Seperti bulan sabit.','I':'Seperti tiang listrik atau lilin.','L':'Seperti kaki meja.','O':'Seperti bola, roda, atau donat.','S':'Seperti ular yang meliuk-liuk.','U':'Seperti mangkok atau ayunan.'}[letters[i]] ?? 'Kenali bentuk huruf ini.';
+          return Item(letters[i], pics[i], words[i], hint);
+        });
       case LearningType.angka:
-        return List.generate(
-          10,
-          (i) {
-            final number = i + 1;
-
-            return LearningItem(
-              title: '$number',
-              visual: List.filled(number, '⭐').join(' '),
-              sound: 'Angka $number',
-            );
-          },
-        );
-
+        return List.generate(10, (i) => Item((i+1).toString(), List.filled(i+1,'⭐').join(' '), numberWords[i], numberHints[i]));
       case LearningType.hijaiyah:
-        const letters = [
-          ['ا', 'Alif'],
-          ['ب', 'Ba'],
-          ['ت', 'Ta'],
-          ['ث', 'Tsa'],
-          ['ج', 'Jim'],
-          ['ح', 'Ha'],
-          ['خ', 'Kha'],
-          ['د', 'Dal'],
-          ['ذ', 'Dzal'],
-          ['ر', 'Ra'],
-          ['ز', 'Zai'],
-          ['س', 'Sin'],
-          ['ش', 'Syin'],
-          ['ص', 'Shad'],
-          ['ض', 'Dhad'],
-          ['ط', 'Tha'],
-          ['ظ', 'Zha'],
-          ['ع', 'Ain'],
-          ['غ', 'Ghain'],
-          ['ف', 'Fa'],
-          ['ق', 'Qaf'],
-          ['ك', 'Kaf'],
-          ['ل', 'Lam'],
-          ['م', 'Mim'],
-          ['ن', 'Nun'],
-          ['و', 'Wau'],
-          ['ه', 'Ha'],
-          ['لا', 'Lam Alif'],
-          ['ي', 'Ya'],
-        ];
-
-        return letters
-            .map(
-              (item) => LearningItem(
-                title: item[0],
-                visual: item[0],
-                sound: item[1],
-              ),
-            )
-            .toList();
-
+        return hij.map((e) => Item(e.$1, e.$1, e.$2, 'Ulangi bunyi ' + e.$2 + ' sambil mengenali bentuknya.')).toList();
       case LearningType.gambar:
-        const data = [
-          ['🐱', 'Kucing'],
-          ['🐶', 'Anjing'],
-          ['🐘', 'Gajah'],
-          ['🦁', 'Singa'],
-          ['🐟', 'Ikan'],
-          ['🍎', 'Apel'],
-          ['🍌', 'Pisang'],
-          ['🍊', 'Jeruk'],
-          ['🍇', 'Anggur'],
-          ['🍉', 'Semangka'],
-          ['🚗', 'Mobil'],
-          ['🚌', 'Bus'],
-          ['🚆', 'Kereta'],
-          ['✈️', 'Pesawat'],
-          ['🏠', 'Rumah'],
-          ['📚', 'Buku'],
-          ['⏰', 'Jam'],
-          ['⚽', 'Bola'],
-        ];
-
-        return data
-            .map(
-              (item) => LearningItem(
-                title: item[1],
-                visual: item[0],
-                sound: item[1],
-              ),
-            )
-            .toList();
-
+        return imageItems.map((e) => Item(e.$2,e.$1,e.$2,'Ini adalah gambar ' + e.$2 + '.')).toList();
       case LearningType.warna:
-        const data = [
-          ['🔴', 'Merah'],
-          ['🔵', 'Biru'],
-          ['🟡', 'Kuning'],
-          ['🟢', 'Hijau'],
-          ['🟣', 'Ungu'],
-          ['🟠', 'Oranye'],
-          ['🩷', 'Merah Muda'],
-          ['🟤', 'Cokelat'],
-          ['⚪', 'Putih'],
-          ['⚫', 'Hitam'],
-        ];
-
-        return data
-            .map(
-              (item) => LearningItem(
-                title: item[1],
-                visual: item[0],
-                sound: item[1],
-              ),
-            )
-            .toList();
+        return colorItems.map((e) => Item(e.$2,e.$1,e.$2,'Ini adalah warna ' + e.$2 + '.')).toList();
     }
   }
 
+  int get tabCount => (widget.type == LearningType.huruf || widget.type == LearningType.angka) ? 3 : 2;
+  List<String> get tabNames {
+    switch(widget.type) {
+      case LearningType.huruf: return ['BESAR','KECIL','MINI KUIS'];
+      case LearningType.angka: return ['ANGKA ID','ANGKA ARAB','KUIS MINI'];
+      case LearningType.hijaiyah: return ['HURUF','KUIS MINI'];
+      case LearningType.gambar: return ['GAMBAR','KUIS MINI'];
+      case LearningType.warna: return ['WARNA','KUIS MINI'];
+    }
+  }
   String get title {
-    switch (widget.type) {
-      case LearningType.huruf:
-        return 'Dunia Huruf 🔤';
-      case LearningType.angka:
-        return 'Dunia Angka 🔢';
-      case LearningType.hijaiyah:
-        return 'Dunia Hijaiyah 🕌';
-      case LearningType.gambar:
-        return 'Dunia Gambar 🐱';
-      case LearningType.warna:
-        return 'Dunia Warna 🎨';
+    switch(widget.type) {
+      case LearningType.huruf: return 'Belajar Huruf';
+      case LearningType.angka: return 'Belajar Angka';
+      case LearningType.hijaiyah: return 'Belajar Hijaiyah';
+      case LearningType.gambar: return 'Belajar Gambar';
+      case LearningType.warna: return 'Belajar Warna';
     }
   }
 
-  Color _colorForTitle(String name) {
-    const colors = {
-      'Merah': Color(0xFFFF6B6B),
-      'Biru': Color(0xFF6CA8FF),
-      'Kuning': Color(0xFFFFD94D),
-      'Hijau': Color(0xFF7DD87D),
-      'Ungu': Color(0xFFB08CFF),
-      'Oranye': Color(0xFFFFA64D),
-      'Merah Muda': Color(0xFFFF9EC9),
-      'Cokelat': Color(0xFFB9825A),
-      'Putih': Color(0xFFFFFFFF),
-      'Hitam': Color(0xFF424242),
-    };
-
-    return colors[name] ?? Colors.transparent;
-  }
-
-  Color get selectedColor => _colorForTitle(items[index].title);
-
-  @override
-  void initState() {
+  @override void initState() {
     super.initState();
+    tabs = TabController(length: tabCount, vsync: this);
+    deck = List.generate(items.length,(i)=>i)..shuffle(random);
+    loadQuestion();
+  }
+  @override void dispose(){ tabs.dispose(); super.dispose(); }
 
-    tabs = TabController(
-      length: 2,
-      vsync: this,
-    );
-
-    _newQuestion();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => audio.speak(items[index].sound),
-    );
+  void loadQuestion() {
+    if (qPos >= deck.length) { deck.shuffle(random); qPos = 0; }
+    question = items[deck[qPos]];
+    final wrong = [...items]..removeWhere((x)=>x.title==question.title)..shuffle(random);
+    options = [question,...wrong.take(2)]..shuffle(random);
+  }
+  void nextQuestion() {
+    setState(() { qPos++; loadQuestion(); });
+    audio.question('Mana ' + question.title + '?');
+  }
+  void choose(Item item) {
+    if(item.title == question.title) {
+      setState(()=>score++);
+      audio.correct();
+      Future.delayed(const Duration(milliseconds:650), nextQuestion);
+    } else { audio.wrong(); }
   }
 
-  @override
-  void dispose() {
-    tabs.dispose();
-    super.dispose();
+  @override Widget build(BuildContext context) => Scaffold(
+    body: KidBackground(child: SafeArea(child: Column(children:[
+      Padding(padding:const EdgeInsets.all(12),child:Row(children:[
+        _round(Icons.arrow_back_rounded,const Color(0xFFFFC42D),()=>Navigator.of(context).maybePop()),
+        Expanded(child:Column(children:[
+          Text(title,style:const TextStyle(fontSize:28,fontWeight:FontWeight.w900,color:Color(0xFFFFD32F),shadows:[Shadow(color:Color(0xFF17417B),blurRadius:3,offset:Offset(2,3))])),
+          const Text('Belajar sambil bermain',style:TextStyle(color:Colors.white,fontWeight:FontWeight.w800)),
+        ])),
+        _round(Icons.volume_up_rounded,const Color(0xFF29C63E),()=>audio.speak(title)),
+      ])),
+      Container(margin:const EdgeInsets.symmetric(horizontal:12),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.92),borderRadius:BorderRadius.circular(20)),
+        child:TabBar(controller:tabs,isScrollable:tabCount==3,tabAlignment:tabCount==3?TabAlignment.center:TabAlignment.fill,dividerColor:Colors.transparent,
+          indicator:BoxDecoration(color:const Color(0xFF2D98C8),borderRadius:BorderRadius.circular(18)),indicatorSize:TabBarIndicatorSize.tab,
+          labelColor:Colors.white,unselectedLabelColor:const Color(0xFF52677A),labelStyle:const TextStyle(fontWeight:FontWeight.w900,fontSize:13),
+          tabs:tabNames.map((x)=>Tab(text:x)).toList())),
+      Expanded(child:TabBarView(controller:tabs,children:List.generate(tabCount,tabView))),
+    ]))),
+  );
+
+  Widget _round(IconData icon,Color color,VoidCallback onTap)=>Material(color:color,shape:const CircleBorder(),elevation:5,child:InkWell(customBorder:const CircleBorder(),onTap:onTap,child:SizedBox(width:56,height:56,child:Icon(icon,color:Colors.white,size:31))));
+
+  Widget tabView(int tab) {
+    if(tab==tabCount-1) return quiz();
+    return learn(widget.type==LearningType.huruf&&tab==1,widget.type==LearningType.angka&&tab==1);
   }
 
-  void _newQuestion() {
-    correct = items[random.nextInt(items.length)];
-
-    final wrong = [...items]
-      ..removeWhere(
-        (item) => item.title == correct.title,
-      )
-      ..shuffle(random);
-
-    options = [
-      correct,
-      ...wrong.take(3),
-    ]..shuffle(random);
+  Widget learn(bool lower,bool arab) {
+    final item=items[index];
+    final display=widget.type==LearningType.huruf&&lower?item.title.toLowerCase():widget.type==LearningType.angka&&arab?arabic(index+1):item.title;
+    return SingleChildScrollView(padding:const EdgeInsets.all(14),child:Column(children:[
+      Container(width:double.infinity,padding:const EdgeInsets.all(20),decoration:panel(),child:Column(children:[
+        Text(item.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?100:78)),
+        const SizedBox(height:8),
+        Text(display,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?80:58,fontWeight:FontWeight.w900,color:const Color(0xFF26324A))),
+        Text(item.sound,style:const TextStyle(fontSize:21,fontWeight:FontWeight.w900,color:Color(0xFF2D98C8))),
+        const SizedBox(height:12),
+        Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFF5FBFF),borderRadius:BorderRadius.circular(18)),child:Text(item.hint,textAlign:TextAlign.center,style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800,color:Color(0xFF385267)))),
+        const SizedBox(height:12),
+        ElevatedButton.icon(onPressed:()=>audio.speak(item.title+'. '+item.hint),icon:const Icon(Icons.volume_up_rounded),label:const Text('Dengarkan')),
+      ])),
+      const SizedBox(height:14),
+      Wrap(spacing:8,runSpacing:8,alignment:WrapAlignment.center,children:List.generate(items.length,(i){
+        final label=widget.type==LearningType.huruf&&lower?items[i].title.toLowerCase():widget.type==LearningType.angka&&arab?arabic(i+1):items[i].title;
+        final active=i==index;
+        return InkWell(onTap:()=>setState(()=>index=i),borderRadius:BorderRadius.circular(14),child:Container(width:48,height:48,alignment:Alignment.center,decoration:BoxDecoration(color:active?const Color(0xFFFFC42D):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:active?const Color(0xFF31536D):const Color(0xFFD8E2EA),width:active?3:1.5)),child:Text(label,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?27:18,fontWeight:FontWeight.w900,color:const Color(0xFF26324A)))));
+      })),
+    ]));
   }
 
-  void next() {
-    setState(() {
-      index = (index + 1) % items.length;
-    });
+  String arabic(int n)=>const ['١','٢','٣','٤','٥','٦','٧','٨','٩','١٠'][n-1];
 
-    audio.speak(items[index].sound);
-  }
+  Widget quiz()=>SingleChildScrollView(padding:const EdgeInsets.all(14),child:Column(children:[
+    Text('Pertanyaan '+((qPos%items.length)+1).toString(),style:const TextStyle(fontSize:18,fontWeight:FontWeight.w900,color:Color(0xFF2D98C8))),
+    const SizedBox(height:10),
+    Container(width:double.infinity,padding:const EdgeInsets.all(20),decoration:panel(),child:Column(children:[
+      const Text('Pilih jawaban yang benar!',style:TextStyle(fontSize:22,fontWeight:FontWeight.w900,color:Color(0xFF26324A))),
+      const SizedBox(height:16),
+      Text(question.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?100:86)),
+      const SizedBox(height:10),
+      Text('Mana '+question.title+'?',style:const TextStyle(fontSize:26,fontWeight:FontWeight.w900,color:Color(0xFF26324A))),
+      const SizedBox(height:14),
+      ...options.map((x)=>Padding(padding:const EdgeInsets.only(bottom:10),child:SizedBox(width:double.infinity,child:ElevatedButton(onPressed:()=>choose(x),style:ElevatedButton.styleFrom(padding:const EdgeInsets.symmetric(vertical:16)),child:Text(x.title,style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900)))))),
+      Text('⭐ Skor: '+score.toString(),style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900)),
+    ])),
+  ]));
 
-  void previous() {
-    setState(() {
-      index = (index - 1 + items.length) % items.length;
-    });
+  BoxDecoration panel()=>BoxDecoration(color:Colors.white.withValues(alpha:.95),borderRadius:BorderRadius.circular(28),border:Border.all(color:Colors.white,width:3),boxShadow:const [BoxShadow(color:Color(0x260D405C),blurRadius:14,offset:Offset(0,6))]);
+}
 
-    audio.speak(items[index].sound);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final item = items[index];
-
-    return Scaffold(
-      body: KidBackground(
-        child: SafeArea(
-          child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
-              child: KidHeader(
-                title: title,
-                subtitle: 'Belajar dan bermain bersama',
-              ),
-            ),
-            SizedBox(
-              height: 52,
-              child: TabBar(
-                controller: tabs,
-                labelColor: const Color(0xFF31536D),
-                unselectedLabelColor: const Color(0xFF55758C),
-                indicatorColor: const Color(0xFF31536D),
-                indicatorWeight: 4,
-                labelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-                tabs: const [
-                  Tab(text: '📚 Belajar'),
-                  Tab(text: '🎮 Mini Game'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: tabs,
-                children: [
-                  _learn(item),
-                  _game(),
-                ],
-              ),
-            ),
-          ],
-        ),
-        ),
-      ),
-    );
-  }
-
-  Widget _learn(LearningItem item) {
-    final background = Colors.white.withValues(alpha: 0.94);
-
-    final visualSize = widget.type == LearningType.hijaiyah ? 96.0 : 70.0;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-      child: Column(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            width: double.infinity,
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Column(
-              children: [
-                if (widget.type == LearningType.warna)
-                  Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: selectedColor,
-                      borderRadius: BorderRadius.circular(26),
-                      border: Border.all(color: const Color(0xFF31536D), width: 3),
-                    ),
-                  )
-                else if (widget.type == LearningType.angka)
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: List.generate(
-                      int.parse(item.title),
-                      (_) => const Text('⭐', style: TextStyle(fontSize: 42)),
-                    ),
-                  )
-                else
-                  Text(
-                    item.visual,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: visualSize),
-                  ),
-                const SizedBox(height: 12),
-                if (widget.type == LearningType.gambar)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEAF6FF),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: const Color(0xFF9FD3F5), width: 2),
-                    ),
-                    child: Text(
-                      item.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
-                        color: Color(0xFF31536D),
-                      ),
-                    ),
-                  )
-                else ...[
-                  Text(
-                    item.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF31536D),
-                    ),
-                  ),
-                  if (widget.type == LearningType.hijaiyah) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      item.sound,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF55758C),
-                      ),
-                    ),
-                  ],
-                ],
-                const SizedBox(height: 10),
-                const SizedBox(height: 2),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF5EA8F5),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    onPressed: () => audio.speak(item.sound),
-                    icon: const Icon(Icons.volume_up_rounded, size: 26),
-                    label: Text(
-                      widget.type == LearningType.hijaiyah
-                          ? 'Dengarkan ${item.sound}'
-                          : 'Dengarkan',
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _navigationButton(
-                  icon: Icons.arrow_back_rounded,
-                  label: 'Sebelumnya',
-                  onPressed: previous,
-                  colors: const [Color(0xFF6CA8FF), Color(0xFF4E8DE6)],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _navigationButton(
-                  icon: Icons.arrow_forward_rounded,
-                  label: 'Selanjutnya',
-                  onPressed: next,
-                  colors: const [Color(0xFFFFB84D), Color(0xFFFF8F4D)],
-                  trailing: true,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            alignment: WrapAlignment.center,
-            children: List.generate(
-              items.length,
-              (i) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    index = i;
-                  });
-
-                  audio.speak(items[i].sound);
-                },
-                child: Container(
-                  width: widget.type == LearningType.warna ? 118 : 50,
-                  height: widget.type == LearningType.warna ? 58 : 50,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: widget.type == LearningType.warna
-                        ? _colorForTitle(items[i].title)
-                        : i == index
-                            ? const Color(0xFFFFD65C)
-                            : Colors.white,
-                    border: Border.all(
-                      color: i == index ? const Color(0xFF31536D) : Colors.white,
-                      width: i == index ? 4 : 2,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x220D405C),
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    items[i].title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: widget.type == LearningType.warna ? 13 : 18,
-                      color: widget.type == LearningType.warna &&
-                              items[i].title == 'Hitam'
-                          ? Colors.white
-                          : const Color(0xFF31536D),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _navigationButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-    required List<Color> colors,
-    bool trailing = false,
-  }) {
-    final iconWidget = Icon(icon, size: 24, color: Colors.white);
-    final labelWidget = Flexible(
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
-      ),
-    );
-    final children = trailing
-        ? [labelWidget, const SizedBox(width: 8), iconWidget]
-        : [iconWidget, const SizedBox(width: 8), labelWidget];
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: colors),
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Color(0x330D405C), blurRadius: 8, offset: Offset(0, 5)),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(22),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(22),
-          onTap: onPressed,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: children),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _game() {
-    return StatefulBuilder(
-      builder: (context, setGameState) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-          child: Column(
-            children: [
-              const Text(
-                '🧠 Pilih Jawaban yang Benar!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF31536D),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                correct.visual,
-                style: TextStyle(
-                  fontSize: widget.type == LearningType.hijaiyah
-                      ? 96
-                      : 72,
-                ),
-              ),
-              const SizedBox(height: 8),
-              FilledButton(
-                onPressed: () {
-                  audio.question(
-                    'Mana ${correct.title}?',
-                  );
-                },
-                child: const Text(
-                  '🔊 Dengarkan Pertanyaan',
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...options.map(
-                (option) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () async {
-                        if (option.title == correct.title) {
-                          setGameState(() {
-                            score++;
-                            _newQuestion();
-                          });
-
-                          await audio.correct();
-                        } else {
-                          await audio.wrong();
-                        }
-                      },
-                      child: Text(option.title),
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                '⭐ Skor: $score',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+class Item {
+  final String title,visual,sound,hint;
+  const Item(this.title,this.visual,this.sound,this.hint);
 }
