@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   void _go(BuildContext context, Widget page) {
+    BackgroundMusic.instance.start();
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
