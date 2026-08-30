@@ -37,6 +37,40 @@ class PlayIntroPage extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   const _SkyDecoration(),
+                  Positioned(
+                    top: 14,
+                    right: 16,
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: BackgroundMusic.instance.enabled,
+                      builder: (context, musicOn, _) => Material(
+                        color: musicOn
+                            ? const Color(0xFF2DBB45)
+                            : const Color(0xFF7C8796),
+                        shape: const CircleBorder(),
+                        elevation: 6,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () {
+                            BackgroundMusic.instance.toggle();
+                            if (BackgroundMusic.instance.enabled.value) {
+                              BackgroundMusic.instance.start();
+                            }
+                          },
+                          child: SizedBox(
+                            width: 62,
+                            height: 62,
+                            child: Icon(
+                              musicOn
+                                  ? Icons.music_note_rounded
+                                  : Icons.music_off_rounded,
+                              color: Colors.white,
+                              size: 34,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
