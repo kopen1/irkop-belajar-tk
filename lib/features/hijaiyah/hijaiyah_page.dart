@@ -195,15 +195,15 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
               }),
             if (quizAnswered) ...[
               SizedBox(height: 10 * scale),
-              Container(width: double.infinity, padding: EdgeInsets.symmetric(vertical: 9 * scale, horizontal: 14 * scale),
+              Container(width: double.infinity, padding: EdgeInsets.symmetric(vertical: 7 * scale, horizontal: 12 * scale),
                 decoration: BoxDecoration(color: selectedAnswer == answer ? const Color(0xFFE8F8E9) : const Color(0xFFFFEEEE), borderRadius: BorderRadius.circular(18 * scale)),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(selectedAnswer == answer ? Icons.check_circle_rounded : Icons.favorite_rounded, color: selectedAnswer == answer ? const Color(0xFF1E9C43) : const Color(0xFFE25C6A)),
-                  const SizedBox(width: 8),
-                  Flexible(child: Text(selectedAnswer == answer ? 'Hebat! Jawabanmu Benar! 🎉' : 'Tidak apa-apa, ayo lanjut belajar!', textAlign: TextAlign.center, style: TextStyle(color: selectedAnswer == answer ? const Color(0xFF1F7E3A) : const Color(0xFFB14B59), fontSize: 15 * scale, fontWeight: FontWeight.w900))),
+                child: Row(children: [
+                  ClipRRect(borderRadius: BorderRadius.circular(14 * scale), child: Image.asset(selectedAnswer == answer ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg', width: 60 * scale, height: 60 * scale, fit: BoxFit.cover)),
+                  SizedBox(width: 10 * scale),
+                  Expanded(child: Text(selectedAnswer == answer ? 'Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', style: TextStyle(color: selectedAnswer == answer ? const Color(0xFF1F7E3A) : const Color(0xFFB14B59), fontSize: 15 * scale, fontWeight: FontWeight.w900))),
                 ])),
             ],
-            SizedBox(height: 12 * scale), _nextQuizButton(scale), SizedBox(height: 12 * scale), _quizStats(scale),
+            SizedBox(height: 12 * scale), _quizStats(scale),
           ]),
         ),
       )),
@@ -213,11 +213,20 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
 
   void _answerQuiz(String option, String answer) {
     if (quizAnswered) return;
+    final correct = option == answer;
     setState(() {
       selectedAnswer = option; quizAnswered = true;
-      if (option == answer) { quizCorrect++; quizScore += 50; }
+      if (correct) { quizCorrect++; quizScore += 50; }
     });
-    audio.speak(option == answer ? 'Hebat, jawabanmu benar' : 'Belum tepat, ayo belajar lagi');
+    audio.speak(correct ? 'Hebat, jawabanmu benar' : 'Belum tepat, coba lagi ya');
+    Future.delayed(Duration(milliseconds: correct ? 1100 : 900), () {
+      if (!mounted) return;
+      if (correct) {
+        _nextQuiz();
+      } else {
+        setState(() { selectedAnswer = null; quizAnswered = false; });
+      }
+    });
   }
 
   void _nextQuiz() => setState(() {
