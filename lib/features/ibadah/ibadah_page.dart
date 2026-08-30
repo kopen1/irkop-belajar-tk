@@ -16,23 +16,23 @@ class _IbadahPageState extends State<IbadahPage> with SingleTickerProviderStateM
     ('Sesudah Makan','😊','Alhamdulillah','اَلْحَمْدُ لِلّٰهِ'),
     ('Sebelum Tidur','😴','Bismika Allahumma ahya wa bismika amut','بِاسْمِكَ اللّٰهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ'),
     ('Bangun Tidur','🌅','Alhamdulillahil ladzi ahyana','اَلْحَمْدُ لِلّٰهِ الَّذِي أَحْيَانَا'),
-    ('Masuk Kamar Mandi','🚪','Allahumma inni a udzubika minal khubutsi wal khaba its'),
+    ('Masuk Kamar Mandi','🚪','Allahumma inni a udzubika minal khubutsi wal khaba its','اَللّٰهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ'),
   ];
   final wudhu = const <(String,String,String,String)>[
     ('Niat','🤲','Nawaitul wudhu a liraf il hadatsil asghari fardhan lillahi ta ala','نَوَيْتُ الْوُضُوءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلّٰهِ تَعَالَى'),
     ('Cuci Tangan','🧼','Cuci kedua tangan sampai bersih.',''),
-    ('Berkumur','💧','Berkumur dengan lembut.'),
-    ('Cuci Wajah','🙂','Basuh seluruh wajah.'),
-    ('Cuci Tangan','🙌','Basuh tangan sampai siku.'),
-    ('Usap Kepala','🧑','Usap sebagian kepala.'),
-    ('Cuci Kaki','🦶','Basuh kedua kaki sampai mata kaki.'),
+    ('Berkumur','💧','Berkumur dengan lembut.',''),
+    ('Cuci Wajah','🙂','Basuh seluruh wajah.',''),
+    ('Cuci Tangan','🙌','Basuh tangan sampai siku.',''),
+    ('Usap Kepala','🧑','Usap sebagian kepala.',''),
+    ('Cuci Kaki','🦶','Basuh kedua kaki sampai mata kaki.',''),
   ];
   final sholat = const <(String,String,String,String)>[
     ('Berdiri','🧍','Allahu Akbar','اللّٰهُ أَكْبَرُ'),
     ('Rukuk','🙇','Subhana rabbiyal azhim','سُبْحَانَ رَبِّيَ الْعَظِيمِ'),
-    ('I tidal','🧍','Sami allahu liman hamidah'),
+    ('I tidal','🧍','Sami allahu liman hamidah','سَمِعَ اللّٰهُ لِمَنْ حَمِدَهُ'),
     ('Sujud','🙏','Subhana rabbiyal a la','سُبْحَانَ رَبِّيَ الْأَعْلَى'),
-    ('Duduk','🧎','Rabbighfirli warhamni'),
+    ('Duduk','🧎','Rabbighfirli warhamni','رَبِّ اغْفِرْ لِي وَارْحَمْنِي'),
     ('Salam','🙂','Assalamu alaikum warahmatullah','السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللّٰهِ'),
   ];
 
