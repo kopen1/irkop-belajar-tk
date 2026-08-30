@@ -328,30 +328,24 @@ class _KuisPageState extends State<KuisPage> {
       ),
       child: Row(
         children: [
-          SizedBox(
-            width: 118,
-            height: 150,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/quiz_dino_happy.jpg',
-                  fit: BoxFit.contain,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Image.asset(
+              ok ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg',
+              width: 118,
+              height: 150,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 118,
+                height: 150,
+                alignment: Alignment.center,
+                color: ok ? const Color(0xFFE9FBEA) : const Color(0xFFFFEEEE),
+                child: Icon(
+                  ok ? Icons.celebration_rounded : Icons.sentiment_dissatisfied_rounded,
+                  color: ok ? const Color(0xFF147F2D) : const Color(0xFFC7443D),
+                  size: 60,
                 ),
-                if (!ok) ...[
-                  const Positioned(top: 6, child: Text('😢', style: TextStyle(fontSize: 50))),
-                  const Positioned(
-                    top: 52,
-                    left: 42,
-                    child: Icon(Icons.water_drop_rounded, color: Color(0xFF4DB8FF), size: 24),
-                  ),
-                  const Positioned(
-                    top: 60,
-                    right: 38,
-                    child: Icon(Icons.water_drop_rounded, color: Color(0xFF4DB8FF), size: 20),
-                  ),
-                ],
-              ],
+              ),
             ),
           ),
           const SizedBox(width: 12),
