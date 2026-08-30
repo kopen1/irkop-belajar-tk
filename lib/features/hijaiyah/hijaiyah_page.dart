@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
 
+import '../../core/services/app_settings.dart';
 class HijaiyahPage extends StatefulWidget {
   const HijaiyahPage({super.key});
 
@@ -221,8 +222,9 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
   }
 
   void _nextQuiz() => setState(() {
-    var nextIndex = _quizRandom.nextInt(letters.length);
-    if (letters.length > 1) {
+    final randomMode = AppSettings.instance.randomQuiz.value;
+    var nextIndex = randomMode ? _quizRandom.nextInt(letters.length) : (index + 1) % letters.length;
+    if (randomMode && letters.length > 1) {
       while (nextIndex == index) {
         nextIndex = _quizRandom.nextInt(letters.length);
       }
