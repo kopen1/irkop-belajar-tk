@@ -23,3 +23,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/quiz_dino_happy.jpg
+    - assets/images/quiz_wrong_tiger.jpg
+    - assets/images/quiz_correct_dino.jpg
