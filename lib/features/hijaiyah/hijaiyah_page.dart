@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/mini_quiz_panel.dart';
 
 import '../../core/services/app_settings.dart';
 class HijaiyahPage extends StatefulWidget {
@@ -142,73 +143,11 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
   }
 
 
-  Widget _quizTab(double w, double s) {
-    final answer = letters[index];
-    final options = <String>{answer, letters[(index + 1) % letters.length], letters[(index + 5) % letters.length], letters[(index + 10) % letters.length]}.toList()
-      ..sort((a, b) => a.codeUnitAt(0).compareTo(b.codeUnitAt(0)));
-    final visual = _quizVisual(index);
-    final scale = w < 430 ? s * .88 : s;
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(w * .04, 10 * scale, w * .04, 16 * scale),
-      child: Center(child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 720 * scale),
-        child: Container(
-          padding: EdgeInsets.all(18 * scale), decoration: _quizPanel(scale),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            _quizBadge(scale), SizedBox(height: 10 * scale),
-            Text('Pilih Jawaban yang Benar!', textAlign: TextAlign.center, style: TextStyle(fontSize: 26 * scale, color: const Color(0xFF493483), fontWeight: FontWeight.w900)),
-            SizedBox(height: 2 * scale),
-            Text('Huruf apakah ini?', style: TextStyle(fontSize: 18 * scale, color: const Color(0xFF3A4D66), fontWeight: FontWeight.w800)),
-            SizedBox(height: 8 * scale),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(width: 142 * scale, height: 142 * scale,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFE8E4FB), border: Border.all(color: const Color(0xFFC9C1F4), width: 2.5 * scale), boxShadow: const [BoxShadow(color: Color(0x180D405C), blurRadius: 12, offset: Offset(0, 5))]),
-                child: _centeredArabic(answer, 86 * scale, const Color(0xFF6A3BB7), FontWeight.w900)),
-              SizedBox(width: 12 * scale),
-              Expanded(child: Container(
-                constraints: BoxConstraints(maxWidth: 190 * scale), padding: EdgeInsets.symmetric(horizontal: 10 * scale, vertical: 8 * scale),
-                decoration: BoxDecoration(color: const Color(0xFFFFF9E9), borderRadius: BorderRadius.circular(24 * scale), border: Border.all(color: const Color(0xFFF2D77B), width: 2)),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Text(visual.emoji, style: TextStyle(fontSize: 54 * scale)), SizedBox(height: 2 * scale),
-                  Text('${names[index]} (${answer})', textAlign: TextAlign.center, style: TextStyle(fontSize: 18 * scale, color: const Color(0xFF51388B), fontWeight: FontWeight.w900)),
-                  Text('Seperti ${visual.label}', textAlign: TextAlign.center, style: TextStyle(fontSize: 14 * scale, color: const Color(0xFF546276), fontWeight: FontWeight.w700)),
-                ]),
-              )),
-            ]),
-            SizedBox(height: 10 * scale), _quizListenButton(scale), SizedBox(height: 12 * scale),
-            GridView.builder(
-              shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: options.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12 * scale, mainAxisSpacing: 10 * scale, childAspectRatio: 2.15),
-              itemBuilder: (context, optionIndex) {
-                final option = options[optionIndex], isSelected = selectedAnswer == option;
-                final isCorrect = quizAnswered && option == answer, isWrong = quizAnswered && isSelected && option != answer;
-                return Material(color: isCorrect ? const Color(0xFFE7F8E8) : isWrong ? const Color(0xFFFFE8E8) : const Color(0xFFF6F7FC), borderRadius: BorderRadius.circular(22 * scale),
-                  child: InkWell(borderRadius: BorderRadius.circular(22 * scale), onTap: quizAnswered ? null : () => _answerQuiz(option, answer),
-                    child: Container(
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(22 * scale), border: Border.all(color: isCorrect ? const Color(0xFF32A852) : isWrong ? const Color(0xFFE26A6A) : const Color(0xFFC8D0DD), width: isCorrect || isWrong ? 2.5 : 1.8)),
-                      child: Stack(alignment: Alignment.center, children: [
-                        _centeredArabic(option, 42 * scale, const Color(0xFF233E66), FontWeight.w900),
-                        if (isCorrect) const Positioned(right: 10, top: 8, child: Icon(Icons.check_circle_rounded, color: Color(0xFF24A148))),
-                      ]),
-                    ),
-                  ));
-              }),
-            if (quizAnswered) ...[
-              SizedBox(height: 10 * scale),
-              Container(width: double.infinity, padding: EdgeInsets.symmetric(vertical: 7 * scale, horizontal: 12 * scale),
-                decoration: BoxDecoration(color: selectedAnswer == answer ? const Color(0xFFE8F8E9) : const Color(0xFFFFEEEE), borderRadius: BorderRadius.circular(18 * scale)),
-                child: Row(children: [
-                  ClipRRect(borderRadius: BorderRadius.circular(14 * scale), child: Image.asset(selectedAnswer == answer ? 'assets/images/quiz_correct_dino.jpg' : 'assets/images/quiz_wrong_tiger.jpg', width: 60 * scale, height: 60 * scale, fit: BoxFit.cover)),
-                  SizedBox(width: 10 * scale),
-                  Expanded(child: Text(selectedAnswer == answer ? 'Hebat! Jawabanmu Benar! 🎉' : 'Coba lagi ya! 💪', style: TextStyle(color: selectedAnswer == answer ? const Color(0xFF1F7E3A) : const Color(0xFFB14B59), fontSize: 15 * scale, fontWeight: FontWeight.w900))),
-                ])),
-            ],
-            SizedBox(height: 12 * scale), _quizStats(scale),
-          ]),
-        ),
-      )),
-    );
-  }
+  Widget _quizTab(double w, double s) => MiniQuizPanel(
+    items: List.generate(letters.length, (i) => (letters[i], letters[i])),
+    questionPrefix: 'Huruf apakah ini?',
+    totalQuestions: 10,
+  );
 
 
   void _answerQuiz(String option, String answer) {
