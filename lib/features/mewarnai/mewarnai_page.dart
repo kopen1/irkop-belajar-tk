@@ -106,8 +106,19 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
                           ],
                         )
                       : MiniQuizPanel(
-                          items: drawings.skip(1).map((item) => (item.$1, item.$2)).toList(),
-                          questionPrefix: 'Gambar apakah yang bisa kita warnai?',
+                          questions: const [
+                            MiniQuizQuestion(prompt: 'Pilih warna yang cocok untuk daun!', visual: '🌳', choices: ['Hijau','Biru','Ungu','Hitam'], answer: 'Hijau'),
+                            MiniQuizQuestion(prompt: 'Pilih warna yang cocok untuk matahari!', visual: '☀️', choices: ['Kuning','Biru','Pink','Hitam'], answer: 'Kuning'),
+                            MiniQuizQuestion(prompt: 'Warna apa yang biasa dipakai untuk mewarnai apel?', visual: '🍎', choices: ['Merah','Hijau','Biru','Ungu'], answer: 'Merah'),
+                            MiniQuizQuestion(prompt: 'Pilih gambar yang cocok diwarnai warna biru!', visual: 'BIRU', choices: ['☁️','🍌','🌸','🍓'], answer: '☁️'),
+                            MiniQuizQuestion(prompt: 'Pilih warna yang cocok untuk rumput!', visual: '🌿', choices: ['Hijau','Oranye','Ungu','Pink'], answer: 'Hijau'),
+                            MiniQuizQuestion(prompt: 'Pilih warna untuk pisang!', visual: '🍌', choices: ['Kuning','Biru','Hitam','Ungu'], answer: 'Kuning'),
+                            MiniQuizQuestion(prompt: 'Pilih benda yang cocok diwarnai merah!', visual: 'MERAH', choices: ['🍓','🥦','🫐','🍆'], answer: '🍓'),
+                            MiniQuizQuestion(prompt: 'Pilih warna yang cocok untuk langit cerah!', visual: '🌤️', choices: ['Biru','Cokelat','Hitam','Merah'], answer: 'Biru'),
+                            MiniQuizQuestion(prompt: 'Pilih warna untuk daun pada gambar!', visual: '🍃', choices: ['Hijau','Pink','Abu-abu','Ungu'], answer: 'Hijau'),
+                            MiniQuizQuestion(prompt: 'Pilih benda yang cocok diwarnai kuning!', visual: 'KUNING', choices: ['🌻','🍇','🫐','🍆'], answer: '🌻'),
+                          ],
+                          totalQuestions: 10,
                         ),
                 ),
               ],
