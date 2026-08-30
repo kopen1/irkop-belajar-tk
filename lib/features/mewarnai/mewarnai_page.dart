@@ -137,6 +137,23 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
         ),
       ),
       SizedBox(height: 7 * s),
+      if (drawingIndex != 0) ...[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(10 * s),
+          decoration: BoxDecoration(color: const Color(0xFFFFF6D8), borderRadius: BorderRadius.circular(18 * s), border: Border.all(color: const Color(0xFFF1D26A), width: 2)),
+          child: Row(children: [
+            Text(drawings[drawingIndex].$1, style: TextStyle(fontSize: 46 * s)),
+            SizedBox(width: 10 * s),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('CONTOH HASIL JADI', style: TextStyle(fontSize: 14 * s, fontWeight: FontWeight.w900, color: const Color(0xFF9B6A00))),
+              Text('Gunakan warna cerah seperti contoh ini', style: TextStyle(fontSize: 13 * s, fontWeight: FontWeight.w700, color: const Color(0xFF5B4A1E))),
+            ])),
+            const Icon(Icons.palette_rounded, color: Color(0xFF8A5BE8), size: 34),
+          ]),
+        ),
+        SizedBox(height: 7 * s),
+      ],
       AspectRatio(
         aspectRatio: 1.18,
         child: Container(
@@ -338,7 +355,7 @@ class _DinoOutlinePainter extends CustomPainter {
       final r2 = size.shortestSide * .145;
       canvas.drawLine(
         Offset(center.dx + r1 * math.cos(a), center.dy + r1 * math.sin(a)),
-        Offset(center.dx + r2 * Math.cos(a), center.dy + r2 * Math.sin(a)),
+        Offset(center.dx + r2 * math.cos(a), center.dy + r2 * Math.sin(a)),
         line,
       );
     }
