@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../services/background_music.dart';
 import '../../core/services/audio_service.dart';
-import '../angka/angka_page.dart';
-import '../gambar/gambar_page.dart';
-import '../hijaiyah/hijaiyah_page.dart';
-import '../huruf/huruf_page.dart';
+import '../learning/learning_page.dart';
+import '../ibadah/ibadah_page.dart';
 import '../kuis/kuis_page.dart';
 import '../mewarnai/mewarnai_page.dart';
 import '../titik_garis/titik_garis_page.dart';
-import '../warna/warna_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,13 +19,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = <_HomeEntry>[
-      const _HomeEntry('🔤', 'Huruf', [Color(0xFFFF5B83), Color(0xFFE91E63)], HurufPage()),
-      const _HomeEntry('🔢', 'Angka', [Color(0xFF3CA7E8), Color(0xFF1375C8)], AngkaPage()),
-      const _HomeEntry('🕌', 'Hijaiyah', [Color(0xFF80D64E), Color(0xFF1FA35B)], HijaiyahPage()),
-      const _HomeEntry('🦁', 'Gambar', [Color(0xFFFF9B3F), Color(0xFFFF6E25)], GambarPage()),
-      const _HomeEntry('🎨', 'Warna', [Color(0xFF9A5BE7), Color(0xFF6B32BF)], WarnaPage()),
+      const _HomeEntry('🔤', 'Huruf', [Color(0xFFFF5B83), Color(0xFFE91E63)], LearningPage(type: LearningType.huruf)),
+      const _HomeEntry('🔢', 'Angka', [Color(0xFF3CA7E8), Color(0xFF1375C8)], LearningPage(type: LearningType.angka)),
+      const _HomeEntry('🕌', 'Hijaiyah', [Color(0xFF80D64E), Color(0xFF1FA35B)], LearningPage(type: LearningType.hijaiyah)),
+      const _HomeEntry('🦁', 'Gambar', [Color(0xFFFF9B3F), Color(0xFFFF6E25)], LearningPage(type: LearningType.gambar)),
+      const _HomeEntry('🎨', 'Warna', [Color(0xFF9A5BE7), Color(0xFF6B32BF)], LearningPage(type: LearningType.warna)),
       const _HomeEntry('🖍️', 'Mewarnai', [Color(0xFFC45AE7), Color(0xFF7A38C7)], MewarnaiPage()),
       const _HomeEntry('📝', 'Titik & Garis', [Color(0xFFFFC94E), Color(0xFFFF9E20)], TitikGarisPage()),
+      const _HomeEntry('🤲', 'Ibadah', [Color(0xFF4CCF8A), Color(0xFF1C9A6B)], IbadahPage()),
       const _HomeEntry('🏆', 'Kuis Seru', [Color(0xFF7B68E8), Color(0xFF4939B9)], KuisPage()),
     ];
 
@@ -46,6 +44,8 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       children: [
                         _HomeHero(compact: compact),
+                        const SizedBox(height: 10),
+                        const _ProgressChart(),
                         const SizedBox(height: 10),
                         Container(
                           padding: const EdgeInsets.all(8),
