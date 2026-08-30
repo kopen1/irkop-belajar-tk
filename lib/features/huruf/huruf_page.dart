@@ -263,7 +263,7 @@ class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _letterCard(double scale) {
+  Widget _letterCard(double scale, {bool lowercase = false}) {
     return Container(
       decoration: _whiteCardDecoration(scale),
       child: Column(
