@@ -10,7 +10,7 @@ class HijaiyahPage extends StatefulWidget {
   State<HijaiyahPage> createState() => _HijaiyahPageState();
 }
 
-class _HijaiyahPageState extends State<HijaiyahPage> {
+class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderStateMixin {
   final audio = AudioService.instance;
   static const letters = [
     'ا','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص',
@@ -21,6 +21,12 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
     'Dhad','Tha','Zha','Ain','Ghain','Fa','Qaf','Kaf','Lam','Mim','Nun','Ha','Wau','Ya',
   ];
   int index = 0;
+  late final TabController _tabs;
+
+  @override
+  void initState() { super.initState(); _tabs = TabController(length: 2, vsync: this); }
+  @override
+  void dispose() { _tabs.dispose(); super.dispose(); }
 
   List<int> get _gridOrder {
     final result = <int>[];
@@ -48,10 +54,11 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
             builder: (context, box) {
               final w = box.maxWidth;
               final s = (w / 820).clamp(.72, 1.0);
-              return SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 24),
-                child: Column(children: [
+              return Column(children: [
                   _header(w, s),
+                  TabBar(controller: _tabs, isScrollable: true, tabAlignment: TabAlignment.center, tabs: const [Tab(text: 'HURUF'), Tab(text: 'KUIS MINI')]),
+                  Expanded(child: TabBarView(controller: _tabs, children: [
+                    SingleChildScrollView(padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 24), child: Column(children: [
                   SizedBox(height: 14 * s),
                   Container(
                     height: w * .49,
@@ -111,13 +118,28 @@ class _HijaiyahPageState extends State<HijaiyahPage> {
                       },
                     ),
                   ),
-                ]),
-              );
+                ])),
+                    _quizTab(w, s),
+                  ])),
+                ]);
             },
           ),
         ),
       ),
     );
+  }
+
+
+  Widget _quizTab(double w, double s) {
+    final answer = letters[index];
+    final options = <String>{answer, letters[(index + 1) % letters.length], letters[(index + 5) % letters.length], letters[(index + 10) % letters.length]}.toList();
+    return Center(child: Container(margin: EdgeInsets.all(w * .06), padding: EdgeInsets.all(24 * s), decoration: _panel(Colors.white, s), child: Column(mainAxisSize: MainAxisSize.min, children: [
+      Text('MINI KUIS', style: TextStyle(fontSize: 28 * s, fontWeight: FontWeight.w900)),
+      const SizedBox(height: 12),
+      Text('Pilih huruf \${names[index]}', style: TextStyle(fontSize: 21 * s, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 16),
+      Wrap(spacing: 12, runSpacing: 12, alignment: WrapAlignment.center, children: options.map((x) => FilledButton(onPressed: () { if (x == answer) { audio.speak('Hebat, benar'); setState(() => index = (index + 1) % letters.length); } else { audio.speak('Coba lagi'); } }, child: Text(x, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 30 * s, fontWeight: FontWeight.w900)))).toList()),
+    ])));
   }
 
   Widget _centeredArabic(String value, double fontSize, Color color, FontWeight weight) {
