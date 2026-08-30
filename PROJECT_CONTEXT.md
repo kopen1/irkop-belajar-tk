@@ -144,3 +144,10 @@ Asisten harus:
 - Gambar mencampur nama, gambar, kategori, dan huruf awal.
 - Warna dan Mewarnai mencampur nama warna, benda, dan kecocokan warna.
 - Feedback benar/salah memakai layout overlay penuh dan BoxFit.contain agar karakter tidak terpotong.
+
+
+## Fix startup intro 2026-08-31
+
+- Menghapus tagline kedua di PlayIntroPage agar teks hanya muncul sekali di banner logo.
+- Menghapus splash HTML panda yang berbeda jauh dari referensi.
+- Splash web sekarang hanya menjadi loading ringan dengan identitas logo, lalu langsung berganti ke intro Flutter.
