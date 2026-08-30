@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../core/services/audio_service.dart';
@@ -21,6 +22,7 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
     'Dhad','Tha','Zha','Ain','Ghain','Fa','Qaf','Kaf','Lam','Mim','Nun','Ha','Wau','Ya',
   ];
   int index = 0;
+  final Random _quizRandom = Random();
   int quizQuestion = 1;
   int quizCorrect = 0;
   int quizScore = 0;
@@ -203,6 +205,12 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    index = _quizRandom.nextInt(letters.length);
+  }
+
   void _answerQuiz(String option, String answer) {
     if (quizAnswered) return;
     setState(() {
@@ -213,9 +221,16 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
   }
 
   void _nextQuiz() => setState(() {
-    index = (index + 1) % letters.length;
+    var nextIndex = _quizRandom.nextInt(letters.length);
+    if (letters.length > 1) {
+      while (nextIndex == index) {
+        nextIndex = _quizRandom.nextInt(letters.length);
+      }
+    }
+    index = nextIndex;
     quizQuestion = quizQuestion == 20 ? 1 : quizQuestion + 1;
-    selectedAnswer = null; quizAnswered = false;
+    selectedAnswer = null;
+    quizAnswered = false;
   });
 
   _QuizVisual _quizVisual(int value) {
