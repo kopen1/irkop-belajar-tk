@@ -239,6 +239,59 @@ class _HomeHero extends StatelessWidget {
   }
 }
 
+class _ProgressChart extends StatelessWidget {
+  const _ProgressChart();
+
+  @override
+  Widget build(BuildContext context) {
+    const values = [0.72, 0.48, 0.82, 0.60, 0.38];
+    const labels = ['Huruf', 'Angka', 'Hijaiyah', 'Gambar', 'Warna'];
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .90),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [BoxShadow(color: Color(0x220D405C), blurRadius: 8, offset: Offset(0, 4))],
+      ),
+      child: Column(
+        children: [
+          const Text('Perjalanan Belajarku', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF31536D))),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 86,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(values.length, (i) => Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: FractionallySizedBox(
+                        heightFactor: values[i],
+                        widthFactor: .55,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const [Color(0xFFFF8B6A),Color(0xFF5EA8F5),Color(0xFF59C878),Color(0xFFFFB84D),Color(0xFF9A7BE8)][i],
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          ),
+                        ),
+                      ),
+                    )),
+                    const SizedBox(height: 4),
+                    Text(labels[i], style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Color(0xFF52677A))),
+                  ],
+                ),
+              )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _HomeEntry {
   final String emoji;
   final String title;
