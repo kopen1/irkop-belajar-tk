@@ -10,9 +10,10 @@ class HurufPage extends StatefulWidget {
   State<HurufPage> createState() => _HurufPageState();
 }
 
-class _HurufPageState extends State<HurufPage> {
+class _HurufPageState extends State<HurufPage> with SingleTickerProviderStateMixin {
   final AudioService audio = AudioService.instance;
   int _index = 0;
+  late final TabController _tabs;
 
   static const _analogyEmoji = ['🏠','8️⃣','🌙','🪜','📘','🪮','🪝','🎢','🕯️','🪝','🔑','🦵','⛰️','🧲','⚽','🚩','🎈','🌈','🐍','☂️','🥣','✌️','🌊','❎','🪀','⚡'];
   static const _analogyText = ['Seperti atap rumah','Seperti dua perut gemuk','Seperti bulan sabit','Seperti pintu melengkung','Seperti sisir','Seperti sisir','Seperti kail','Seperti tangga','Seperti tiang atau lilin','Seperti kail','Seperti kunci','Seperti kaki meja','Seperti dua gunung','Seperti magnet','Seperti bola atau donat','Seperti tiang berbendera','Seperti balon berekor','Seperti pita melengkung','Seperti ular meliuk','Seperti payung','Seperti mangkok','Seperti ayunan','Seperti gelombang','Seperti dua garis menyilang','Seperti ketapel','Seperti kilat'];
@@ -34,6 +35,11 @@ class _HurufPageState extends State<HurufPage> {
     '🥭','🍍','🦧','🐼','📖','🦌','🦁','🎩','🐍','🏺','🥕','🎼',
     '🪀','🦓',
   ];
+
+  @override
+  void initState() { super.initState(); _tabs = TabController(length: 3, vsync: this); }
+  @override
+  void dispose() { _tabs.dispose(); super.dispose(); }
 
   void _select(int index) {
     setState(() => _index = index);
@@ -67,16 +73,13 @@ class _HurufPageState extends State<HurufPage> {
               return Column(
                 children: [
                   _header(w, scale),
+                  _tabBar(w, scale),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24),
                       child: Column(
                         children: [
-                          _lessonPanel(w, scale),
-                          SizedBox(height: 18 * scale),
-                          _pager(w, scale),
-                          SizedBox(height: 24 * scale),
-                          _alphabetPanel(w, scale),
+                          SizedBox(height: constraints.maxHeight * .74, child: TabBarView(controller: _tabs, children: [_lessonTab(w, scale, lowercase: false), _lessonTab(w, scale, lowercase: true), _quizTab(w, scale)])),
                         ],
                       ),
                     ),
@@ -177,7 +180,12 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _lessonPanel(double w, double scale) {
+
+  Widget _tabBar(double w, double scale) => TabBar(controller: _tabs, isScrollable: true, tabAlignment: TabAlignment.center, tabs: const [Tab(text: 'BESAR'), Tab(text: 'KECIL'), Tab(text: 'MINI KUIS')]);
+  Widget _lessonTab(double w, double scale, {required bool lowercase}) => SingleChildScrollView(padding: EdgeInsets.fromLTRB(w * .035, 4, w * .035, 24), child: Column(children: [_lessonPanel(w, scale, lowercase: lowercase), SizedBox(height: 18 * scale), _pager(w, scale), SizedBox(height: 24 * scale), _alphabetPanel(w, scale, lowercase: lowercase)]));
+  Widget _quizTab(double w, double scale) { final answer = _letters[_index]; final options = <String>{answer, _letters[(_index+1)%26], _letters[(_index+5)%26], _letters[(_index+10)%26]}.toList(); return Center(child: Container(margin: EdgeInsets.all(w*.05), padding: EdgeInsets.all(24*scale), decoration: BoxDecoration(color: Colors.white.withValues(alpha:.94), borderRadius: BorderRadius.circular(30)), child: Column(mainAxisSize: MainAxisSize.min, children: [Text('MINI KUIS', style: TextStyle(fontSize: 28*scale, fontWeight: FontWeight.w900)), const SizedBox(height: 10), Text('Pilih huruf untuk ${_words[_index]} ${_emoji[_index]}', textAlign: TextAlign.center), const SizedBox(height: 18), Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: options.map((x) => FilledButton(onPressed: () { if(x==answer){ audio.speak('Hebat, benar!'); _next(); } else { audio.speak('Coba lagi'); } }, child: Text(x, style: TextStyle(fontSize: 26*scale, fontWeight: FontWeight.w900)))).toList())]))); }
+
+  Widget _lessonPanel(double w, double scale, {bool lowercase = false}) {
     final panelHeight = w * .78;
     final padding = w * .035;
 
@@ -264,8 +272,8 @@ class _HurufPageState extends State<HurufPage> {
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 180),
             child: Text(
-              _letters[_index],
-              key: ValueKey('letter-$_index'),
+              lowercase ? _letters[_index].toLowerCase() : _letters[_index],
+              key: ValueKey('letter-$_index-$lowercase'),
               style: TextStyle(
                 fontSize: 180 * scale,
                 height: .9,
@@ -370,7 +378,7 @@ class _HurufPageState extends State<HurufPage> {
     );
   }
 
-  Widget _alphabetPanel(double w, double scale) {
+  Widget _alphabetPanel(double w, double scale, {bool lowercase = false}) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20 * scale),
@@ -395,12 +403,12 @@ class _HurufPageState extends State<HurufPage> {
           mainAxisSpacing: 16 * scale,
           childAspectRatio: .92,
         ),
-        itemBuilder: (context, index) => _letterTile(index, scale),
+        itemBuilder: (context, index) => _letterTile(index, scale, lowercase: lowercase),
       ),
     );
   }
 
-  Widget _letterTile(int index, double scale) {
+  Widget _letterTile(int index, double scale, {bool lowercase = false}) {
     const colors = [
       Color(0xFFFF3044), Color(0xFFFF8B0A), Color(0xFFFFC62E),
       Color(0xFF31C842), Color(0xFF2399D8), Color(0xFF4655D6),
@@ -421,7 +429,7 @@ class _HurufPageState extends State<HurufPage> {
         onTap: () => _select(index),
         child: Center(
           child: Text(
-            _letters[index],
+            lowercase ? _letters[index].toLowerCase() : _letters[index],
             style: TextStyle(
               color: Colors.white,
               fontSize: 36 * scale,
