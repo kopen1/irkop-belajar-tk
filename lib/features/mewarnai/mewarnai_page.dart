@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/mini_quiz_panel.dart';
 import 'painting_canvas.dart';
 
 class MewarnaiPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
   int clearSignal = 0;
   int fillSignal = 0;
   int drawingIndex = 0;
+  int _tab = 0;
   // Daftar terus berputar, jadi setelah gambar terakhir kembali ke awal.
   // Anak dapat berpindah gambar kapan saja lewat pilihan di atas.
   static const drawings = [
@@ -74,20 +76,39 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
             return Column(
               children: [
                 _header(w, s),
-                _drawingSelector(s),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(w * .04, 0, w * .04, 6 * s),
+                  child: Row(children: [
+                    Expanded(child: _tabButton('MEWARNAI', 0, s)),
+                    SizedBox(width: 8 * s),
+                    Expanded(child: _tabButton('MINI KUIS', 1, s)),
+                  ]),
+                ),
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 16 * s),
-                    child: Column(
-                      children: [
-                        _drawingPanel(s),
-                        SizedBox(height: 14 * s),
-                        _toolbar(s),
-                        SizedBox(height: 10 * s),
-                        _nextButton(s),
-                      ],
-                    ),
-                  ),
+                  child: _tab == 0
+                      ? Column(
+                          children: [
+                            _drawingSelector(s),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(w * .04, 8, w * .04, 16 * s),
+                                child: Column(
+                                  children: [
+                                    _drawingPanel(s),
+                                    SizedBox(height: 14 * s),
+                                    _toolbar(s),
+                                    SizedBox(height: 10 * s),
+                                    _nextButton(s),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : MiniQuizPanel(
+                          items: drawings.skip(1).map((item) => (item.$1, item.$2)).toList(),
+                          questionPrefix: 'Gambar apakah yang bisa kita warnai?',
+                        ),
                 ),
               ],
             );
@@ -96,6 +117,19 @@ class _MewarnaiPageState extends State<MewarnaiPage> {
       ),
     ),
   );
+
+  Widget _tabButton(String label, int value, double s) {
+    final active = _tab == value;
+    return Material(
+      color: active ? Colors.white.withValues(alpha: .94) : Colors.white.withValues(alpha: .42),
+      borderRadius: BorderRadius.circular(18 * s),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18 * s),
+        onTap: () => setState(() => _tab = value),
+        child: SizedBox(height: 52 * s, child: Center(child: Text(label, style: TextStyle(color: active ? const Color(0xFF244B78) : Colors.white, fontSize: 16 * s, fontWeight: FontWeight.w900)))),
+      ),
+    );
+  }
 
   Widget _drawingSelector(double s) => SizedBox(
     height: 64 * s,
