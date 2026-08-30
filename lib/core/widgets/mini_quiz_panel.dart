@@ -25,11 +25,13 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
   int? _selected;
   int _question = 1;
   int _correct = 0;
+  List<int> _currentChoices = const [];
 
   @override
   void initState() {
     super.initState();
     _target = _random.nextInt(widget.items.length);
+    _buildChoices();
   }
 
   void _next() {
@@ -43,23 +45,24 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
       _target = next;
       _selected = null;
       _question++;
+      _buildChoices();
     });
   }
 
-  List<int> get _choices {
+  void _buildChoices() {
     final pool = List<int>.generate(widget.items.length, (i) => i)..shuffle(_random);
     final values = <int>[_target];
     for (final i in pool) {
       if (i != _target && values.length < 4) values.add(i);
     }
     values.shuffle(_random);
-    return values;
+    _currentChoices = values;
   }
 
   @override
   Widget build(BuildContext context) {
     final target = widget.items[_target];
-    final choices = _choices;
+    final choices = _currentChoices;
     return LayoutBuilder(
       builder: (context, box) {
         final s = (box.maxWidth / 820).clamp(.72, 1.0);
