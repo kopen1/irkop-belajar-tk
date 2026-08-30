@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 
+import '../core/services/app_settings.dart';
+
 class BackgroundMusic {
   BackgroundMusic._();
 
@@ -62,7 +64,7 @@ class BackgroundMusic {
 
     oscillator.frequency.value = _notes[_index];
     // Dinaikkan agar musik terdengar lebih jelas di perangkat mobile.
-    gain.gain.value = .28;
+    gain.gain.value = .45 * AppSettings.instance.musicVolume.value;
 
     oscillator.connect(gain);
     gain.connect(context.destination);
