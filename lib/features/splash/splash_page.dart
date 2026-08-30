@@ -177,13 +177,6 @@ class _SplashPageState extends State<SplashPage>
                         ),
                       ),
                       const SizedBox(height: 14),
-                      const Text(
-                        'by IRKOP',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
                       ),
                     ],
                   ),
