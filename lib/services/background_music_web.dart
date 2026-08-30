@@ -62,7 +62,7 @@ class BackgroundMusic {
 
     oscillator.frequency.value = _notes[_index];
     // Dinaikkan agar musik terdengar lebih jelas di perangkat mobile.
-    gain.gain.value = .14;
+    gain.gain.value = .28;
 
     oscillator.connect(gain);
     gain.connect(context.destination);
