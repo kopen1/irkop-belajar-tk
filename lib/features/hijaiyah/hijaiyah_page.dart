@@ -144,8 +144,18 @@ class _HijaiyahPageState extends State<HijaiyahPage> with SingleTickerProviderSt
 
 
   Widget _quizTab(double w, double s) => MiniQuizPanel(
-    items: List.generate(letters.length, (i) => (letters[i], letters[i])),
-    questionPrefix: 'Huruf apakah ini?',
+    questions: const [
+      MiniQuizQuestion(prompt: 'Huruf apakah ini?', visual: 'ا', choices: ['Alif','Ba','Ta','Tsa'], answer: 'Alif'),
+      MiniQuizQuestion(prompt: 'Pilih huruf untuk nama Ba!', visual: 'Ba', choices: ['ا','ب','ت','ث'], answer: 'ب'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini?', visual: 'ت', choices: ['Ba','Ta','Jim','Dal'], answer: 'Ta'),
+      MiniQuizQuestion(prompt: 'Pilih huruf untuk nama Jim!', visual: 'Jim', choices: ['ج','ح','خ','د'], answer: 'ج'),
+      MiniQuizQuestion(prompt: 'Dengarkan dan pilih huruf yang tepat!', visual: 'Ha', choices: ['ح','خ','د','ذ'], answer: 'ح', spokenPrompt: 'Pilih huruf Ha'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini?', visual: 'س', choices: ['Sin','Syin','Shad','Zai'], answer: 'Sin'),
+      MiniQuizQuestion(prompt: 'Pilih huruf untuk nama Mim!', visual: 'Mim', choices: ['ل','م','ن','هـ'], answer: 'م'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini?', visual: 'و', choices: ['Ya','Wau','Ha','Nun'], answer: 'Wau'),
+      MiniQuizQuestion(prompt: 'Pilih huruf untuk nama Qaf!', visual: 'Qaf', choices: ['ف','ق','ك','ل'], answer: 'ق'),
+      MiniQuizQuestion(prompt: 'Huruf apakah ini?', visual: 'ي', choices: ['Wau','Ya','Nun','Ha'], answer: 'Ya'),
+    ],
     totalQuestions: 10,
   );
 
