@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/services/fullscreen_service.dart';
+
 import '../../core/services/app_settings.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../services/background_music.dart';
@@ -63,8 +65,10 @@ class SettingsPage extends StatelessWidget {
                       value: value, onChanged: (v) async {
                         settings.fullscreen.value = v;
                         if (v) {
+                          await FullscreenService.setFullscreen(true);
                           await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
                         } else {
+                          await FullscreenService.setFullscreen(false);
                           await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
                         }
                       },
