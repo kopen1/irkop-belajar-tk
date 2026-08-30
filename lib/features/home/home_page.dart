@@ -3,32 +3,36 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../services/background_music.dart';
 import '../../core/services/audio_service.dart';
-import '../learning/learning_page.dart';
-import '../ibadah/ibadah_page.dart';
+import '../angka/angka_page.dart';
+import '../gambar/gambar_page.dart';
+import '../hijaiyah/hijaiyah_page.dart';
+import '../huruf/huruf_page.dart';
 import '../kuis/kuis_page.dart';
 import '../mewarnai/mewarnai_page.dart';
 import '../titik_garis/titik_garis_page.dart';
+import '../warna/warna_page.dart';
+import '../ibadah/ibadah_page.dart';
+import '../settings/settings_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   void _go(BuildContext context, Widget page) {
-    BackgroundMusic.instance.start();
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
   @override
   Widget build(BuildContext context) {
     final entries = <_HomeEntry>[
-      const _HomeEntry('🔤', 'Huruf', [Color(0xFFFF5B83), Color(0xFFE91E63)], LearningPage(type: LearningType.huruf)),
-      const _HomeEntry('🔢', 'Angka', [Color(0xFF3CA7E8), Color(0xFF1375C8)], LearningPage(type: LearningType.angka)),
-      const _HomeEntry('🕌', 'Hijaiyah', [Color(0xFF80D64E), Color(0xFF1FA35B)], LearningPage(type: LearningType.hijaiyah)),
-      const _HomeEntry('🦁', 'Gambar', [Color(0xFFFF9B3F), Color(0xFFFF6E25)], LearningPage(type: LearningType.gambar)),
-      const _HomeEntry('🎨', 'Warna', [Color(0xFF9A5BE7), Color(0xFF6B32BF)], LearningPage(type: LearningType.warna)),
+      const _HomeEntry('🔤', 'Huruf', [Color(0xFFFF5B83), Color(0xFFE91E63)], HurufPage()),
+      const _HomeEntry('🔢', 'Angka', [Color(0xFF3CA7E8), Color(0xFF1375C8)], AngkaPage()),
+      const _HomeEntry('🕌', 'Hijaiyah', [Color(0xFF80D64E), Color(0xFF1FA35B)], HijaiyahPage()),
+      const _HomeEntry('🦁', 'Gambar', [Color(0xFFFF9B3F), Color(0xFFFF6E25)], GambarPage()),
+      const _HomeEntry('🎨', 'Warna', [Color(0xFF9A5BE7), Color(0xFF6B32BF)], WarnaPage()),
       const _HomeEntry('🖍️', 'Mewarnai', [Color(0xFFC45AE7), Color(0xFF7A38C7)], MewarnaiPage()),
       const _HomeEntry('📝', 'Titik & Garis', [Color(0xFFFFC94E), Color(0xFFFF9E20)], TitikGarisPage()),
-      const _HomeEntry('🤲', 'Ibadah', [Color(0xFF4CCF8A), Color(0xFF1C9A6B)], IbadahPage()),
       const _HomeEntry('🏆', 'Kuis Seru', [Color(0xFF7B68E8), Color(0xFF4939B9)], KuisPage()),
+      const _HomeEntry('🤲', 'Ibadah', [Color(0xFF4CCF8A), Color(0xFF1C9A6B)], IbadahPage()),
     ];
 
     return Scaffold(
@@ -45,8 +49,6 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       children: [
                         _HomeHero(compact: compact),
-                        const SizedBox(height: 10),
-                        const _ProgressChart(),
                         const SizedBox(height: 10),
                         Container(
                           padding: const EdgeInsets.all(8),
@@ -125,8 +127,8 @@ class _HomeHero extends StatelessWidget {
               Row(
                 children: [
                   _roundIcon(
-                    icon: Icons.home_rounded,
-                    onTap: () {},
+                    icon: Icons.settings_rounded,
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsPage())),
                     compact: compact,
                   ),
                   Expanded(
@@ -235,59 +237,6 @@ class _HomeHero extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ProgressChart extends StatelessWidget {
-  const _ProgressChart();
-
-  @override
-  Widget build(BuildContext context) {
-    const values = [0.72, 0.48, 0.82, 0.60, 0.38];
-    const labels = ['Huruf', 'Angka', 'Hijaiyah', 'Gambar', 'Warna'];
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .90),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [BoxShadow(color: Color(0x220D405C), blurRadius: 8, offset: Offset(0, 4))],
-      ),
-      child: Column(
-        children: [
-          const Text('Perjalanan Belajarku', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF31536D))),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 86,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(values.length, (i) => Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: FractionallySizedBox(
-                        heightFactor: values[i],
-                        widthFactor: .55,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const [Color(0xFFFF8B6A),Color(0xFF5EA8F5),Color(0xFF59C878),Color(0xFFFFB84D),Color(0xFF9A7BE8)][i],
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                          ),
-                        ),
-                      ),
-                    )),
-                    const SizedBox(height: 4),
-                    Text(labels[i], style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: Color(0xFF52677A))),
-                  ],
-                ),
-              )),
-            ),
-          ),
-        ],
       ),
     );
   }
