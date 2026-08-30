@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/services/app_settings.dart';
 import '../../core/widgets/kid_background.dart';
@@ -59,9 +60,16 @@ class SettingsPage extends StatelessWidget {
                   const SizedBox(height: 12),
                   _section('Tampilan', Icons.fullscreen_rounded, [
                     ValueListenableBuilder<bool>(valueListenable: settings.fullscreen, builder: (_, value, __) => SwitchListTile(
-                      value: value, onChanged: (v) => settings.fullscreen.value = v,
+                      value: value, onChanged: (v) async {
+                        settings.fullscreen.value = v;
+                        if (v) {
+                          await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+                        } else {
+                          await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                        }
+                      },
                       title: const Text('Mode Layar Penuh', style: TextStyle(fontWeight: FontWeight.w900)),
-                      subtitle: const Text('Status preferensi layar penuh aplikasi'))),
+                      subtitle: const Text('Sembunyikan bilah sistem untuk layar belajar lebih luas'))),
                     const ListTile(leading: Icon(Icons.format_size_rounded), title: Text('Tampilan Anak', style: TextStyle(fontWeight: FontWeight.w900)), subtitle: Text('Desain aplikasi sudah responsif untuk mobile')),
                   ]),
                   const SizedBox(height: 12),
