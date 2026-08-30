@@ -44,8 +44,19 @@ class _WarnaPageState extends State<WarnaPage> {
               child: _tab == 0
                   ? _lesson(w, s)
                   : MiniQuizPanel(
-                      items: List.generate(items.length, (i) => (const ['🔴','🟠','🟡','🟢','🔵','🟣','🩷','🟤','⚫','⚪','⚪','🔵'][i], items[i].$1)),
-                      questionPrefix: 'Warna apakah ini?',
+                      questions: const [
+                        MiniQuizQuestion(prompt: 'Warna apakah ini?', visual: '🔴', choices: ['Merah','Biru','Hijau','Kuning'], answer: 'Merah'),
+                        MiniQuizQuestion(prompt: 'Pilih warna yang sesuai nama!', visual: 'BIRU', choices: ['🔴','🔵','🟢','🟡'], answer: '🔵'),
+                        MiniQuizQuestion(prompt: 'Warna apel yang umum adalah?', visual: '🍎', choices: ['Merah','Biru','Ungu','Hitam'], answer: 'Merah'),
+                        MiniQuizQuestion(prompt: 'Pilih benda berwarna kuning!', visual: 'KUNING', choices: ['🍌','🍅','🫐','🍇'], answer: '🍌'),
+                        MiniQuizQuestion(prompt: 'Warna apakah ini?', visual: '🟢', choices: ['Hijau','Pink','Oranye','Cokelat'], answer: 'Hijau'),
+                        MiniQuizQuestion(prompt: 'Pilih warna langit!', visual: '☁️☀️', choices: ['Biru','Merah','Hitam','Ungu'], answer: 'Biru'),
+                        MiniQuizQuestion(prompt: 'Pilih warna yang sesuai nama!', visual: 'UNGU', choices: ['🟣','🟠','🟤','⚪'], answer: '🟣'),
+                        MiniQuizQuestion(prompt: 'Warna daun yang umum adalah?', visual: '🍃', choices: ['Hijau','Pink','Abu-abu','Hitam'], answer: 'Hijau'),
+                        MiniQuizQuestion(prompt: 'Warna apakah ini?', visual: '🟠', choices: ['Oranye','Kuning','Merah','Cokelat'], answer: 'Oranye'),
+                        MiniQuizQuestion(prompt: 'Pilih benda berwarna merah!', visual: 'MERAH', choices: ['🍓','🥝','🫐','🍋'], answer: '🍓'),
+                      ],
+                      totalQuestions: 10,
                     ),
             ),
           ]);
