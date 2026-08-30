@@ -165,7 +165,7 @@ class _AngkaPageState extends State<AngkaPage> with SingleTickerProviderStateMix
     ],
     questionPrefix: 'Angka manakah ini?',
     totalQuestions: 10,
-  ););
+  );
 
   BoxDecoration _panel() => BoxDecoration(color: Colors.white.withValues(alpha: .94), borderRadius: BorderRadius.circular(32), border: Border.all(color: Colors.white, width: 2), boxShadow: const [BoxShadow(color: Color(0x33143F66), blurRadius: 16, offset: Offset(0,8))]);
 
