@@ -2,27 +2,26 @@ import 'package:flutter/material.dart';
 
 class KidBackground extends StatelessWidget {
   final Widget child;
+  final Color? tint;
 
-  const KidBackground({
-    super.key,
-    required this.child,
-  });
+  const KidBackground({super.key, required this.child, this.tint});
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF63B8E6),
-            Color(0xFFB9E8F7),
-            Color(0xFFFFF6C9),
-            Color(0xFFA8E39B),
-          ],
-          stops: [0.0, 0.42, 0.72, 1.0],
-        ),
+    final base = const [Color(0xFF63B8E6), Color(0xFFB9E8F7), Color(0xFFFFF6C9), Color(0xFFA8E39B)];
+    final colors = tint == null
+        ? base
+        : [
+            Color.lerp(base[0], tint!, .42)!,
+            Color.lerp(base[1], tint!, .30)!,
+            Color.lerp(base[2], tint!, .18)!,
+            Color.lerp(base[3], tint!, .12)!,
+          ];
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOutCubic,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: colors, stops: const [0.0, 0.42, 0.72, 1.0]),
       ),
       child: Stack(
         fit: StackFit.expand,
