@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../features/play_intro/play_intro_page.dart';
+import '../features/intro/play_intro_page.dart';
 
 class IrkopApp extends StatelessWidget {
   const IrkopApp({super.key});
@@ -12,7 +12,6 @@ class IrkopApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: null,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF5EA8F5),
         ),
