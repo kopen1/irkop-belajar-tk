@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../features/splash/splash_page.dart';
+import '../features/play_intro/play_intro_page.dart';
 
 class IrkopApp extends StatelessWidget {
   const IrkopApp({super.key});
@@ -17,7 +17,7 @@ class IrkopApp extends StatelessWidget {
           seedColor: const Color(0xFF5EA8F5),
         ),
       ),
-      home: const SplashPage(),
+      home: const PlayIntroPage(),
     );
   }
 }
