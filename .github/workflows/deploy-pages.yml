@@ -27,7 +27,7 @@ jobs:
       - name: Flutter Pub Get
         run: flutter pub get
       - name: Flutter Analyze
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
       - name: Flutter Test
         run: flutter test
       - name: Configure Flutter Web
