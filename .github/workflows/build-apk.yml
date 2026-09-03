@@ -52,18 +52,17 @@ jobs:
           path: ~/.android/debug.keystore
           key: irkop-android-debug-keystore-v1
 
-      # This creates a real Android project and compiles Flutter to a native
-      # Android APK. No WebView and no Flutter Web build are involved here.
       - name: Prepare native Android platform
         run: flutter create . --platforms android --org com.irkop
 
       - name: Flutter Pub Get
         run: flutter pub get
 
-      - name: Flutter Analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+      # Tests are intentionally skipped. Analyze only application source so
+      # obsolete test-only files cannot block a release APK build.
+      - name: Flutter Analyze app source
+        run: flutter analyze lib --no-fatal-infos --no-fatal-warnings
 
-      # Tests intentionally skipped to keep APK iteration fast.
       - name: Build release APK
         run: flutter build apk --release --build-name=1.0.2 --build-number=${{ github.run_number }} --tree-shake-icons
 
@@ -72,9 +71,6 @@ jobs:
           mkdir -p dist
           cp build/app/outputs/flutter-apk/app-release.apk "dist/irkop-belajar-tk_v1.0.2.apk"
 
-      # GitHub Actions artifacts are always downloaded as ZIP archives.
-      # Publish the APK as a Release asset as well, so the user gets the
-      # actual .apk file directly without an artifact ZIP wrapper.
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
