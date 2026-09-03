@@ -26,15 +26,11 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: flutter-:os:-:channel:-:version:-:arch:
-          cache-dependency-path: pubspec.lock
 
-      - name: Cache Flutter/Pub dependencies
+      - name: Cache Pub dependencies
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.pub-cache
-            .dart_tool
+          path: ~/.pub-cache
           key: flutter-pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
           restore-keys: |
             flutter-pub-${{ runner.os }}-
