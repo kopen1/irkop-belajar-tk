@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/kids_theme.dart';
 
+/// Shared Sunny Kids Adventure backdrop used by Home and every learning world.
 class KidBackground extends StatelessWidget {
   final Widget child;
   final Color? tint;
@@ -10,43 +11,78 @@ class KidBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = const [
-      KidsTheme.sky,
-      Color(0xFFBEEBFA),
-      Color(0xFFFFF5CF),
-      Color(0xFFDDF5D5),
-    ];
-    final colors = tint == null
-        ? base
-        : [
-            Color.lerp(base[0], tint!, .30)!,
-            Color.lerp(base[1], tint!, .20)!,
-            Color.lerp(base[2], tint!, .12)!,
-            Color.lerp(base[3], tint!, .10)!,
-          ];
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 420),
-      curve: Curves.easeOutCubic,
+    final top = tint == null
+        ? KidsTheme.sky
+        : Color.lerp(KidsTheme.sky, tint!, .22)!;
+    final middle = tint == null
+        ? const Color(0xFFBEEBFA)
+        : Color.lerp(const Color(0xFFBEEBFA), tint!, .14)!;
+
+    return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: colors,
-          stops: const [0.0, 0.42, 0.72, 1.0],
+          colors: [top, middle, const Color(0xFFFFF8DC), const Color(0xFFE4F7DF)],
+          stops: const [0, .38, .72, 1],
         ),
       ),
       child: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned(top: 28, left: 14, child: Text('☁️', style: TextStyle(fontSize: 44))),
-          const Positioned(top: 96, right: 16, child: Text('☁️', style: TextStyle(fontSize: 36))),
-          const Positioned(top: 136, right: 34, child: Text('✨', style: TextStyle(fontSize: 30))),
-          const Positioned(top: 174, left: 28, child: Text('🌼', style: TextStyle(fontSize: 24))),
-          const Positioned(bottom: 8, left: 10, child: Text('🌷  🌸  🌼', style: TextStyle(fontSize: 22))),
-          const Positioned(bottom: 8, right: 10, child: Text('🌼  🌸  🌷', style: TextStyle(fontSize: 22))),
+          const Positioned(top: 18, left: -8, child: _Cloud(size: 70)),
+          const Positioned(top: 84, right: -10, child: _Cloud(size: 56)),
+          const Positioned(top: 28, right: 68, child: Text('☀️', style: TextStyle(fontSize: 34))),
+          const Positioned(top: 142, left: 20, child: Text('🌼', style: TextStyle(fontSize: 22))),
+          const Positioned(top: 132, right: 28, child: Text('✨', style: TextStyle(fontSize: 24))),
+          const Positioned(bottom: 10, left: 10, child: Text('🌷  🌸  🌼', style: TextStyle(fontSize: 20))),
+          const Positioned(bottom: 10, right: 10, child: Text('🌼  🌸  🌷', style: TextStyle(fontSize: 20))),
           child,
         ],
       ),
     );
   }
+}
+
+class _Cloud extends StatelessWidget {
+  final double size;
+  const _Cloud({required this.size});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: size,
+        height: size * .58,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              width: size,
+              height: size * .34,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: .78),
+                borderRadius: BorderRadius.circular(size),
+              ),
+            ),
+            Positioned(
+              left: size * .16,
+              bottom: size * .10,
+              child: _puff(size * .38),
+            ),
+            Positioned(
+              right: size * .13,
+              bottom: size * .10,
+              child: _puff(size * .34),
+            ),
+          ],
+        ),
+      );
+
+  Widget _puff(double s) => Container(
+        width: s,
+        height: s,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .84),
+          shape: BoxShape.circle,
+        ),
+      );
 }
