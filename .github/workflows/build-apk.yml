@@ -1,0 +1,72 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter (cached)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: flutter-pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            flutter-pub-${{ runner.os }}-
+
+      # Flutter's generated Android release configuration uses the debug
+      # signing key until a production key is configured. Cache that key so
+      # successive APKs keep the same signature and can be installed as an
+      # update instead of requiring an uninstall.
+      - name: Cache Android signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: irkop-android-debug-keystore-v1
+
+      - name: Prepare Android platform
+        run: flutter create . --platforms android --org com.irkop
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Flutter Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Flutter Test
+        run: flutter test
+
+      - name: Build release APK
+        run: flutter build apk --release --build-number ${{ github.run_number }} --tree-shake-icons
+
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/irkop-belajar-tk_v1.0.1.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: irkop-belajar-tk_v1.0.1-apk
+          path: dist/irkop-belajar-tk_v1.0.1.apk
+          compression-level: 9
+          retention-days: 30
