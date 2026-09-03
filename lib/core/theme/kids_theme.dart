@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// Shared visual language for the Sunny Kids Adventure theme.
-/// Keep this theme lightweight so every feature page feels like one app.
 class KidsTheme {
   static const sky = Color(0xFF62C8F5);
   static const sunny = Color(0xFFFFD95A);
@@ -26,16 +25,6 @@ class KidsTheme {
       scaffoldBackgroundColor: surface,
       splashFactory: InkSparkle.splashFactory,
       visualDensity: VisualDensity.standard,
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.fuchsia: FadeUpwardsPageTransitionsBuilder(),
-        },
-      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         foregroundColor: ink,
