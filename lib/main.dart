@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'core/theme/kids_theme.dart';
 import 'features/home/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    const MaterialApp(
+    MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Belajar TK',
-      home: HomePage(),
+      title: 'IRKOP Belajar TK',
+      theme: KidsTheme.data(),
+      home: const HomePage(),
     ),
   );
 }
