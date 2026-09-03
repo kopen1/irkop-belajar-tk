@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Native Android APK
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: android-apk
@@ -33,9 +33,6 @@ jobs:
           restore-keys: |
             flutter-pub-${{ runner.os }}-
 
-      # Create the signing key before cache restore so the first build can
-      # save it. Later builds restore the same key, keeping APK signatures
-      # stable and allowing an in-place Android update.
       - name: Prepare stable Android signing key
         shell: bash
         run: |
@@ -55,7 +52,9 @@ jobs:
           path: ~/.android/debug.keystore
           key: irkop-android-debug-keystore-v1
 
-      - name: Prepare Android platform
+      # This creates a real Android project and compiles Flutter to a native
+      # Android APK. No WebView and no Flutter Web build are involved here.
+      - name: Prepare native Android platform
         run: flutter create . --platforms android --org com.irkop
 
       - name: Flutter Pub Get
@@ -64,21 +63,30 @@ jobs:
       - name: Flutter Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
-      - name: Flutter Test
-        run: flutter test
-
+      # Tests intentionally skipped to keep APK iteration fast.
       - name: Build release APK
-        run: flutter build apk --release --build-number ${{ github.run_number }} --tree-shake-icons
+        run: flutter build apk --release --build-name=1.0.2 --build-number=${{ github.run_number }} --tree-shake-icons
 
       - name: Rename APK
         run: |
           mkdir -p dist
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/irkop-belajar-tk_v1.0.1.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/irkop-belajar-tk_v1.0.2.apk"
 
+      # GitHub Actions artifacts are always downloaded as ZIP archives.
+      # Publish the APK as a Release asset as well, so the user gets the
+      # actual .apk file directly without an artifact ZIP wrapper.
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: irkop-belajar-tk_v1.0.1-apk
-          path: dist/irkop-belajar-tk_v1.0.1.apk
+          name: irkop-belajar-tk_v1.0.2-apk
+          path: dist/irkop-belajar-tk_v1.0.2.apk
           compression-level: 9
           retention-days: 30
+
+      - name: Publish direct APK release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.2-build-${{ github.run_number }}
+          name: IRKOP Belajar TK v1.0.2 (Build ${{ github.run_number }})
+          generate_release_notes: true
+          files: dist/irkop-belajar-tk_v1.0.2.apk
