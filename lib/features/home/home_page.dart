@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/kid_background.dart';
-import '../../services/background_music.dart';
 import '../../core/services/audio_service.dart';
+import '../../services/background_music.dart';
+import '../../core/widgets/kid_background.dart';
 import '../angka/angka_page.dart';
 import '../gambar/gambar_page.dart';
 import '../hijaiyah/hijaiyah_page.dart';
@@ -11,8 +11,6 @@ import '../kuis/kuis_page.dart';
 import '../mewarnai/mewarnai_page.dart';
 import '../titik_garis/titik_garis_page.dart';
 import '../warna/warna_page.dart';
-import '../ibadah/ibadah_page.dart';
-import '../settings/settings_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,16 +21,19 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = <_HomeEntry>[
-      const _HomeEntry('🔤', 'Huruf', [Color(0xFFFF5B83), Color(0xFFE91E63)], HurufPage()),
-      const _HomeEntry('🔢', 'Angka', [Color(0xFF3CA7E8), Color(0xFF1375C8)], AngkaPage()),
-      const _HomeEntry('🕌', 'Hijaiyah', [Color(0xFF80D64E), Color(0xFF1FA35B)], HijaiyahPage()),
-      const _HomeEntry('🦁', 'Gambar', [Color(0xFFFF9B3F), Color(0xFFFF6E25)], GambarPage()),
-      const _HomeEntry('🎨', 'Warna', [Color(0xFF9A5BE7), Color(0xFF6B32BF)], WarnaPage()),
-      const _HomeEntry('🖍️', 'Mewarnai', [Color(0xFFC45AE7), Color(0xFF7A38C7)], MewarnaiPage()),
-      const _HomeEntry('📝', 'Titik & Garis', [Color(0xFFFFC94E), Color(0xFFFF9E20)], TitikGarisPage()),
-      const _HomeEntry('🏆', 'Kuis Seru', [Color(0xFF7B68E8), Color(0xFF4939B9)], KuisPage()),
-      const _HomeEntry('🤲', 'Ibadah', [Color(0xFF4CCF8A), Color(0xFF1C9A6B)], IbadahPage()),
+    const entries = <_HomeEntry>[
+      _HomeEntry('🔤', 'Dunia Huruf', [Color(0xFFFF7FA4), Color(0xFFE83D72)]),
+      _HomeEntry('🔢', 'Dunia Angka', [Color(0xFF68C5F0), Color(0xFF2589D5)]),
+      _HomeEntry('🕌', 'Dunia Hijaiyah', [Color(0xFF91D96B), Color(0xFF32A96B)]),
+      _HomeEntry('🐱', 'Dunia Gambar', [Color(0xFFFFB45E), Color(0xFFFF7B3D)]),
+      _HomeEntry('🎨', 'Dunia Warna', [Color(0xFFB78AF0), Color(0xFF7B50D1)]),
+      _HomeEntry('🖍️', 'Mewarnai', [Color(0xFFF18BE8), Color(0xFFB752D0)]),
+      _HomeEntry('🔗', 'Titik & Garis', [Color(0xFFFFD86A), Color(0xFFFFA62E)]),
+      _HomeEntry('🧠', 'Kuis Seru', [Color(0xFF8C8CF1), Color(0xFF5B55C9)]),
+    ];
+    const pages = [
+      HurufPage(), AngkaPage(), HijaiyahPage(), GambarPage(),
+      WarnaPage(), MewarnaiPage(), TitikGarisPage(), KuisPage(),
     ];
 
     return Scaffold(
@@ -40,47 +41,31 @@ class HomePage extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxWidth < 390;
+              final compact = constraints.maxWidth < 430;
+              final columns = constraints.maxWidth >= 700 ? 4 : 2;
               return SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(compact ? 12 : 18, 8, compact ? 12 : 18, 26),
+                padding: EdgeInsets.fromLTRB(compact ? 12 : 20, 12, compact ? 12 : 20, 28),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
+                    constraints: const BoxConstraints(maxWidth: 900),
                     child: Column(
                       children: [
-                        _HomeHero(compact: compact),
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.88),
-                            borderRadius: BorderRadius.circular(30),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x330D405C),
-                                blurRadius: 14,
-                                offset: Offset(0, 6),
-                              ),
-                            ],
+                        _Hero(compact: compact),
+                        const SizedBox(height: 14),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: entries.length,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            crossAxisSpacing: compact ? 10 : 14,
+                            mainAxisSpacing: compact ? 10 : 14,
+                            childAspectRatio: columns == 2 ? 1.02 : 1.0,
                           ),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: entries.length,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: compact ? 8 : 12,
-                              mainAxisSpacing: compact ? 8 : 12,
-                              childAspectRatio: compact ? 1.08 : 1.22,
-                            ),
-                            itemBuilder: (context, index) {
-                              final entry = entries[index];
-                              return _HomeCard(
-                                entry: entry,
-                                compact: compact,
-                                onTap: () => _go(context, entry.page),
-                              );
-                            },
+                          itemBuilder: (context, index) => _HomeCard(
+                            entry: entries[index],
+                            compact: compact,
+                            onTap: () => _go(context, pages[index]),
                           ),
                         ),
                       ],
@@ -96,237 +81,107 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _HomeHero extends StatelessWidget {
+class _Hero extends StatelessWidget {
   final bool compact;
-
-  const _HomeHero({required this.compact});
+  const _Hero({required this.compact});
 
   @override
   Widget build(BuildContext context) {
-    final audio = AudioService.instance;
     final music = BackgroundMusic.instance;
-
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
-      children: [
-        Positioned(
-          left: compact ? 4 : 12,
-          top: 16,
-          child: const Text('⭐', style: TextStyle(fontSize: 34)),
-        ),
-        Positioned(
-          right: compact ? 6 : 14,
-          top: 52,
-          child: const Text('⭐', style: TextStyle(fontSize: 30)),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Column(
+    return Container(
+      padding: EdgeInsets.fromLTRB(compact ? 14 : 22, 14, compact ? 14 : 22, 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .24),
+        borderRadius: BorderRadius.circular(34),
+        border: Border.all(color: Colors.white.withValues(alpha: .55), width: 2),
+      ),
+      child: Column(
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  _roundIcon(
-                    icon: Icons.settings_rounded,
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsPage())),
-                    compact: compact,
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontSize: compact ? 30 : 38,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
-                              shadows: const [
-                                Shadow(
-                                  color: Color(0x66001D58),
-                                  blurRadius: 2,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            children: const [
-                              TextSpan(
-                                text: 'BELAJAR TK',
-                                style: TextStyle(color: Color(0xFFFFE12E)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          'Belajar, Bermain, Menjadi Anak Pintar',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: compact ? 12 : 15,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            shadows: const [
-                              Shadow(
-                                color: Color(0x99001D58),
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: music.enabled,
-                    builder: (context, musicOn, _) => _roundIcon(
-                      icon: musicOn
-                          ? Icons.music_note_rounded
-                          : Icons.music_off_rounded,
-                      onTap: () {
-                        music.toggle();
-                        if (music.enabled.value) music.start();
-                      },
-                      compact: compact,
-                      active: musicOn,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: compact ? 2 : 8),
-              Transform.translate(
-                offset: const Offset(0, 6),
-                child: const Text('🐼', style: TextStyle(fontSize: 84, height: 0.72)),
+              const Expanded(child: SizedBox()),
+              ValueListenableBuilder<bool>(
+                valueListenable: music.enabled,
+                builder: (context, on, _) => _SoundButton(
+                  on: on,
+                  onTap: () {
+                    music.toggle();
+                    if (music.enabled.value) music.start();
+                  },
+                ),
               ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _roundIcon({
-    required IconData icon,
-    required VoidCallback onTap,
-    required bool compact,
-    bool active = true,
-  }) {
-    final size = compact ? 54.0 : 66.0;
-    return Material(
-      color: active
-          ? (icon == Icons.music_note_rounded
-              ? const Color(0xFF35C84A)
-              : const Color(0xFFFFD44B))
-          : const Color(0xFF8B96A6),
-      shape: const CircleBorder(),
-      elevation: 6,
-      shadowColor: const Color(0x660D405C),
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: Icon(
-            icon,
-            size: compact ? 30 : 38,
-            color: Colors.white,
-            shadows: const [
-              Shadow(color: Color(0x66001D58), blurRadius: 3, offset: Offset(0, 2)),
-            ],
-          ),
-        ),
+          Text('Halo, Teman Pintar! 👋', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 28 : 38, fontWeight: FontWeight.w900, color: const Color(0xFF174B7D))),
+          const SizedBox(height: 2),
+          Text('IRKOP Belajar TK', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 34 : 46, fontWeight: FontWeight.w900, color: const Color(0xFFFFD83D), shadows: const [Shadow(color: Color(0xFF174B7D), blurRadius: 2, offset: Offset(2, 3))])),
+          const SizedBox(height: 2),
+          Text('Belajar • Bermain • Jadi Hebat! 🌈', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 15 : 19, fontWeight: FontWeight.w800, color: Colors.white, shadows: const [Shadow(color: Color(0x66264C68), blurRadius: 3, offset: Offset(1, 2))])),
+          Transform.translate(offset: const Offset(0, 8), child: Text('🐼', style: TextStyle(fontSize: compact ? 68 : 86))),
+        ],
       ),
     );
   }
+}
+
+class _SoundButton extends StatelessWidget {
+  final bool on;
+  final VoidCallback onTap;
+  const _SoundButton({required this.on, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: on ? const Color(0xFF35C84A) : const Color(0xFF7C8B99),
+    shape: const CircleBorder(),
+    elevation: 6,
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: onTap,
+      child: const SizedBox(width: 60, height: 60, child: Icon(Icons.volume_up_rounded, color: Colors.white, size: 34)),
+    ),
+  );
 }
 
 class _HomeEntry {
   final String emoji;
   final String title;
   final List<Color> colors;
-  final Widget page;
-
-  const _HomeEntry(this.emoji, this.title, this.colors, this.page);
+  const _HomeEntry(this.emoji, this.title, this.colors);
 }
 
 class _HomeCard extends StatelessWidget {
   final _HomeEntry entry;
   final bool compact;
   final VoidCallback onTap;
-
-  const _HomeCard({
-    required this.entry,
-    required this.compact,
-    required this.onTap,
-  });
+  const _HomeCard({required this.entry, required this.compact, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(28),
-      elevation: 6,
-      shadowColor: const Color(0x550D405C),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(28),
-        onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: entry.colors,
-            ),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.55), width: 2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x22000000),
-                blurRadius: 5,
-                offset: Offset(0, 3),
-              ),
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent,
+    borderRadius: BorderRadius.circular(30),
+    elevation: 7,
+    shadowColor: const Color(0x440D405C),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(30),
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: entry.colors),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Colors.white.withValues(alpha: .65), width: 2),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(compact ? 10 : 14),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child: FittedBox(fit: BoxFit.contain, child: Text(entry.emoji, style: const TextStyle(fontSize: 82)))),
+              const SizedBox(height: 5),
+              Text(entry.title, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: compact ? 18 : 22, height: 1.05, fontWeight: FontWeight.w900, color: Colors.white, shadows: const [Shadow(color: Color(0x8800184A), blurRadius: 2, offset: Offset(0, 2))])),
             ],
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: compact ? 6 : 10,
-              vertical: compact ? 8 : 12,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Text(entry.emoji, style: const TextStyle(fontSize: 76)),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  entry.title,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: compact ? 20 : 24,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0x99001A4D),
-                        blurRadius: 2,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
