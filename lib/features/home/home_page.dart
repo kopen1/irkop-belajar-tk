@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/kids_theme.dart';
 import '../../services/background_music.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/web_3d_visual.dart';
 import '../angka/angka_page.dart';
 import '../gambar/gambar_page.dart';
 import '../hijaiyah/hijaiyah_page.dart';
@@ -112,7 +113,7 @@ class _Hero extends StatelessWidget {
           child: const Text('Yuk belajar sambil bermain! 🌈', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
         ),
         const SizedBox(height: 8),
-        Text('🐼', style: TextStyle(fontSize: compact ? 58 : 70)),
+        Web3DEmoji(emoji: '🐼', size: compact ? 76 : 92, textSize: compact ? 50 : 62),
       ]),
     );
   }
@@ -171,11 +172,10 @@ class _HomeCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: compact ? 64 : 72,
-                    height: compact ? 64 : 72,
-                    decoration: BoxDecoration(color: entry.color.withValues(alpha: .14), shape: BoxShape.circle),
-                    child: Center(child: Text(entry.emoji, style: TextStyle(fontSize: compact ? 36 : 42))),
+                  Web3DEmoji(
+                    emoji: entry.emoji,
+                    size: compact ? 72 : 82,
+                    textSize: compact ? 39 : 46,
                   ),
                   const SizedBox(height: 8),
                   Text(
