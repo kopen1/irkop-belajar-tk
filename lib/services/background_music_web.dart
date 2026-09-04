@@ -15,6 +15,7 @@ class BackgroundMusic {
   web.AudioContext? _context;
   Timer? _timer;
   var _index = 0;
+  var _starting = false;
 
   static const _notes = <double>[
     261.63,
@@ -28,15 +29,36 @@ class BackgroundMusic {
   ];
 
   void start() {
-    if (!enabled.value || _timer != null) return;
+    if (!enabled.value || _timer != null || _starting) return;
 
+    _starting = true;
     _context ??= web.AudioContext();
-    _context!.resume();
-    _playNext();
-    _timer = Timer.periodic(
-      const Duration(milliseconds: 420),
-      (_) => _playNext(),
-    );
+    _resumeAndStart();
+  }
+
+  Future<void> _resumeAndStart() async {
+    try {
+      final context = _context;
+      if (context == null || !enabled.value) return;
+
+      // Browser tab switching can suspend an AudioContext. Await the resume
+      // operation and swallow browser autoplay/visibility-policy rejections
+      // instead of leaving an unhandled JS promise that can break the page.
+      try {
+        await context.resume();
+      } catch (_) {
+        return;
+      }
+
+      if (!enabled.value || _timer != null) return;
+      _playNext();
+      _timer = Timer.periodic(
+        const Duration(milliseconds: 420),
+        (_) => _playNext(),
+      );
+    } finally {
+      _starting = false;
+    }
   }
 
   void toggle() {
@@ -59,23 +81,31 @@ class BackgroundMusic {
     final context = _context;
     if (context == null) return;
 
-    final oscillator = context.createOscillator();
-    final gain = context.createGain();
+    try {
+      final oscillator = context.createOscillator();
+      final gain = context.createGain();
 
-    oscillator.frequency.value = _notes[_index];
-    // Dinaikkan agar musik terdengar lebih jelas di perangkat mobile.
-    gain.gain.value = .45 * AppSettings.instance.musicVolume.value;
+      oscillator.frequency.value = _notes[_index];
+      gain.gain.value = .45 * AppSettings.instance.musicVolume.value;
 
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start();
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
 
-    Future<void>.delayed(const Duration(milliseconds: 340), () {
-      oscillator.stop();
-      oscillator.disconnect();
-      gain.disconnect();
-    });
+      Future<void>.delayed(const Duration(milliseconds: 340), () {
+        try {
+          oscillator.stop();
+          oscillator.disconnect();
+          gain.disconnect();
+        } catch (_) {
+          // The browser may invalidate an audio node while a tab is hidden.
+        }
+      });
 
-    _index = (_index + 1) % _notes.length;
+      _index = (_index + 1) % _notes.length;
+    } catch (_) {
+      // Audio can be temporarily unavailable while a browser tab changes
+      // visibility. Keep the app alive and let a later start recover it.
+    }
   }
 }
