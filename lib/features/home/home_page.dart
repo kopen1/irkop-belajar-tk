@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rive_animated_icon/rive_animated_icon.dart';
 import '../../core/theme/kids_theme.dart';
 import '../../services/background_music.dart';
 import '../angka/angka_page.dart';
@@ -24,14 +23,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const entries = [
-      _HomeEntry(RiveIcon.graduate, 'Dunia Huruf', 'Kenali huruf A–Z', 'A–Z', KidsTheme.pink),
-      _HomeEntry(RiveIcon.timer2, 'Dunia Angka', 'Belajar angka 1–10', '1–10', KidsTheme.primary),
-      _HomeEntry(RiveIcon.globe, 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', 'أ–ي', KidsTheme.green),
-      _HomeEntry(RiveIcon.gallery, 'Dunia Gambar', 'Belajar nama benda & hewan', '🖼', KidsTheme.orange),
-      _HomeEntry(RiveIcon.diamond, 'Dunia Warna', 'Kenali berbagai warna', '🎨', KidsTheme.purple),
-      _HomeEntry(RiveIcon.pen, 'Mewarnai', 'Warnai gambar sesukamu', '✎', KidsTheme.pink),
-      _HomeEntry(RiveIcon.share, 'Titik & Garis', 'Hubungkan titik jadi gambar', '•—•', KidsTheme.yellow),
-      _HomeEntry(RiveIcon.star, 'Kuis Seru', 'Uji kemampuan dengan kuis', '★', KidsTheme.purple),
+      _HomeEntry(WorldArt.letters, 'Dunia Huruf', 'Kenali huruf A–Z', 'A–Z', KidsTheme.pink),
+      _HomeEntry(WorldArt.numbers, 'Dunia Angka', 'Belajar angka 1–10', '1–10', KidsTheme.primary),
+      _HomeEntry(WorldArt.hijaiyah, 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', 'أ–ي', KidsTheme.green),
+      _HomeEntry(WorldArt.pictures, 'Dunia Gambar', 'Belajar nama benda & hewan', '🖼', KidsTheme.orange),
+      _HomeEntry(WorldArt.colors, 'Dunia Warna', 'Kenali berbagai warna', '🎨', KidsTheme.purple),
+      _HomeEntry(WorldArt.coloring, 'Mewarnai', 'Warnai gambar sesukamu', '✎', KidsTheme.pink),
+      _HomeEntry(WorldArt.dotsLines, 'Titik & Garis', 'Hubungkan titik jadi gambar', '•—•', KidsTheme.yellow),
+      _HomeEntry(WorldArt.quiz, 'Kuis Seru', 'Uji kemampuan dengan kuis', '★', KidsTheme.purple),
     ];
     const pages = [
       HurufPage(), AngkaPage(), HijaiyahPage(), GambarPage(),
@@ -142,10 +141,10 @@ class _RoundButton extends StatelessWidget {
 }
 
 class _HomeEntry {
-  final RiveIcon icon;
+  final WorldArt art;
   final String title, subtitle, badge;
   final Color color;
-  const _HomeEntry(this.icon, this.title, this.subtitle, this.badge, this.color);
+  const _HomeEntry(this.art, this.title, this.subtitle, this.badge, this.color);
 }
 
 class _HomeCard extends StatelessWidget {
@@ -156,7 +155,7 @@ class _HomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedWorldCard(
-      icon: entry.icon,
+      art: entry.art,
       accentColor: entry.color,
       title: entry.title,
       subtitle: entry.subtitle,
