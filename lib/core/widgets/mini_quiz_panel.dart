@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
+import 'web_3d_visual.dart';
 
 class MiniQuizQuestion {
   const MiniQuizQuestion({required this.prompt, required this.visual, required this.choices, required this.answer, this.spokenPrompt});
@@ -86,11 +87,15 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
       SizedBox(height: 10 * s),
       Text(_q.prompt, textAlign: TextAlign.center, style: TextStyle(color: const Color(0xFF563A91), fontSize: 22 * s, fontWeight: FontWeight.w900)),
       SizedBox(height: 6 * s),
-      Expanded(child: Center(child: Container(
-        constraints: BoxConstraints(maxWidth: 420 * s),
-        padding: EdgeInsets.all(16 * s),
-        decoration: const BoxDecoration(shape: BoxShape.circle, gradient: RadialGradient(colors: [Color(0xFFFFF9D7), Color(0xFFDDEFFC), Color(0xFFBEDCEB)])),
-        child: FittedBox(fit: BoxFit.scaleDown, child: Text(_q.visual, textAlign: TextAlign.center, style: TextStyle(fontSize: _q.visual.length > 18 ? 46 * s : 82 * s, height: 1.05, fontWeight: FontWeight.w900, color: const Color(0xFF244B78)))),
+      Expanded(child: Center(child: Web3DVisual(
+        size: 220 * s,
+        radius: 34 * s,
+        topColor: const Color(0xFFFFFDF1),
+        bottomColor: const Color(0xFFCAE5F2),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(_q.visual, textAlign: TextAlign.center, style: TextStyle(fontSize: _q.visual.length > 18 ? 46 * s : 82 * s, height: 1.05, fontWeight: FontWeight.w900, color: const Color(0xFF244B78))),
+        ),
       ))),
       _listenButton(s),
       SizedBox(height: 10 * s),
