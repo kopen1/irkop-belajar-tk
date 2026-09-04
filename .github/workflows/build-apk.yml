@@ -33,27 +33,44 @@ jobs:
           restore-keys: |
             flutter-pub-${{ runner.os }}-
 
-      - name: Prepare stable Android signing key
-        shell: bash
-        run: |
-          mkdir -p "$HOME/.android"
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android -keypass android \
-              -alias androiddebugkey -keyalg RSA -keysize 2048 \
-              -validity 10000 \
-              -dname "CN=Android Debug,O=Android,C=US"
-          fi
-
-      - name: Cache Android signing key
-        uses: actions/cache@v4
+      # Never silently create a new signing certificate. A different key makes
+      # Android reject an APK as an update to the installed application.
+      - name: Restore stable Android signing key
+        uses: actions/cache/restore@v4
         with:
           path: ~/.android/debug.keystore
           key: irkop-android-debug-keystore-v1
 
+      - name: Verify stable Android signing key
+        shell: bash
+        run: |
+          test -f "$HOME/.android/debug.keystore" || {
+            echo "ERROR: Stable signing key cache is missing. Refusing to build an APK with a new key."
+            exit 1
+          }
+          keytool -list -v \
+            -keystore "$HOME/.android/debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            | grep -E 'Alias name:|SHA256:'
+
       - name: Prepare native Android platform
         run: flutter create . --platforms android --org com.irkop
+
+      - name: Lock release signing configuration
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('android/app/build.gradle.kts')
+          s = p.read_text()
+          marker = 'buildTypes {\n'
+          if marker not in s:
+              raise SystemExit('ERROR: Flutter Android template changed; release signing was not locked.')
+          if 'signingConfig = signingConfigs.getByName("debug")' not in s:
+              s = s.replace(marker, marker + '        release {\n            signingConfig = signingConfigs.getByName("debug")\n        }\n', 1)
+          p.write_text(s)
+          PY
 
       - name: Install native Android music bridge
         shell: bash
@@ -187,6 +204,15 @@ jobs:
 
       - name: Build release APK
         run: flutter build apk --release --build-name=1.0.2 --build-number=${{ github.run_number }} --tree-shake-icons
+
+      - name: Verify APK identity and signing
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          EXPECTED_CERT=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | awk -F': ' '/SHA256:/{print $2; exit}')
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee /tmp/apk-signing.txt
+          grep -F "$EXPECTED_CERT" /tmp/apk-signing.txt
 
       - name: Rename APK
         run: |
