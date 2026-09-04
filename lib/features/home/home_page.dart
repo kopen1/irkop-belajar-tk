@@ -38,19 +38,20 @@ class HomePage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: KidBackground(
         child: SafeArea(
           child: LayoutBuilder(builder: (context, constraints) {
             final compact = constraints.maxWidth < 430;
             final columns = constraints.maxWidth >= 760 ? 4 : 2;
             return SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(compact ? 14 : 24, 14, compact ? 14 : 24, 28),
+              padding: EdgeInsets.fromLTRB(compact ? 14 : 24, 10, compact ? 14 : 24, 28),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 980),
                   child: Column(children: [
                     _Hero(compact: compact, onSettings: () => _go(context, const PengaturanPage())),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -85,35 +86,72 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final music = BackgroundMusic.instance;
-    return Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-        _RoundButton(icon: Icons.settings_rounded, color: KidsTheme.pink, onTap: onSettings),
-        const SizedBox(width: 10),
-        ValueListenableBuilder<bool>(
-          valueListenable: music.enabled,
-          builder: (_, on, __) => _RoundButton(
-            icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-            color: on ? KidsTheme.primary : KidsTheme.muted,
-            onTap: music.toggle,
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _RoundButton(
+                icon: Icons.settings_rounded,
+                color: KidsTheme.pink,
+                onTap: onSettings,
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: music.enabled,
+                builder: (_, on, __) => _RoundButton(
+                  icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                  color: on ? KidsTheme.primary : KidsTheme.muted,
+                  onTap: music.toggle,
+                ),
+              ),
+            ],
           ),
-        ),
-      ]),
-      const SizedBox(height: 8),
-      Text('Halo, Teman Pintar! 👋', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 26 : 34, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
-      const SizedBox(height: 2),
-      Text.rich(const TextSpan(children: [
-        TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
-        TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
-        TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
-      ]), textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 30 : 42, fontWeight: FontWeight.w900)),
-      const SizedBox(height: 4),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-        decoration: BoxDecoration(color: const Color(0xFFFFF4C9), borderRadius: BorderRadius.circular(18)),
-        child: const Text('Yuk belajar sambil bermain! 🌈', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
+          const SizedBox(height: 2),
+          Text(
+            'Halo, Teman Pintar! 👋',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: compact ? 26 : 34,
+              fontWeight: FontWeight.w900,
+              color: KidsTheme.ink,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text.rich(
+            const TextSpan(children: [
+              TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
+              TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
+              TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
+            ]),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: compact ? 30 : 42,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF4C9),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Text(
+              'Yuk belajar sambil bermain! 🌈',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+                color: KidsTheme.ink,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
       ),
-      const SizedBox(height: 8),
-    ]);
+    );
   }
 }
 
@@ -124,11 +162,19 @@ class _RoundButton extends StatelessWidget {
   const _RoundButton({required this.icon, required this.color, required this.onTap});
   @override
   Widget build(BuildContext context) => Material(
-    color: color,
-    elevation: 4,
-    shape: const CircleBorder(),
-    child: InkWell(customBorder: const CircleBorder(), onTap: onTap, child: SizedBox(width: 58, height: 58, child: Icon(icon, color: Colors.white, size: 30))),
-  );
+        color: color,
+        elevation: 4,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: const SizedBox(
+            width: 58,
+            height: 58,
+            child: Center(),
+          ),
+        ),
+      );
 }
 
 class _HomeEntry {
