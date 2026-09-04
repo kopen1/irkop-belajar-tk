@@ -4,38 +4,13 @@
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2495D2">
+  <meta name="theme-color" content="#4DB6E8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Belajar TK</title>
-  <style>
-    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#1595d7}
-    #startup-splash{position:fixed;inset:0;z-index:99999;background:linear-gradient(#1595d7,#74cae8 58%,#bde2c7);transition:opacity .2s ease}
-    .loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88vw,520px);text-align:center;font-family:Arial,sans-serif}
-    .rainbow{width:72%;height:90px;margin:auto;border:14px solid #ff5a3a;border-bottom:0;border-radius:180px 180px 0 0;box-sizing:border-box;position:relative}
-    .rainbow:before{content:"";position:absolute;inset:11px 11px 0;border:13px solid #ffd83d;border-bottom:0;border-radius:150px 150px 0 0}
-    .rainbow:after{content:"";position:absolute;inset:25px 25px 0;border:12px solid #58c964;border-bottom:0;border-radius:120px 120px 0 0}
-    .brand{margin-top:-5px;color:#fff;font-size:clamp(42px,12vw,70px);font-weight:900;letter-spacing:-3px;text-shadow:5px 5px 0 #00479b,0 0 8px #00479b}
-    .tag{display:inline-block;margin-top:14px;padding:11px 22px;border-radius:22px;background:linear-gradient(#ffe05c,#ffb81c);border:2px solid #ff9a00;color:#8b2a00;font-size:clamp(16px,4.4vw,22px);font-weight:900;white-space:nowrap}
-  </style>
 </head>
 <body>
-  <div id="startup-splash" aria-label="Belajar TK sedang dimuat">
-    <div class="loading">
-      <div class="rainbow"></div>
-      <div class="brand">BELAJAR TK</div>
-      <div class="tag">Ayo Bermain &amp; Belajar Bersama!</div>
-    </div>
-  </div>
-  <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));
-    if (window.caches) caches.keys().then(k=>k.forEach(x=>caches.delete(x)));
-    window.addEventListener('flutter-first-frame',function(){
-      const s=document.getElementById('startup-splash');
-      if(s){s.style.opacity='0';setTimeout(()=>s.remove(),220);}
-    });
-  </script>
-  <script src="flutter_bootstrap.js?v=20260831-intro-clean-v1" async></script>
+  <script src="flutter_bootstrap.js?v=20260905-clean-shell-v1" async></script>
 </body>
 </html>
