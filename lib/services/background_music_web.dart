@@ -15,8 +15,6 @@ class BackgroundMusic {
 
   web.AudioContext? _context;
   Timer? _timer;
-  StreamSubscription<web.Event>? _blurSubscription;
-  StreamSubscription<web.Event>? _focusSubscription;
   var _index = 0;
   var _starting = false;
 
@@ -34,18 +32,9 @@ class BackgroundMusic {
   void start() {
     if (!enabled.value || _timer != null || _starting) return;
 
-    _bindVisibilityHandlers();
     _starting = true;
     _context ??= web.AudioContext();
     _resumeAndStart();
-  }
-
-  void _bindVisibilityHandlers() {
-    if (_blurSubscription != null) return;
-    _blurSubscription = web.window.onBlur.listen((_) => stop());
-    _focusSubscription = web.window.onFocus.listen((_) {
-      if (enabled.value) start();
-    });
   }
 
   Future<void> _resumeAndStart() async {
