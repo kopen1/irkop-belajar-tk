@@ -2,11 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-/// Lightweight animated 3D-style visual used on Web and Android.
-///
-/// This is intentionally not a real-time 3D engine: it uses Flutter's GPU
-/// transform, gradients and shadows so the visuals stay small and smooth on
-/// preschool phones while still looking dimensional.
+/// Lightweight animated 3D-style visual for phones and Web.
+/// No mouse, sensors, or 3D engine are required: the animation runs
+/// continuously so it is visible even when the app is used only by touch.
 class Web3DVisual extends StatefulWidget {
   final Widget child;
   final double size;
@@ -36,7 +34,7 @@ class _Web3DVisualState extends State<Web3DVisual>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2400),
+      duration: const Duration(milliseconds: 2800),
     )..repeat();
   }
 
@@ -53,7 +51,7 @@ class _Web3DVisualState extends State<Web3DVisual>
         animation: _controller,
         child: SizedBox(
           width: widget.size,
-          height: widget.size + 12,
+          height: widget.size + 16,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -61,18 +59,11 @@ class _Web3DVisualState extends State<Web3DVisual>
                 left: widget.size * .08,
                 right: widget.size * .08,
                 bottom: 0,
-                height: widget.size * .28,
+                height: widget.size * .26,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: const Color(0x300D405C),
                     borderRadius: BorderRadius.circular(widget.radius),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x250D405C),
-                        blurRadius: 12,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
                   ),
                 ),
               ),
@@ -106,7 +97,7 @@ class _Web3DVisualState extends State<Web3DVisual>
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Colors.white.withValues(alpha: .82),
+                              Colors.white.withValues(alpha: .86),
                               Colors.white.withValues(alpha: 0),
                             ],
                           ),
@@ -121,7 +112,7 @@ class _Web3DVisualState extends State<Web3DVisual>
                         width: widget.size * .16,
                         height: widget.size * .16,
                         decoration: const BoxDecoration(
-                          color: Color(0x28FFFFFF),
+                          color: Color(0x35FFFFFF),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -135,15 +126,15 @@ class _Web3DVisualState extends State<Web3DVisual>
         ),
         builder: (context, child) {
           final phase = _controller.value * math.pi * 2;
-          final bob = math.sin(phase) * widget.size * .055;
-          final rotateY = math.sin(phase) * .075;
-          final rotateX = math.cos(phase) * .035;
-          final scale = 1 + math.sin(phase * 2) * .018;
-          final shadowScale = 1 - math.sin(phase) * .10;
+          final bob = math.sin(phase) * widget.size * .10;
+          final rotateY = math.sin(phase) * .12;
+          final rotateX = math.cos(phase) * .055;
+          final scale = 1 + math.sin(phase * 2) * .025;
+          final shadowScale = 1 - math.sin(phase) * .16;
 
           return SizedBox(
             width: widget.size,
-            height: widget.size + 14,
+            height: widget.size + 16,
             child: Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -156,7 +147,7 @@ class _Web3DVisualState extends State<Web3DVisual>
                       width: widget.size * .56,
                       height: widget.size * .10,
                       decoration: BoxDecoration(
-                        color: const Color(0x280D405C),
+                        color: const Color(0x320D405C),
                         borderRadius: BorderRadius.circular(99),
                       ),
                     ),
@@ -165,11 +156,11 @@ class _Web3DVisualState extends State<Web3DVisual>
                 Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.0014)
+                    ..setEntry(3, 2, 0.0018)
                     ..rotateX(rotateX)
                     ..rotateY(rotateY)
                     ..scale(scale)
-                    ..translate(0.0, -6.0 - bob),
+                    ..translate(0.0, -5.0 - bob),
                   child: child,
                 ),
               ],
@@ -181,7 +172,7 @@ class _Web3DVisualState extends State<Web3DVisual>
   }
 }
 
-class Web3DEmoji extends StatelessWidget {
+class Web3DEmoji extends StatefulWidget {
   final String emoji;
   final double size;
   final double textSize;
@@ -194,28 +185,71 @@ class Web3DEmoji extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final text = Text(
-      emoji,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: textSize,
-        height: 1,
-        shadows: const [
-          Shadow(
-            color: Color(0x660D405C),
-            blurRadius: 2,
-            offset: Offset(3, 6),
-          ),
-          Shadow(
-            color: Color(0xFFFFFFFF),
-            blurRadius: 1,
-            offset: Offset(-2, -2),
-          ),
-        ],
-      ),
-    );
+  State<Web3DEmoji> createState() => _Web3DEmojiState();
+}
 
-    return Web3DVisual(size: size, radius: size * .26, child: text);
+class _Web3DEmojiState extends State<Web3DEmoji>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final phase = _controller.value * math.pi * 2;
+        final tilt = math.sin(phase) * .09;
+        final lift = math.cos(phase) * widget.textSize * .055;
+        final scale = 1 + math.sin(phase * 2) * .035;
+
+        return Web3DVisual(
+          size: widget.size,
+          radius: widget.size * .26,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.002)
+              ..rotateZ(tilt)
+              ..scale(scale)
+              ..translate(0.0, -lift),
+            child: Text(
+              widget.emoji,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: widget.textSize,
+                height: 1,
+                shadows: const [
+                  Shadow(
+                    color: Color(0x660D405C),
+                    blurRadius: 2,
+                    offset: Offset(3, 6),
+                  ),
+                  Shadow(
+                    color: Color(0xFFFFFFFF),
+                    blurRadius: 1,
+                    offset: Offset(-2, -2),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
