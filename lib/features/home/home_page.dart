@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
             return SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
                 desktop ? 34 : (compact ? 14 : 24),
-                desktop ? 22 : 10,
+                desktop ? 18 : 8,
                 desktop ? 34 : (compact ? 14 : 24),
                 desktop ? 42 : 28,
               ),
@@ -57,10 +57,27 @@ class HomePage extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxContent),
                   child: Column(children: [
-                    _Hero(
-                      compact: compact,
-                      desktop: desktop,
-                      onSettings: () => _go(context, const PengaturanPage()),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _RoundButton(
+                            icon: Icons.settings_rounded,
+                            color: KidsTheme.pink,
+                            onTap: () => _go(context, const PengaturanPage()),
+                          ),
+                          const SizedBox(width: 10),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: BackgroundMusic.instance.enabled,
+                            builder: (_, on, __) => _RoundButton(
+                              icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                              color: on ? KidsTheme.primary : KidsTheme.muted,
+                              onTap: BackgroundMusic.instance.toggle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: desktop ? 26 : 10),
                     GridView.builder(
@@ -89,93 +106,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _Hero extends StatelessWidget {
-  final bool compact;
-  final bool desktop;
-  final VoidCallback onSettings;
-  const _Hero({required this.compact, required this.desktop, required this.onSettings});
-
-  @override
-  Widget build(BuildContext context) {
-    final music = BackgroundMusic.instance;
-    final title = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Halo, Teman Pintar! 👋',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: desktop ? 34 : (compact ? 26 : 30),
-            fontWeight: FontWeight.w900,
-            color: KidsTheme.ink,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text.rich(
-          const TextSpan(children: [
-            TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
-            TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
-            TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
-          ]),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: desktop ? 42 : (compact ? 30 : 36),
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF4C9),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Text(
-            'Yuk belajar sambil bermain! 🌈',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink),
-          ),
-        ),
-      ],
-    );
-
-    final settings = _RoundButton(
-      icon: Icons.settings_rounded,
-      color: KidsTheme.pink,
-      onTap: onSettings,
-    );
-    final speaker = ValueListenableBuilder<bool>(
-      valueListenable: music.enabled,
-      builder: (_, on, __) => _RoundButton(
-        icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-        color: on ? KidsTheme.primary : KidsTheme.muted,
-        onTap: music.toggle,
-      ),
-    );
-
-    if (desktop) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          settings,
-          const Expanded(child: SizedBox()),
-          title,
-          const Expanded(child: SizedBox()),
-          speaker,
-        ],
-      );
-    }
-
-    return Column(
-      children: [
-        Row(children: [settings, const Spacer(), speaker]),
-        const SizedBox(height: 4),
-        title,
-        const SizedBox(height: 8),
-      ],
-    );
-  }
-}
-
 class _RoundButton extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -190,11 +120,7 @@ class _RoundButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: SizedBox(
-            width: 58,
-            height: 58,
-            child: Icon(icon, color: Colors.white, size: 30),
-          ),
+          child: SizedBox(width: 58, height: 58, child: Icon(icon, color: Colors.white, size: 30)),
         ),
       );
 }
