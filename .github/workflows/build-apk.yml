@@ -67,8 +67,12 @@ jobs:
           marker = 'buildTypes {\n'
           if marker not in s:
               raise SystemExit('ERROR: Flutter Android template changed; release signing was not locked.')
-          if 'signingConfig = signingConfigs.getByName("debug")' not in s:
-              s = s.replace(marker, marker + '        release {\n            signingConfig = signingConfigs.getByName("debug")\n        }\n', 1)
+          if 'create("irkopRelease")' not in s:
+              signing = '''signingConfigs {\n        create("irkopRelease") {\n            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")\n            storePassword = "android"\n            keyAlias = "androiddebugkey"\n            keyPassword = "android"\n        }\n    }\n\n    '''
+              s = s.replace(marker, signing + marker, 1)
+          s = s.replace('signingConfig = signingConfigs.getByName("debug")', 'signingConfig = signingConfigs.getByName("irkopRelease")')
+          if 'signingConfig = signingConfigs.getByName("irkopRelease")' not in s:
+              s = s.replace(marker, marker + '        release {\n            signingConfig = signingConfigs.getByName("irkopRelease")\n        }\n', 1)
           p.write_text(s)
           PY
 
