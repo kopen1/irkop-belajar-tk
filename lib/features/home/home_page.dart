@@ -160,6 +160,7 @@ class _RoundButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
   const _RoundButton({required this.icon, required this.color, required this.onTap});
+
   @override
   Widget build(BuildContext context) => Material(
         color: color,
@@ -168,10 +169,10 @@ class _RoundButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: const SizedBox(
+          child: SizedBox(
             width: 58,
             height: 58,
-            child: Center(),
+            child: Icon(icon, color: Colors.white, size: 30),
           ),
         ),
       );
