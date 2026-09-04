@@ -85,44 +85,35 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final music = BackgroundMusic.instance;
-    return Container(
-      padding: EdgeInsets.fromLTRB(compact ? 16 : 24, 14, compact ? 16 : 24, 18),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .94),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: const [BoxShadow(color: Color(0x220D405C), blurRadius: 18, offset: Offset(0, 8))],
-      ),
-      child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          ValueListenableBuilder<bool>(
-            valueListenable: music.enabled,
-            builder: (_, on, __) => _RoundButton(
-              icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-              color: on ? KidsTheme.primary : KidsTheme.muted,
-              onTap: music.toggle,
-            ),
+    return Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        _RoundButton(icon: Icons.settings_rounded, color: KidsTheme.pink, onTap: onSettings),
+        const SizedBox(width: 10),
+        ValueListenableBuilder<bool>(
+          valueListenable: music.enabled,
+          builder: (_, on, __) => _RoundButton(
+            icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+            color: on ? KidsTheme.primary : KidsTheme.muted,
+            onTap: music.toggle,
           ),
-          const SizedBox(width: 10),
-          _RoundButton(icon: Icons.settings_rounded, color: KidsTheme.pink, onTap: onSettings),
-        ]),
-        const SizedBox(height: 2),
-        Text('Halo, Teman Pintar! 👋', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 26 : 34, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
-        const SizedBox(height: 2),
-        Text.rich(const TextSpan(children: [
-          TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
-          TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
-          TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
-        ]), textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 30 : 42, fontWeight: FontWeight.w900)),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-          decoration: BoxDecoration(color: const Color(0xFFFFF4C9), borderRadius: BorderRadius.circular(18)),
-          child: const Text('Yuk belajar sambil bermain! 🌈', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
         ),
-        const SizedBox(height: 8),
       ]),
-    );
+      const SizedBox(height: 8),
+      Text('Halo, Teman Pintar! 👋', textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 26 : 34, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
+      const SizedBox(height: 2),
+      Text.rich(const TextSpan(children: [
+        TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
+        TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
+        TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
+      ]), textAlign: TextAlign.center, style: TextStyle(fontSize: compact ? 30 : 42, fontWeight: FontWeight.w900)),
+      const SizedBox(height: 4),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+        decoration: BoxDecoration(color: const Color(0xFFFFF4C9), borderRadius: BorderRadius.circular(18)),
+        child: const Text('Yuk belajar sambil bermain! 🌈', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
+      ),
+      const SizedBox(height: 8),
+    ]);
   }
 }
 
