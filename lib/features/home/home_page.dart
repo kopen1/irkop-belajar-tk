@@ -42,25 +42,36 @@ class HomePage extends StatelessWidget {
       body: KidBackground(
         child: SafeArea(
           child: LayoutBuilder(builder: (context, constraints) {
+            final desktop = constraints.maxWidth >= 900;
             final compact = constraints.maxWidth < 430;
-            final columns = constraints.maxWidth >= 760 ? 4 : 2;
+            final columns = desktop ? 4 : 2;
+            final maxContent = desktop ? 1160.0 : 980.0;
             return SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(compact ? 14 : 24, 10, compact ? 14 : 24, 28),
+              padding: EdgeInsets.fromLTRB(
+                desktop ? 34 : (compact ? 14 : 24),
+                desktop ? 22 : 10,
+                desktop ? 34 : (compact ? 14 : 24),
+                desktop ? 42 : 28,
+              ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 980),
+                  constraints: BoxConstraints(maxWidth: maxContent),
                   child: Column(children: [
-                    _Hero(compact: compact, onSettings: () => _go(context, const PengaturanPage())),
-                    const SizedBox(height: 10),
+                    _Hero(
+                      compact: compact,
+                      desktop: desktop,
+                      onSettings: () => _go(context, const PengaturanPage()),
+                    ),
+                    SizedBox(height: desktop ? 26 : 10),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: entries.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: columns,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: columns == 2 ? 1.02 : 1.08,
+                        crossAxisSpacing: desktop ? 20 : 12,
+                        mainAxisSpacing: desktop ? 20 : 12,
+                        childAspectRatio: desktop ? 1.34 : 1.02,
                       ),
                       itemBuilder: (_, i) => _HomeCard(
                         entry: entries[i],
@@ -80,77 +91,89 @@ class HomePage extends StatelessWidget {
 
 class _Hero extends StatelessWidget {
   final bool compact;
+  final bool desktop;
   final VoidCallback onSettings;
-  const _Hero({required this.compact, required this.onSettings});
+  const _Hero({required this.compact, required this.desktop, required this.onSettings});
 
   @override
   Widget build(BuildContext context) {
     final music = BackgroundMusic.instance;
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _RoundButton(
-                icon: Icons.settings_rounded,
-                color: KidsTheme.pink,
-                onTap: onSettings,
-              ),
-              ValueListenableBuilder<bool>(
-                valueListenable: music.enabled,
-                builder: (_, on, __) => _RoundButton(
-                  icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-                  color: on ? KidsTheme.primary : KidsTheme.muted,
-                  onTap: music.toggle,
-                ),
-              ),
-            ],
+    final title = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Halo, Teman Pintar! 👋',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: desktop ? 34 : (compact ? 26 : 30),
+            fontWeight: FontWeight.w900,
+            color: KidsTheme.ink,
           ),
-          const SizedBox(height: 2),
-          Text(
-            'Halo, Teman Pintar! 👋',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: compact ? 26 : 34,
-              fontWeight: FontWeight.w900,
-              color: KidsTheme.ink,
-            ),
+        ),
+        const SizedBox(height: 3),
+        Text.rich(
+          const TextSpan(children: [
+            TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
+            TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
+            TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
+          ]),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: desktop ? 42 : (compact ? 30 : 36),
+            fontWeight: FontWeight.w900,
           ),
-          const SizedBox(height: 2),
-          Text.rich(
-            const TextSpan(children: [
-              TextSpan(text: 'IRKOP ', style: TextStyle(color: KidsTheme.primary)),
-              TextSpan(text: 'Belajar ', style: TextStyle(color: KidsTheme.pink)),
-              TextSpan(text: 'TK', style: TextStyle(color: KidsTheme.green)),
-            ]),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: compact ? 30 : 42,
-              fontWeight: FontWeight.w900,
-            ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF4C9),
+            borderRadius: BorderRadius.circular(18),
           ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4C9),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Text(
-              'Yuk belajar sambil bermain! 🌈',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w900,
-                color: KidsTheme.ink,
-              ),
-            ),
+          child: const Text(
+            'Yuk belajar sambil bermain! 🌈',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink),
           ),
-          const SizedBox(height: 8),
-        ],
+        ),
+      ],
+    );
+
+    final settings = _RoundButton(
+      icon: Icons.settings_rounded,
+      color: KidsTheme.pink,
+      onTap: onSettings,
+    );
+    final speaker = ValueListenableBuilder<bool>(
+      valueListenable: music.enabled,
+      builder: (_, on, __) => _RoundButton(
+        icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+        color: on ? KidsTheme.primary : KidsTheme.muted,
+        onTap: music.toggle,
       ),
+    );
+
+    if (desktop) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          settings,
+          const Expanded(child: SizedBox()),
+          title,
+          const Expanded(child: SizedBox()),
+          speaker,
+        ],
+      );
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [settings, const Spacer(), speaker],
+        ),
+        const SizedBox(height: 4),
+        title,
+        const SizedBox(height: 8),
+      ],
     );
   }
 }
@@ -169,10 +192,10 @@ class _RoundButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: SizedBox(
+          child: const SizedBox(
             width: 58,
             height: 58,
-            child: Icon(icon, color: Colors.white, size: 30),
+            child: Icon(Icons.settings_rounded, color: Colors.white, size: 30),
           ),
         ),
       );
