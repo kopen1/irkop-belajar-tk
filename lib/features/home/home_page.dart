@@ -167,9 +167,7 @@ class _Hero extends StatelessWidget {
 
     return Column(
       children: [
-        Row(
-          children: [settings, const Spacer(), speaker],
-        ),
+        Row(children: [settings, const Spacer(), speaker]),
         const SizedBox(height: 4),
         title,
         const SizedBox(height: 8),
@@ -192,10 +190,10 @@ class _RoundButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: const SizedBox(
+          child: SizedBox(
             width: 58,
             height: 58,
-            child: Icon(Icons.settings_rounded, color: Colors.white, size: 30),
+            child: Icon(icon, color: Colors.white, size: 30),
           ),
         ),
       );
