@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
@@ -41,11 +42,12 @@ class BackgroundMusic {
       final context = _context;
       if (context == null || !enabled.value) return;
 
-      // Browser tab switching can suspend an AudioContext. Await the resume
-      // operation and swallow browser autoplay/visibility-policy rejections
-      // instead of leaving an unhandled JS promise that can break the page.
+      // package:web exposes browser promises as JS interop extension types.
+      // Convert the resume promise to a Dart Future so browser autoplay or
+      // tab-visibility rejections are handled instead of becoming unhandled
+      // JavaScript promise errors.
       try {
-        await context.resume();
+        await context.resume().toDart;
       } catch (_) {
         return;
       }
