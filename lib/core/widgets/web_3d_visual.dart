@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Adds the soft 3D/toy-like treatment only to the Web build.
-/// Native Android keeps the original widget unchanged.
+/// Lightweight animated 3D-style visual used on Web and Android.
+///
+/// This is intentionally not a real-time 3D engine: it uses Flutter's GPU
+/// transform, gradients and shadows so the visuals stay small and smooth on
+/// preschool phones while still looking dimensional.
 class Web3DVisual extends StatefulWidget {
   final Widget child;
   final double size;
@@ -28,18 +30,14 @@ class Web3DVisual extends StatefulWidget {
 class _Web3DVisualState extends State<Web3DVisual>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  double _tiltX = 0;
-  double _tiltY = 0;
-
-  bool get _isWeb => kIsWeb;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2800),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 2400),
+    )..repeat();
   }
 
   @override
@@ -48,73 +46,30 @@ class _Web3DVisualState extends State<Web3DVisual>
     super.dispose();
   }
 
-  void _onHover(PointerEvent event) {
-    if (!_isWeb) return;
-    final box = context.findRenderObject() as RenderBox?;
-    if (box == null) return;
-    final local = box.globalToLocal(event.position);
-    final half = widget.size / 2;
-    final nx = ((local.dy - half) / half).clamp(-1.0, 1.0);
-    final ny = ((local.dx - half) / half).clamp(-1.0, 1.0);
-    setState(() {
-      _tiltX = -nx * 0.10;
-      _tiltY = ny * 0.12;
-    });
-  }
-
-  void _onExit(PointerEvent event) {
-    if (!_isWeb) return;
-    setState(() {
-      _tiltX = 0;
-      _tiltY = 0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (!_isWeb) return widget.child;
-
-    return MouseRegion(
-      onHover: _onHover,
-      onExit: _onExit,
-      cursor: SystemMouseCursors.click,
+    return RepaintBoundary(
       child: AnimatedBuilder(
         animation: _controller,
-        builder: (context, child) {
-          final breathe = math.sin(_controller.value * math.pi) * 0.018;
-          return TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
-            duration: const Duration(milliseconds: 180),
-            builder: (context, _, __) => Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0018)
-                ..rotateX(_tiltX + breathe)
-                ..rotateY(_tiltY - breathe * 0.8)
-                ..translate(0.0, -2.0 - breathe * widget.size * 0.35),
-              child: child,
-            ),
-          );
-        },
         child: SizedBox(
           width: widget.size,
-          height: widget.size + 8,
+          height: widget.size + 12,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
               Positioned(
-                left: 4,
-                right: 4,
+                left: widget.size * .08,
+                right: widget.size * .08,
                 bottom: 0,
-                height: widget.size * .72,
+                height: widget.size * .28,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: const Color(0x260D405C),
+                    color: const Color(0x300D405C),
                     borderRadius: BorderRadius.circular(widget.radius),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x220D405C),
-                        blurRadius: 10,
+                        color: Color(0x250D405C),
+                        blurRadius: 12,
                         offset: Offset(0, 5),
                       ),
                     ],
@@ -134,24 +89,24 @@ class _Web3DVisualState extends State<Web3DVisual>
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x380D405C),
-                      blurRadius: 14,
-                      offset: Offset(0, 8),
+                      color: Color(0x3A0D405C),
+                      blurRadius: 16,
+                      offset: Offset(0, 9),
                     ),
                   ],
                 ),
                 child: Stack(
                   children: [
                     Positioned(
-                      left: 8,
-                      top: 6,
-                      right: 8,
+                      left: 7,
+                      top: 5,
+                      right: 7,
                       height: widget.size * .24,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Colors.white.withValues(alpha: .78),
+                              Colors.white.withValues(alpha: .82),
                               Colors.white.withValues(alpha: 0),
                             ],
                           ),
@@ -160,13 +115,13 @@ class _Web3DVisualState extends State<Web3DVisual>
                       ),
                     ),
                     Positioned(
-                      right: 10,
-                      bottom: 9,
+                      right: widget.size * .10,
+                      bottom: widget.size * .10,
                       child: Container(
                         width: widget.size * .16,
                         height: widget.size * .16,
                         decoration: const BoxDecoration(
-                          color: Color(0x24FFFFFF),
+                          color: Color(0x28FFFFFF),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -178,6 +133,49 @@ class _Web3DVisualState extends State<Web3DVisual>
             ],
           ),
         ),
+        builder: (context, child) {
+          final phase = _controller.value * math.pi * 2;
+          final bob = math.sin(phase) * widget.size * .055;
+          final rotateY = math.sin(phase) * .075;
+          final rotateX = math.cos(phase) * .035;
+          final scale = 1 + math.sin(phase * 2) * .018;
+          final shadowScale = 1 - math.sin(phase) * .10;
+
+          return SizedBox(
+            width: widget.size,
+            height: widget.size + 14,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  bottom: 2,
+                  child: Transform.scale(
+                    scaleX: shadowScale,
+                    child: Container(
+                      width: widget.size * .56,
+                      height: widget.size * .10,
+                      decoration: BoxDecoration(
+                        color: const Color(0x280D405C),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                  ),
+                ),
+                Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.0014)
+                    ..rotateX(rotateX)
+                    ..rotateY(rotateY)
+                    ..scale(scale)
+                    ..translate(0.0, -6.0 - bob),
+                  child: child,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -204,8 +202,16 @@ class Web3DEmoji extends StatelessWidget {
         fontSize: textSize,
         height: 1,
         shadows: const [
-          Shadow(color: Color(0x550D405C), blurRadius: 2, offset: Offset(2, 5)),
-          Shadow(color: Color(0xFFFFFFFF), blurRadius: 1, offset: Offset(-1, -1)),
+          Shadow(
+            color: Color(0x660D405C),
+            blurRadius: 2,
+            offset: Offset(3, 6),
+          ),
+          Shadow(
+            color: Color(0xFFFFFFFF),
+            blurRadius: 1,
+            offset: Offset(-2, -2),
+          ),
         ],
       ),
     );
