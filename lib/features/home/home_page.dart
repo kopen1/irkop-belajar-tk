@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/kids_theme.dart';
 import '../../services/background_music.dart';
+import '../../core/widgets/animated_world_card.dart';
 import '../../core/widgets/kid_background.dart';
-import '../../core/widgets/web_3d_visual.dart';
 import '../angka/angka_page.dart';
 import '../gambar/gambar_page.dart';
 import '../hijaiyah/hijaiyah_page.dart';
@@ -16,21 +16,26 @@ import '../warna/warna_page.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  void _go(BuildContext c, Widget p) => Navigator.of(c).push(MaterialPageRoute(builder: (_) => p));
+  Future<void> _go(BuildContext c, Widget p) async {
+    await Navigator.of(c).push(MaterialPageRoute(builder: (_) => p));
+  }
 
   @override
   Widget build(BuildContext context) {
     const entries = [
-      _HomeEntry('🔤', 'Dunia Huruf', 'Kenali huruf A–Z', KidsTheme.pink),
-      _HomeEntry('🔢', 'Dunia Angka', 'Belajar angka 1–10', KidsTheme.primary),
-      _HomeEntry('🕌', 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', KidsTheme.green),
-      _HomeEntry('🐱', 'Dunia Gambar', 'Belajar nama benda & hewan', KidsTheme.orange),
-      _HomeEntry('🎨', 'Dunia Warna', 'Kenali berbagai warna', KidsTheme.purple),
-      _HomeEntry('🖍️', 'Mewarnai', 'Warnai gambar sesukamu', KidsTheme.pink),
-      _HomeEntry('🔗', 'Titik & Garis', 'Hubungkan titik jadi gambar', KidsTheme.yellow),
-      _HomeEntry('🧠', 'Kuis Seru', 'Uji kemampuan dengan kuis', KidsTheme.purple),
+      _HomeEntry('dunia_huruf.riv', 'Dunia Huruf', 'Kenali huruf A–Z', KidsTheme.pink),
+      _HomeEntry('dunia_angka.riv', 'Dunia Angka', 'Belajar angka 1–10', KidsTheme.primary),
+      _HomeEntry('dunia_hijaiyah.riv', 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', KidsTheme.green),
+      _HomeEntry('dunia_gambar.riv', 'Dunia Gambar', 'Belajar nama benda & hewan', KidsTheme.orange),
+      _HomeEntry('dunia_warna.riv', 'Dunia Warna', 'Kenali berbagai warna', KidsTheme.purple),
+      _HomeEntry('mewarnai.riv', 'Mewarnai', 'Warnai gambar sesukamu', KidsTheme.pink),
+      _HomeEntry('titik_garis.riv', 'Titik & Garis', 'Hubungkan titik jadi gambar', KidsTheme.yellow),
+      _HomeEntry('kuis.riv', 'Kuis Seru', 'Uji kemampuan dengan kuis', KidsTheme.purple),
     ];
-    const pages = [HurufPage(), AngkaPage(), HijaiyahPage(), GambarPage(), WarnaPage(), MewarnaiPage(), TitikGarisPage(), KuisPage()];
+    const pages = [
+      HurufPage(), AngkaPage(), HijaiyahPage(), GambarPage(),
+      WarnaPage(), MewarnaiPage(), TitikGarisPage(), KuisPage(),
+    ];
 
     return Scaffold(
       body: KidBackground(
@@ -56,7 +61,11 @@ class HomePage extends StatelessWidget {
                         mainAxisSpacing: 12,
                         childAspectRatio: columns == 2 ? 1.08 : 1.12,
                       ),
-                      itemBuilder: (_, i) => _HomeCard(entry: entries[i], compact: compact, onTap: () => _go(context, pages[i])),
+                      itemBuilder: (_, i) => _HomeCard(
+                        entry: entries[i],
+                        compact: compact,
+                        onTap: () => _go(context, pages[i]),
+                      ),
                     ),
                   ]),
                 ),
@@ -113,7 +122,6 @@ class _Hero extends StatelessWidget {
           child: const Text('Yuk belajar sambil bermain! 🌈', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: KidsTheme.ink)),
         ),
         const SizedBox(height: 8),
-        Web3DEmoji(emoji: '🐼', size: compact ? 76 : 92, textSize: compact ? 50 : 62),
       ]),
     );
   }
@@ -134,71 +142,26 @@ class _RoundButton extends StatelessWidget {
 }
 
 class _HomeEntry {
-  final String emoji, title, subtitle;
+  final String riveAsset, title, subtitle;
   final Color color;
-  const _HomeEntry(this.emoji, this.title, this.subtitle, this.color);
+  const _HomeEntry(this.riveAsset, this.title, this.subtitle, this.color);
 }
 
 class _HomeCard extends StatelessWidget {
   final _HomeEntry entry;
   final bool compact;
-  final VoidCallback onTap;
+  final Future<void> Function() onTap;
   const _HomeCard({required this.entry, required this.compact, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: Colors.white.withValues(alpha: .97),
-    borderRadius: BorderRadius.circular(26),
-    elevation: 3,
-    child: InkWell(
-      borderRadius: BorderRadius.circular(26),
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.all(compact ? 10 : 14),
-        child: Stack(children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              width: compact ? 38 : 42,
-              height: compact ? 38 : 42,
-              decoration: BoxDecoration(color: entry.color, shape: BoxShape.circle),
-              child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 23),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 2, right: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Web3DEmoji(
-                    emoji: entry.emoji,
-                    size: compact ? 72 : 82,
-                    textSize: compact ? 39 : 46,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    entry.title,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: compact ? 15 : 17, fontWeight: FontWeight.w900, color: KidsTheme.ink),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    entry.subtitle,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: compact ? 11 : 12, fontWeight: FontWeight.w700, color: KidsTheme.muted),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ]),
-      ),
-    ),
-  );
+  Widget build(BuildContext context) {
+    return AnimatedWorldCard(
+      riveAsset: 'assets/rive/${entry.riveAsset}',
+      accentColor: entry.color,
+      title: entry.title,
+      subtitle: entry.subtitle,
+      onNavigate: onTap,
+      riveSize: compact ? 82 : 92,
+    );
+  }
 }
