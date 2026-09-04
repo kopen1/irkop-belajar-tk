@@ -1,8 +1,8 @@
 name: Build Native Android APK
 
+# APK builds are intentionally paused while the Web UI is being refined.
+# Keep workflow_dispatch so an APK can be built manually when requested.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -86,7 +86,6 @@ jobs:
 
           import android.media.AudioAttributes
           import android.media.AudioFormat
-          import android.media.AudioManager
           import android.media.AudioTrack
           import io.flutter.embedding.android.FlutterActivity
           import io.flutter.embedding.engine.FlutterEngine
