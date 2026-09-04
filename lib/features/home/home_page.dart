@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rive_animated_icon/rive_animated_icon.dart';
 import '../../core/theme/kids_theme.dart';
 import '../../services/background_music.dart';
-import '../../core/widgets/animated_world_card.dart';
-import '../../core/widgets/kid_background.dart';
 import '../angka/angka_page.dart';
 import '../gambar/gambar_page.dart';
 import '../hijaiyah/hijaiyah_page.dart';
@@ -12,6 +11,8 @@ import '../mewarnai/mewarnai_page.dart';
 import '../pengaturan/pengaturan_page.dart';
 import '../titik_garis/titik_garis_page.dart';
 import '../warna/warna_page.dart';
+import '../../core/widgets/animated_world_card.dart';
+import '../../core/widgets/kid_background.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,14 +24,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const entries = [
-      _HomeEntry('dunia_huruf.riv', 'Dunia Huruf', 'Kenali huruf A–Z', KidsTheme.pink),
-      _HomeEntry('dunia_angka.riv', 'Dunia Angka', 'Belajar angka 1–10', KidsTheme.primary),
-      _HomeEntry('dunia_hijaiyah.riv', 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', KidsTheme.green),
-      _HomeEntry('dunia_gambar.riv', 'Dunia Gambar', 'Belajar nama benda & hewan', KidsTheme.orange),
-      _HomeEntry('dunia_warna.riv', 'Dunia Warna', 'Kenali berbagai warna', KidsTheme.purple),
-      _HomeEntry('mewarnai.riv', 'Mewarnai', 'Warnai gambar sesukamu', KidsTheme.pink),
-      _HomeEntry('titik_garis.riv', 'Titik & Garis', 'Hubungkan titik jadi gambar', KidsTheme.yellow),
-      _HomeEntry('kuis.riv', 'Kuis Seru', 'Uji kemampuan dengan kuis', KidsTheme.purple),
+      _HomeEntry(RiveIcon.graduate, 'Dunia Huruf', 'Kenali huruf A–Z', 'A–Z', KidsTheme.pink),
+      _HomeEntry(RiveIcon.timer2, 'Dunia Angka', 'Belajar angka 1–10', '1–10', KidsTheme.primary),
+      _HomeEntry(RiveIcon.globe, 'Dunia Hijaiyah', 'Mengenal huruf Hijaiyah', 'أ–ي', KidsTheme.green),
+      _HomeEntry(RiveIcon.gallery, 'Dunia Gambar', 'Belajar nama benda & hewan', '🖼', KidsTheme.orange),
+      _HomeEntry(RiveIcon.diamond, 'Dunia Warna', 'Kenali berbagai warna', '🎨', KidsTheme.purple),
+      _HomeEntry(RiveIcon.pen, 'Mewarnai', 'Warnai gambar sesukamu', '✎', KidsTheme.pink),
+      _HomeEntry(RiveIcon.share, 'Titik & Garis', 'Hubungkan titik jadi gambar', '•—•', KidsTheme.yellow),
+      _HomeEntry(RiveIcon.star, 'Kuis Seru', 'Uji kemampuan dengan kuis', '★', KidsTheme.purple),
     ];
     const pages = [
       HurufPage(), AngkaPage(), HijaiyahPage(), GambarPage(),
@@ -59,11 +60,10 @@ class HomePage extends StatelessWidget {
                         crossAxisCount: columns,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        childAspectRatio: columns == 2 ? 1.08 : 1.12,
+                        childAspectRatio: columns == 2 ? 1.02 : 1.08,
                       ),
                       itemBuilder: (_, i) => _HomeCard(
                         entry: entries[i],
-                        compact: compact,
                         onTap: () => _go(context, pages[i]),
                       ),
                     ),
@@ -142,26 +142,26 @@ class _RoundButton extends StatelessWidget {
 }
 
 class _HomeEntry {
-  final String riveAsset, title, subtitle;
+  final RiveIcon icon;
+  final String title, subtitle, badge;
   final Color color;
-  const _HomeEntry(this.riveAsset, this.title, this.subtitle, this.color);
+  const _HomeEntry(this.icon, this.title, this.subtitle, this.badge, this.color);
 }
 
 class _HomeCard extends StatelessWidget {
   final _HomeEntry entry;
-  final bool compact;
   final Future<void> Function() onTap;
-  const _HomeCard({required this.entry, required this.compact, required this.onTap});
+  const _HomeCard({required this.entry, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedWorldCard(
-      riveAsset: 'assets/rive/${entry.riveAsset}',
+      icon: entry.icon,
       accentColor: entry.color,
       title: entry.title,
       subtitle: entry.subtitle,
+      badge: entry.badge,
       onNavigate: onTap,
-      riveSize: compact ? 82 : 92,
     );
   }
 }
