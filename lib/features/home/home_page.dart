@@ -14,6 +14,7 @@ import '../warna/warna_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
   void _go(BuildContext c, Widget p) => Navigator.of(c).push(MaterialPageRoute(builder: (_) => p));
 
   @override
@@ -52,7 +53,7 @@ class HomePage extends StatelessWidget {
                         crossAxisCount: columns,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        childAspectRatio: columns == 2 ? 1.42 : 1.15,
+                        childAspectRatio: columns == 2 ? 1.08 : 1.12,
                       ),
                       itemBuilder: (_, i) => _HomeCard(entry: entries[i], compact: compact, onTap: () => _go(context, pages[i])),
                     ),
@@ -90,7 +91,7 @@ class _Hero extends StatelessWidget {
             builder: (_, on, __) => _RoundButton(
               icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
               color: on ? KidsTheme.primary : KidsTheme.muted,
-              onTap: () { music.toggle(); if (music.enabled.value) music.start(); },
+              onTap: music.toggle,
             ),
           ),
           const SizedBox(width: 10),
@@ -142,26 +143,60 @@ class _HomeCard extends StatelessWidget {
   final bool compact;
   final VoidCallback onTap;
   const _HomeCard({required this.entry, required this.compact, required this.onTap});
+
   @override
   Widget build(BuildContext context) => Material(
-    color: Colors.white.withValues(alpha: .96),
+    color: Colors.white.withValues(alpha: .97),
     borderRadius: BorderRadius.circular(26),
     elevation: 3,
     child: InkWell(
       borderRadius: BorderRadius.circular(26),
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.all(compact ? 12 : 15),
-        child: Row(children: [
-          Container(width: compact ? 70 : 78, height: compact ? 70 : 78, decoration: BoxDecoration(color: entry.color.withValues(alpha: .15), shape: BoxShape.circle), child: Center(child: Text(entry.emoji, style: TextStyle(fontSize: compact ? 39 : 45)))),
-          const SizedBox(width: 12),
-          Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(entry.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: compact ? 17 : 19, fontWeight: FontWeight.w900, color: entry.color)),
-            const SizedBox(height: 4),
-            Text(entry.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: KidsTheme.muted)),
-          ])),
-          const SizedBox(width: 4),
-          Container(width: 40, height: 40, decoration: BoxDecoration(color: entry.color, shape: BoxShape.circle), child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 23)),
+        padding: EdgeInsets.all(compact ? 10 : 14),
+        child: Stack(children: [
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              width: compact ? 38 : 42,
+              height: compact ? 38 : 42,
+              decoration: BoxDecoration(color: entry.color, shape: BoxShape.circle),
+              child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 23),
+            ),
+          ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2, right: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: compact ? 64 : 72,
+                    height: compact ? 64 : 72,
+                    decoration: BoxDecoration(color: entry.color.withValues(alpha: .14), shape: BoxShape.circle),
+                    child: Center(child: Text(entry.emoji, style: TextStyle(fontSize: compact ? 36 : 42))),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    entry.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: compact ? 15 : 17, fontWeight: FontWeight.w900, color: KidsTheme.ink),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    entry.subtitle,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: compact ? 11 : 12, fontWeight: FontWeight.w700, color: KidsTheme.muted),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ]),
       ),
     ),
