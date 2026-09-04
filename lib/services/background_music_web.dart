@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
@@ -16,7 +15,6 @@ class BackgroundMusic {
   web.AudioContext? _context;
   Timer? _timer;
   var _index = 0;
-  var _starting = false;
 
   static const _notes = <double>[
     261.63,
@@ -30,33 +28,22 @@ class BackgroundMusic {
   ];
 
   void start() {
-    if (!enabled.value || _timer != null || _starting) return;
+    if (!enabled.value || _timer != null) return;
 
-    _starting = true;
-    _context ??= web.AudioContext();
-    _resumeAndStart();
-  }
+    final context = _context ??= web.AudioContext();
 
-  Future<void> _resumeAndStart() async {
+    // Resume without awaiting: this keeps the call in the browser's
+    // user-gesture path and avoids losing the autoplay activation window.
     try {
-      final context = _context;
-      if (context == null || !enabled.value) return;
+      context.resume();
+    } catch (_) {}
 
-      try {
-        await context.resume().toDart;
-      } catch (_) {
-        return;
-      }
-
-      if (!enabled.value || _timer != null) return;
-      _playNext();
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 650),
-        (_) => _playNext(),
-      );
-    } finally {
-      _starting = false;
-    }
+    if (!enabled.value || _timer != null) return;
+    _playNext();
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 650),
+      (_) => _playNext(),
+    );
   }
 
   void toggle() {
@@ -83,6 +70,7 @@ class BackgroundMusic {
       final oscillator = context.createOscillator();
       final gain = context.createGain();
 
+      oscillator.type = 'sine';
       oscillator.frequency.value = _notes[_index];
       gain.gain.value = .28 * AppSettings.instance.musicVolume.value;
 
