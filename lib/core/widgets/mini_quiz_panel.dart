@@ -23,25 +23,119 @@ class MiniQuizPanel extends StatefulWidget {
 class _MiniQuizPanelState extends State<MiniQuizPanel> {
   final _audio = AudioService.instance;
   final _random = Random();
-  final Set<int> _used = <int>{};
+  List<MiniQuizQuestion> _sessionQuestions = const [];
   int _questionNo = 1, _correct = 0, _wrong = 0, _current = 0;
   String? _selected;
   bool _finished = false;
-  MiniQuizQuestion get _q => widget.questions[_current];
+  MiniQuizQuestion get _q => _sessionQuestions[_current];
 
   @override
   void initState() { super.initState(); _start(); }
 
   void _start() {
-    _questionNo = 1; _correct = 0; _wrong = 0; _selected = null; _finished = false; _used.clear(); _pickQuestion();
+    _questionNo = 1;
+    _correct = 0;
+    _wrong = 0;
+    _selected = null;
+    _finished = false;
+    _current = 0;
+    _sessionQuestions = _buildFreshSession();
   }
 
-  void _pickQuestion() {
-    final available = List<int>.generate(widget.questions.length, (i) => i).where((i) => !_used.contains(i)).toList();
-    if (available.isEmpty) { _used.clear(); available.addAll(List<int>.generate(widget.questions.length, (i) => i)); }
-    _current = available[_random.nextInt(available.length)];
-    _used.add(_current);
-    _selected = null;
+  String _kind(String value) {
+    final v = value.trim();
+    if (RegExp(r'^[A-Za-z]$').hasMatch(v)) return 'letter';
+    if (RegExp(r'^[٠-٩]+$').hasMatch(v)) return 'arabic-number';
+    if (RegExp(r'^\d+$').hasMatch(v)) return 'number';
+    if (v.runes.length <= 4 && !RegExp(r'^[A-Za-z0-9٠-٩]+$').hasMatch(v)) return 'emoji';
+    return 'text';
+  }
+
+  List<MiniQuizQuestion> _buildFreshSession() {
+    if (widget.questions.isEmpty) return const [];
+
+    final candidates = <MiniQuizQuestion>[];
+    final seen = <String>{};
+    final answersByKind = <String, List<String>>{};
+    for (final q in widget.questions) {
+      for (final choice in q.choices) {
+        answersByKind.putIfAbsent(_kind(choice), () => <String>[]);
+        if (!answersByKind[_kind(choice)]!.contains(choice)) {
+          answersByKind[_kind(choice)]!.add(choice);
+        }
+      }
+    }
+
+    for (var round = 0; round < 8; round++) {
+      for (final base in widget.questions) {
+        final answerKind = _kind(base.answer);
+        final pool = List<String>.from(answersByKind[answerKind] ?? base.choices)
+          ..removeWhere((value) => value == base.answer);
+        pool.shuffle(_random);
+
+        final distractors = <String>[];
+        for (final value in pool) {
+          if (!distractors.contains(value)) distractors.add(value);
+          if (distractors.length == 3) break;
+        }
+        for (final value in base.choices) {
+          if (distractors.length == 3) break;
+          if (value != base.answer && !distractors.contains(value)) distractors.add(value);
+        }
+        if (distractors.isEmpty) continue;
+
+        final choices = <String>[base.answer, ...distractors]..shuffle(_random);
+        final prompt = _freshPrompt(base.prompt, round);
+        final signature = '$prompt|${base.visual}|${choices.join('|')}|${base.answer}';
+        if (seen.add(signature)) {
+          candidates.add(MiniQuizQuestion(
+            prompt: prompt,
+            visual: base.visual,
+            choices: choices,
+            answer: base.answer,
+            spokenPrompt: base.spokenPrompt,
+          ));
+        }
+      }
+    }
+
+    candidates.shuffle(_random);
+    final result = <MiniQuizQuestion>[];
+    final usedCore = <String>{};
+    for (final q in candidates) {
+      final core = '${q.visual}|${q.answer}|${q.choices.join('|')}';
+      if (usedCore.add(core)) result.add(q);
+      if (result.length >= widget.totalQuestions) break;
+    }
+
+    if (result.length < widget.totalQuestions) {
+      final fallback = List<MiniQuizQuestion>.from(widget.questions)..shuffle(_random);
+      for (final q in fallback) {
+        if (result.length >= widget.totalQuestions) break;
+        result.add(MiniQuizQuestion(
+          prompt: _freshPrompt(q.prompt, result.length),
+          visual: q.visual,
+          choices: List<String>.from(q.choices)..shuffle(_random),
+          answer: q.answer,
+          spokenPrompt: q.spokenPrompt,
+        ));
+      }
+    }
+    return result;
+  }
+
+  String _freshPrompt(String original, int variant) {
+    const prefixes = [
+      'Ayo coba!',
+      'Siap bermain?',
+      'Tantangan baru!',
+      'Perhatikan baik-baik!',
+      'Sekarang giliranmu!',
+      'Yuk pilih yang tepat!',
+      'Coba jawab ini!',
+      'Hebat, lanjutkan!',
+    ];
+    return '${prefixes[variant % prefixes.length]} $original';
   }
 
   void _answer(String value) {
@@ -53,15 +147,23 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
       if (!mounted) return;
       setState(() {
         if (correct) {
-          if (_questionNo >= widget.totalQuestions) { _finished = true; } else { _questionNo++; _pickQuestion(); }
-        } else { _selected = null; }
+          if (_questionNo >= widget.totalQuestions || _current >= _sessionQuestions.length - 1) {
+            _finished = true;
+          } else {
+            _questionNo++;
+            _current++;
+            _selected = null;
+          }
+        } else {
+          _selected = null;
+        }
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.questions.isEmpty) return const Center(child: Text('Belum ada soal kuis.'));
+    if (_sessionQuestions.isEmpty) return const Center(child: Text('Belum ada soal kuis.'));
     return LayoutBuilder(builder: (context, box) {
       final s = (box.maxWidth / 820).clamp(.72, 1.0);
       if (_finished) return _result(s);
@@ -181,7 +283,7 @@ class _MiniQuizPanelState extends State<MiniQuizPanel> {
 
   BoxDecoration _panel(double s) => BoxDecoration(color: Colors.white.withValues(alpha: .95), borderRadius: BorderRadius.circular(32 * s), border: Border.all(color: Colors.white, width: 2), boxShadow: const [BoxShadow(color: Color(0x33143F66), blurRadius: 16, offset: Offset(0, 8))]);
 
-  Widget _badge(double s) => Container(padding: EdgeInsets.symmetric(horizontal: 30 * s, vertical: 8 * s), decoration: BoxDecoration(color: const Color(0xFF7651BE), borderRadius: BorderRadius.circular(18 * s)), child: Text('MINI KUIS', style: TextStyle(color: Colors.white, fontSize: 23 * s, fontWeight: FontWeight.w900)));
+  Widget _badge(double s) => Container(padding: EdgeInsets.symmetric(horizontal: 30 * s, vertical: 8 * s), decoration: BoxDecoration(color: const Color(0xFF7651BE), borderRadius: BorderRadius.circular(18 * s)), child: Text('MINI KUIS • SOAL FRESH', style: TextStyle(color: Colors.white, fontSize: 20 * s, fontWeight: FontWeight.w900)));
 
   Widget _listenButton(double s) => _actionButton('DENGARKAN PERTANYAAN', Icons.volume_up_rounded, () => _audio.speak(_q.spokenPrompt ?? _q.prompt), s);
 
