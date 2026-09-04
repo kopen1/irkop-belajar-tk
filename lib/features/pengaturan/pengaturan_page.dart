@@ -1,13 +1,34 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/services/app_settings.dart';
 import '../../core/services/audio_service.dart';
+import '../../core/services/fullscreen_service.dart';
 import '../../core/theme/kids_theme.dart';
 import '../../core/widgets/kid_background.dart';
 import '../../core/widgets/kid_header.dart';
 
-class PengaturanPage extends StatelessWidget {
+class PengaturanPage extends StatefulWidget {
   const PengaturanPage({super.key});
+
+  @override
+  State<PengaturanPage> createState() => _PengaturanPageState();
+}
+
+class _PengaturanPageState extends State<PengaturanPage> {
+  final _fullscreen = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    _fullscreen.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggleFullscreen() async {
+    final next = !_fullscreen.value;
+    await FullscreenService.setFullscreen(next);
+    if (mounted) _fullscreen.value = next;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +181,49 @@ class PengaturanPage extends StatelessWidget {
                   },
                 ),
               ),
+              if (kIsWeb) ...[
+                const SizedBox(height: 14),
+                _SettingsCard(
+                  title: '📱 Tampilan Web',
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: _fullscreen,
+                    builder: (_, enabled, __) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Gunakan layar penuh agar pengalaman belajar lebih mirip aplikasi mobile.',
+                            style: TextStyle(
+                              color: KidsTheme.muted,
+                              height: 1.35,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: _toggleFullscreen,
+                              icon: Icon(
+                                enabled
+                                    ? Icons.fullscreen_exit_rounded
+                                    : Icons.fullscreen_rounded,
+                              ),
+                              label: Text(
+                                enabled
+                                    ? 'Keluar dari Fullscreen'
+                                    : 'Aktifkan Fullscreen',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
               OutlinedButton.icon(
                 onPressed: settings.resetProgress,
