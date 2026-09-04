@@ -15,6 +15,8 @@ class BackgroundMusic {
 
   web.AudioContext? _context;
   Timer? _timer;
+  StreamSubscription<web.Event>? _blurSubscription;
+  StreamSubscription<web.Event>? _focusSubscription;
   var _index = 0;
   var _starting = false;
 
@@ -32,9 +34,18 @@ class BackgroundMusic {
   void start() {
     if (!enabled.value || _timer != null || _starting) return;
 
+    _bindVisibilityHandlers();
     _starting = true;
     _context ??= web.AudioContext();
     _resumeAndStart();
+  }
+
+  void _bindVisibilityHandlers() {
+    if (_blurSubscription != null) return;
+    _blurSubscription = web.window.onBlur.listen((_) => stop());
+    _focusSubscription = web.window.onFocus.listen((_) {
+      if (enabled.value) start();
+    });
   }
 
   Future<void> _resumeAndStart() async {
@@ -42,10 +53,6 @@ class BackgroundMusic {
       final context = _context;
       if (context == null || !enabled.value) return;
 
-      // package:web exposes browser promises as JS interop extension types.
-      // Convert the resume promise to a Dart Future so browser autoplay or
-      // tab-visibility rejections are handled instead of becoming unhandled
-      // JavaScript promise errors.
       try {
         await context.resume().toDart;
       } catch (_) {
@@ -55,7 +62,7 @@ class BackgroundMusic {
       if (!enabled.value || _timer != null) return;
       _playNext();
       _timer = Timer.periodic(
-        const Duration(milliseconds: 420),
+        const Duration(milliseconds: 650),
         (_) => _playNext(),
       );
     } finally {
@@ -88,26 +95,21 @@ class BackgroundMusic {
       final gain = context.createGain();
 
       oscillator.frequency.value = _notes[_index];
-      gain.gain.value = .45 * AppSettings.instance.musicVolume.value;
+      gain.gain.value = .28 * AppSettings.instance.musicVolume.value;
 
       oscillator.connect(gain);
       gain.connect(context.destination);
       oscillator.start();
 
-      Future<void>.delayed(const Duration(milliseconds: 340), () {
+      Future<void>.delayed(const Duration(milliseconds: 480), () {
         try {
           oscillator.stop();
           oscillator.disconnect();
           gain.disconnect();
-        } catch (_) {
-          // The browser may invalidate an audio node while a tab is hidden.
-        }
+        } catch (_) {}
       });
 
       _index = (_index + 1) % _notes.length;
-    } catch (_) {
-      // Audio can be temporarily unavailable while a browser tab changes
-      // visibility. Keep the app alive and let a later start recover it.
-    }
+    } catch (_) {}
   }
 }
