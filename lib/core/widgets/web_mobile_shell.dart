@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// On Web, keeps the app content in a phone-friendly viewport while still
-/// using the full available height and width on small screens.
+/// Responsive Web shell:
+/// - phone/tablet: edge-to-edge app surface
+/// - desktop: a wide native-app workspace instead of a phone-sized frame
 class WebMobileShell extends StatelessWidget {
   final Widget child;
 
@@ -17,32 +18,34 @@ class WebMobileShell extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
-          final usePhoneFrame = width >= 700;
-          final appWidth = usePhoneFrame ? 540.0 : width;
+          final desktop = width >= 900;
+          final contentWidth = desktop
+              ? (width - 48).clamp(0.0, 1280.0).toDouble()
+              : width;
 
           return Center(
             child: SizedBox(
-              width: appWidth,
+              width: contentWidth,
               height: constraints.maxHeight,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: usePhoneFrame
-                      ? const BorderRadius.all(Radius.circular(28))
+                  borderRadius: desktop
+                      ? const BorderRadius.all(Radius.circular(32))
                       : BorderRadius.zero,
-                  boxShadow: usePhoneFrame
+                  boxShadow: desktop
                       ? const [
                           BoxShadow(
                             color: Color(0x180D405C),
-                            blurRadius: 28,
-                            offset: Offset(0, 8),
+                            blurRadius: 30,
+                            offset: Offset(0, 10),
                           ),
                         ]
                       : const [],
                 ),
                 child: ClipRRect(
-                  borderRadius: usePhoneFrame
-                      ? const BorderRadius.all(Radius.circular(28))
+                  borderRadius: desktop
+                      ? const BorderRadius.all(Radius.circular(32))
                       : BorderRadius.zero,
                   child: child,
                 ),
