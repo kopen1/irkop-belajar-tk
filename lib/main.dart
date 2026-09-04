@@ -7,17 +7,20 @@ import 'services/background_music.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  BackgroundMusic.instance.start();
 
   runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'IRKOP Belajar TK',
-      theme: KidsTheme.data(),
-      builder: (context, child) => WebMobileShell(
-        child: child ?? const SizedBox.shrink(),
+    Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => BackgroundMusic.instance.start(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'IRKOP Belajar TK',
+        theme: KidsTheme.data(),
+        builder: (context, child) => WebMobileShell(
+          child: child ?? const SizedBox.shrink(),
+        ),
+        home: const HomePage(),
       ),
-      home: const HomePage(),
     ),
   );
 }
