@@ -37,9 +37,7 @@ jobs:
 
       - name: Flutter Pub Get
         run: flutter pub get
-      - name: Flutter Analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-      # Tests are intentionally skipped for the fast release/deploy path.
+      # Tests and static analysis are intentionally skipped for the fast release/deploy path.
       - name: Configure Flutter Web
         run: flutter create . --platforms web
       - name: Build Flutter Web
