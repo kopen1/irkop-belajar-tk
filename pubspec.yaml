@@ -13,6 +13,7 @@ dependencies:
   flutter_tts: ^4.2.0
   confetti: ^0.8.0
   web: ^1.1.0
+  rive: ^0.14.11
 
 dev_dependencies:
   flutter_lints: ^6.0.0
@@ -25,3 +26,4 @@ flutter:
     - assets/images/quiz_dino_happy.jpg
     - assets/images/quiz_wrong_tiger.jpg
     - assets/images/quiz_correct_dino.jpg
+    - assets/rive/
