@@ -2,11 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-/// Native vector illustration for a learning world.
-///
-/// Deliberately does not use image assets or generic icon packs. Every world
-/// gets its own composition, while the animation is driven by Flutter's
-/// AnimationController so it behaves identically on mobile and web.
 enum WorldArt {
   letters,
   numbers,
@@ -44,8 +39,8 @@ class _AnimatedWorldCardState extends State<AnimatedWorldCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2200),
-  )..repeat(reverse: true);
+    duration: const Duration(milliseconds: 560),
+  );
 
   bool _pressed = false;
   bool _busy = false;
@@ -62,14 +57,15 @@ class _AnimatedWorldCardState extends State<AnimatedWorldCard>
       _busy = true;
       _pressed = true;
     });
-    await Future<void>.delayed(const Duration(milliseconds: 150));
+
+    await _controller.forward(from: 0);
     if (!mounted) return;
     setState(() => _pressed = false);
-    await Future<void>.delayed(const Duration(milliseconds: 260));
+
+    await Future<void>.delayed(const Duration(milliseconds: 90));
     if (!mounted) return;
     await widget.onNavigate();
-    if (!mounted) return;
-    setState(() => _busy = false);
+    if (mounted) setState(() => _busy = false);
   }
 
   @override
@@ -80,73 +76,69 @@ class _AnimatedWorldCardState extends State<AnimatedWorldCard>
       label: '${widget.title}. ${widget.subtitle}',
       child: AnimatedScale(
         scale: _pressed ? .955 : 1,
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 120),
         curve: Curves.easeOutBack,
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: _busy ? null : _handleTap,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(24),
             splashColor: widget.accentColor.withValues(alpha: .10),
-            highlightColor: widget.accentColor.withValues(alpha: .05),
             child: Ink(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: widget.accentColor.withValues(alpha: .16),
-                  width: 1.5,
+                  color: widget.accentColor.withValues(alpha: .15),
+                  width: 1.2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.accentColor.withValues(alpha: _pressed ? .27 : .13),
-                    blurRadius: _pressed ? 24 : 16,
-                    offset: const Offset(0, 8),
+                    color: widget.accentColor.withValues(alpha: .12),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 13),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 11),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: softAccent,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
                             widget.badge,
                             style: TextStyle(
                               color: widget.accentColor,
-                              fontSize: 11,
+                              fontSize: 10,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
                         ),
                         const Spacer(),
                         Container(
-                          width: 34,
-                          height: 34,
+                          width: 31,
+                          height: 31,
                           decoration: BoxDecoration(
                             color: widget.accentColor,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: widget.accentColor.withValues(alpha: .25),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
                           ),
-                          child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 19),
+                          child: const Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Colors.white,
+                            size: 17,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 3),
                     Expanded(
                       child: AnimatedBuilder(
                         animation: _controller,
@@ -158,21 +150,29 @@ class _AnimatedWorldCardState extends State<AnimatedWorldCard>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 3),
                     Text(
                       widget.title,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF24445C)),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF24445C),
+                      ),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),
                     Text(
                       widget.subtitle,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF718798)),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF718798),
+                      ),
                     ),
                   ],
                 ),
@@ -223,86 +223,96 @@ class WorldIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wave = math.sin(progress * math.pi * 2);
-    final lift = wave * 4.0;
-    final tilt = wave * .035;
-    final scale = pressed ? .91 : 1 + wave * .018;
-    final glow = accent.withValues(alpha: pressed ? .30 : .14 + (wave + 1) * .035);
+    final t = Curves.easeOutBack.transform(progress);
+    final pulse = math.sin(progress * math.pi);
+    final lift = pulse * 5;
+    final scale = pressed ? .91 + t * .14 : 1.0;
+    final glowAlpha = pressed ? .30 : .12 + pulse * .10;
 
     return Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
         Transform.translate(
-          offset: Offset(0, 10 - lift * .35),
+          offset: Offset(0, 9 - lift * .25),
           child: Container(
-            width: 108,
-            height: 24,
+            width: 100,
+            height: 20,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
-              color: accent.withValues(alpha: .16),
-              boxShadow: [BoxShadow(color: accent.withValues(alpha: .18), blurRadius: 14, spreadRadius: 2)],
+              color: accent.withValues(alpha: .14),
             ),
           ),
         ),
         Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..setEntry(3, 2, .0012)
-            ..rotateZ(tilt)
+            ..setEntry(3, 2, .001)
+            ..rotateZ(math.sin(progress * math.pi) * .025)
             ..scale(scale),
           child: Container(
-            width: 112,
-            height: 112,
+            width: 108,
+            height: 108,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(34),
+              borderRadius: BorderRadius.circular(30),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  accent.withValues(alpha: .17),
-                ],
+                colors: [Colors.white, accent.withValues(alpha: .16)],
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: .9), width: 3),
+              border: Border.all(color: Colors.white, width: 2.5),
               boxShadow: [
-                BoxShadow(color: glow, blurRadius: pressed ? 28 : 20, spreadRadius: pressed ? 5 : 2, offset: const Offset(0, 7)),
+                BoxShadow(
+                  color: accent.withValues(alpha: glowAlpha),
+                  blurRadius: pressed ? 22 : 12,
+                  spreadRadius: pressed ? 3 : 1,
+                  offset: const Offset(0, 6),
+                ),
               ],
             ),
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Positioned(
-                  top: 11,
-                  right: 12,
-                  child: _Shine(color: accent),
+                  top: 10,
+                  right: 11,
+                  child: Container(
+                    width: 11,
+                    height: 11,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .88),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ),
                 Container(
-                  width: 68,
-                  height: 68,
+                  width: 65,
+                  height: 65,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: accent,
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [accent.withValues(alpha: .98), accent.withValues(alpha: .62)],
+                      colors: [accent, accent.withValues(alpha: .65)],
                     ),
                     boxShadow: [
-                      BoxShadow(color: accent.withValues(alpha: .34), blurRadius: 12, offset: const Offset(0, 7)),
+                      BoxShadow(
+                        color: accent.withValues(alpha: .28),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
                     ],
                   ),
-                  child: Icon(_icon, color: Colors.white, size: 38),
+                  child: Icon(_icon, color: Colors.white, size: 36),
                 ),
                 ...List.generate(_miniLabels.length, (i) {
                   final angle = -math.pi / 2 + i * math.pi;
-                  final radius = 46.0 + wave * 2;
+                  final radius = 44.0 + pulse * 2;
                   return Transform.translate(
                     offset: Offset(math.cos(angle) * radius, math.sin(angle) * radius),
                     child: _MiniBubble(
                       label: _miniLabels[i],
                       accent: accent,
-                      index: i,
                     ),
                   );
                 }),
@@ -318,43 +328,26 @@ class WorldIllustration extends StatelessWidget {
 class _MiniBubble extends StatelessWidget {
   final String label;
   final Color accent;
-  final int index;
-  const _MiniBubble({required this.label, required this.accent, required this.index});
+
+  const _MiniBubble({required this.label, required this.accent});
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 27,
-        height: 27,
+        width: 26,
+        height: 26,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: accent.withValues(alpha: .35), width: 2),
-          boxShadow: [BoxShadow(color: accent.withValues(alpha: .16), blurRadius: 7, offset: const Offset(0, 3))],
+          border: Border.all(color: accent.withValues(alpha: .30), width: 1.5),
         ),
         child: Text(
           label,
           style: TextStyle(
             color: accent,
-            fontSize: label.length > 1 ? 8 : 13,
+            fontSize: label.length > 1 ? 8 : 12,
             fontWeight: FontWeight.w900,
           ),
-        ),
-      );
-}
-
-class _Shine extends StatelessWidget {
-  final Color color;
-  const _Shine({required this.color});
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 13,
-        height: 13,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: .88),
-          shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: color.withValues(alpha: .35), blurRadius: 7)],
         ),
       );
 }
