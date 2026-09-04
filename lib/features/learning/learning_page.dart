@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../core/services/audio_service.dart';
 import '../../core/widgets/kid_background.dart';
+import '../../core/widgets/web_3d_visual.dart';
 
 enum LearningType { huruf, angka, hijaiyah, gambar, warna }
 
@@ -122,11 +123,25 @@ class _LearningPageState extends State<LearningPage> with SingleTickerProviderSt
   Widget learn(bool lower,bool arab) {
     final item=items[index];
     final display=widget.type==LearningType.huruf&&lower?item.title.toLowerCase():widget.type==LearningType.angka&&arab?arabic(index+1):item.title;
+    final visualSize = widget.type==LearningType.hijaiyah ? 150.0 : 132.0;
     return SingleChildScrollView(padding:const EdgeInsets.all(14),child:Column(children:[
       Container(width:double.infinity,padding:const EdgeInsets.all(20),decoration:panel(),child:Column(children:[
-        Text(item.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?100:78)),
+        Web3DVisual(
+          size: visualSize,
+          radius: 32,
+          topColor: const Color(0xFFFFFEF7),
+          bottomColor: const Color(0xFFD8EEF8),
+          child: FittedBox(fit:BoxFit.scaleDown,child:Text(item.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?100:78))),
+        ),
         const SizedBox(height:8),
-        Text(display,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?80:58,fontWeight:FontWeight.w900,color:const Color(0xFF26324A))),
+        Web3DVisual(
+          size: 122,
+          radius: 28,
+          topColor: const Color(0xFFFFFFFF),
+          bottomColor: const Color(0xFFE8F4FA),
+          child: FittedBox(fit:BoxFit.scaleDown,child:Text(display,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?70:58,fontWeight:FontWeight.w900,color:const Color(0xFF26324A)))),
+        ),
+        const SizedBox(height:8),
         Text(item.sound,style:const TextStyle(fontSize:21,fontWeight:FontWeight.w900,color:Color(0xFF2D98C8))),
         const SizedBox(height:12),
         Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:const Color(0xFFF5FBFF),borderRadius:BorderRadius.circular(18)),child:Text(item.hint,textAlign:TextAlign.center,style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800,color:Color(0xFF385267)))),
@@ -150,7 +165,13 @@ class _LearningPageState extends State<LearningPage> with SingleTickerProviderSt
     Container(width:double.infinity,padding:const EdgeInsets.all(20),decoration:panel(),child:Column(children:[
       const Text('Pilih jawaban yang benar!',style:TextStyle(fontSize:22,fontWeight:FontWeight.w900,color:Color(0xFF26324A))),
       const SizedBox(height:16),
-      Text(question.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?100:86)),
+      Web3DVisual(
+        size: 150,
+        radius: 30,
+        topColor: const Color(0xFFFFFEF7),
+        bottomColor: const Color(0xFFD8EEF8),
+        child: FittedBox(fit:BoxFit.scaleDown,child:Text(question.visual,style:TextStyle(fontSize:widget.type==LearningType.hijaiyah?90:78))),
+      ),
       const SizedBox(height:10),
       Text('Mana '+question.title+'?',style:const TextStyle(fontSize:26,fontWeight:FontWeight.w900,color:Color(0xFF26324A))),
       const SizedBox(height:14),
