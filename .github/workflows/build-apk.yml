@@ -209,10 +209,17 @@ jobs:
         shell: bash
         run: |
           APK="build/app/outputs/flutter-apk/app-release.apk"
-          EXPECTED_CERT=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | awk -F': ' '/SHA256:/{print $2; exit}')
+          EXPECTED_CERT=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | awk -F': ' '/SHA256:/{print $2; exit}' | tr -d ':' | tr '[:upper:]' '[:lower:]')
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
           "$APKSIGNER" verify --verbose --print-certs "$APK" | tee /tmp/apk-signing.txt
-          grep -F "$EXPECTED_CERT" /tmp/apk-signing.txt
+          ACTUAL_CERT=$(awk '/certificate SHA-256 digest:/{print $NF; exit}' /tmp/apk-signing.txt | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          test -n "$EXPECTED_CERT" || { echo "ERROR: signing key fingerprint could not be read"; exit 1; }
+          test "$ACTUAL_CERT" = "$EXPECTED_CERT" || {
+            echo "ERROR: APK was signed with a different certificate"
+            echo "Expected: $EXPECTED_CERT"
+            echo "Actual:   $ACTUAL_CERT"
+            exit 1
+          }
 
       - name: Rename APK
         run: |
