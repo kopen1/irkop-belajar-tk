@@ -10,6 +10,7 @@ class AppSettings {
   final ValueNotifier<bool> fullscreen = ValueNotifier<bool>(false);
   final ValueNotifier<double> musicVolume = ValueNotifier<double>(0.65);
   final ValueNotifier<double> effectsVolume = ValueNotifier<double>(1.0);
+  final ValueNotifier<double> speechRate = ValueNotifier<double>(0.48);
   final ValueNotifier<int> totalScore = ValueNotifier<int>(0);
   final ValueNotifier<int> totalCorrect = ValueNotifier<int>(0);
   final ValueNotifier<int> activitiesPlayed = ValueNotifier<int>(0);
