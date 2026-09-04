@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -20,6 +20,43 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node (cached)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cache Rive generator npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: rive-generator-npm-${{ runner.os }}-${{ hashFiles('tool/generate_rive_cards.mjs') }}
+          restore-keys: |
+            rive-generator-npm-${{ runner.os }}-
+
+      - name: Build Rive generator
+        run: |
+          rm -rf /tmp/rive-mcp
+          git clone --depth 1 https://github.com/ODU33104/rive-mcp.git /tmp/rive-mcp
+          cd /tmp/rive-mcp
+          npm ci
+          npm run build
+
+      - name: Generate all 8 Rive world cards
+        run: node tool/generate_rive_cards.mjs
+
+      - name: Commit generated Rive assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/rive/*.riv
+          if git diff --cached --quiet; then
+            echo "Rive assets are already current."
+          else
+            git commit -m "chore(rive): bundle 8 interactive world cards"
+            git push
+          fi
 
       - name: Setup Flutter (cached)
         uses: subosito/flutter-action@v2
